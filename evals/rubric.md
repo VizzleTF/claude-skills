@@ -14,7 +14,7 @@ The anchors describe what a reader can or cannot do with the output, or they cit
 4. **Style is judged in the language of the document.** A Russian document is judged by Russian style norms, an English document by English ones. Do not penalise a Russian text for not following English conventions, or the reverse. Quoted source text, commands and identifiers are not judged for style.
 5. **The facts and the fixtures are the source of truth.** A statement that contradicts a fact, or adds a specific fact (a number, a name, a command, a flag, a date, a team, a channel) that is in neither the request, the facts nor the fixtures, is an error. Marking a missing fact as a gap for the author to fill is correct and is not an error. `expect_notes` describe what a good answer does; use them when scoring, but they are not facts the document has to state.
 6. **A review is a document too.** For `kind: review` the output is a review report, judged on the same criteria: `type` — the review identifies what kind of document it reviews and judges it by what that kind's reader needs; `skeleton` — it checks the parts that kind needs; `accuracy` — every finding is true of the reviewed text, and the problems listed in the facts are found; `answer_first`, `scannable`, `voice`, `no_llm_patterns` and `concise` apply to the report itself; `actionable` — each finding names a place and gives a concrete fix.
-7. **Records are superseded, not edited.** Nygard's ADR format and Keep a Changelog treat accepted decisions and released versions as fixed history. An output that edits the body of an accepted record to reflect a new decision scores at most 2 on `skeleton` and `accuracy`. The expected change is a new record that supersedes the old one, with the old one's status set to superseded.
+7. **Accepted ADRs are superseded, not edited.** Nygard: "If a decision is reversed, we will keep the old one around, but mark it as superseded." An output that edits the body of an accepted ADR to reflect a new decision scores at most 2 on `skeleton` and `accuracy`. The expected change is a new ADR that supersedes the old one, with the old one's status set to superseded. This rule covers ADRs only.
 8. **Ignore tool chatter.** Skip lines where the writer talks about its own process ("I will now write…", "Here is the document"). Judge the document.
 9. **Do not guess the writer.** Outputs carry no names. Do not reward or punish an output for how it seems to have been produced.
 
@@ -95,7 +95,7 @@ Can the reader do their job using this output alone?
 ## Sources
 
 - Diátaxis, https://diataxis.fr/ — tutorial, how-to, reference, explanation.
-- Michael Nygard, "Documenting Architecture Decisions" (2011), https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions — ADR parts and "We will …".
+- Michael Nygard, "Documenting Architecture Decisions" (2011), https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions — ADR parts, "We will …", superseding instead of editing.
 - Google SRE Book, chapter 15 "Postmortem Culture: Learning from Failure", https://sre.google/sre-book/postmortem-culture/ — blameless postmortems, impact, timeline, action items.
 - Keep a Changelog 1.1.0, https://keepachangelog.com/en/1.1.0/ — version, ISO date, change groups.
 - PEP 257, https://peps.python.org/pep-0257/ — docstring first line.
