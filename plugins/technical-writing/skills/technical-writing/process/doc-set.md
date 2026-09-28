@@ -50,7 +50,7 @@ Plan how readers report problems: an issue template, a link at the bottom of eac
 
 ## Maintenance and retirement
 
-Name an owner for each page. Tie review to events: a release, a changed flag, a closed incident. When a living page stops being true, fix it or delete it and redirect its address. Records follow a different rule: the content of an ADR, a postmortem or a changelog entry is never changed. A newer record supersedes it, and the old record is marked superseded with a link. Typos and broken links are the only fixes made in a record.
+Name an owner for each page. Tie review to events: a release, a changed flag, a closed incident. When a living page stops being true, fix it or delete it and redirect its address. Records follow a different rule: the content of an ADR, a postmortem or a changelog entry is never changed. A newer record supersedes it, and the old record is marked superseded with a link. Besides typos and broken links, the only changes to a published record are its status mark (`[YANKED]`, `superseded by`) and the link to its replacement.
 
 ## Plan format
 

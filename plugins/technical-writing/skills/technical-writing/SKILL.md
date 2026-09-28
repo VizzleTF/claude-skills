@@ -20,7 +20,7 @@ This skill writes and reviews documentation by type. It finds the reader first, 
 - **Skeleton**: the ordered sections a type requires.
 - **Core rules**: the rules in this file. They apply to every type unless the type file says otherwise.
 - **Living document**: a page that changes with the product and is fixed or deleted when it stops being true.
-- **Record**: a page that captures a moment. Its content is never edited; typos and broken links are the only fixes made in place.
+- **Record**: a page that captures a moment. Besides typos and broken links, the only changes to a published record are its status mark (`[YANKED]`, `superseded by`) and the link to its replacement.
 - **Superseded**: the status of a record that a newer record replaces. The old record gets this status and a link to the newer one.
 - **Finding**: one problem found in review, reported as where, what, and how to fix.
 - **Cold reader**: someone who has not seen the draft or its context: a fresh subagent or a person.
@@ -112,7 +112,7 @@ This version holds English style rules. If the document is in another language, 
 
 **Examples run.** Every command and snippet works as written, with placeholders marked (`<NAMESPACE>`). After a step that can fail quietly, show what success looks like.
 
-**Current.** Incorrect documentation is worse than missing documentation. Fix or delete a living document that is wrong. Never change the content of a record: write a newer record and mark the old one superseded. Typos and broken links are the only fixes made in a record. Say which version a page applies to where it matters; avoid phrases that expire on a date.
+**Current.** Incorrect documentation is worse than missing documentation. Fix or delete a living document that is wrong. Never change the content of a record: write a newer record and mark the old one superseded. Besides typos and broken links, the only changes to a published record are its status mark (`[YANKED]`, `superseded by`) and the link to its replacement. Say which version a page applies to where it matters; avoid phrases that expire on a date.
 
 **Lengths are guides.** Numbers in the type and style files are rules of thumb with a source or marked as such. None of them is a hard limit.
 

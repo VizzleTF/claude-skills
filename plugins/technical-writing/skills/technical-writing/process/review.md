@@ -53,7 +53,7 @@ Mark Baker's *Every Page is Page One* describes a topic that works for a reader 
 
 ## Records under review
 
-An ADR, a postmortem or a published changelog entry records a moment. The review does not rewrite it. When the content is out of date, the finding proposes a new record that supersedes the old one. The old record gets a one-line status change with a link to the new one. Typos and broken links are the only fixes made in a record.
+An ADR, a postmortem or a published changelog entry records a moment. The review does not rewrite it. When the content is out of date, the finding proposes a new record that supersedes the old one. The old record gets a one-line status change with a link to the new one. Besides typos and broken links, the only changes to a published record are its status mark (`[YANKED]`, `superseded by`) and the link to its replacement.
 
 ## Report format
 

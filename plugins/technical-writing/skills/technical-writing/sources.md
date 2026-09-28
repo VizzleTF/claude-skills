@@ -52,7 +52,8 @@ Each row gives the source, what the skill takes from it, and where the rule appe
 
 | Source | What the skill takes | Where in the skill |
 |---|---|---|
-| Betsy Beyer, Chris Jones, Jennifer Petoff, Niall Richard Murphy (eds.). *Site Reliability Engineering*. O'Reilly. Chapter "Postmortem Culture: Learning from Failure", sre.google. Also *The Site Reliability Workbook*. | A blameless postmortem focuses "on identifying the contributing causes of the incident without indicting any individual or team". Contents of a postmortem: impact, actions taken, root causes, follow-up actions. A playbook entry for each alert. | types/postmortem.md, types/runbook.md |
+| Betsy Beyer, Chris Jones, Jennifer Petoff, Niall Richard Murphy (eds.). *Site Reliability Engineering*. O'Reilly. Chapter "Postmortem Culture: Learning from Failure", sre.google. Also *The Site Reliability Workbook*. | A blameless postmortem focuses "on identifying the contributing causes of the incident without indicting any individual or team". Contents of a postmortem: impact, actions taken, root causes, follow-up actions. | types/postmortem.md |
+| Scott Bradner. RFC 2119, *Key words for use in RFCs to Indicate Requirement Levels*. IETF. rfc-editor.org | The requirement key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY, with their defined meanings, as the modality scale for team rules. | types/conventions.md |
 | Michael Nygard. "Documenting Architecture Decisions". Cognitect blog. | ADR sections: title, context, decision, status, consequences. The decision is stated "in full sentences, with active voice. 'We will …'". All consequences are listed. One or two pages. A replaced decision stays in the repository, marked superseded. | types/adr.md |
 | Olivier Lacan. Keep a Changelog 1.1.0. keepachangelog.com | "Changelogs are for humans, not machines." Change types Added, Changed, Deprecated, Removed, Fixed, Security; the latest version first; ISO 8601 dates. | types/changelog.md |
 | David Goodger, Guido van Rossum. PEP 257, Docstring Conventions. peps.python.org | The one-line docstring prescribes the effect as a command ("Do this", "Return that") and does not restate the signature. | types/docstring.md |
@@ -69,6 +70,6 @@ Each row gives the source, what the skill takes from it, and where the rule appe
 
 ## Sources the skill does not rely on
 
-Nielsen Norman Group published a web-reading study run in 1997 on a tourism website about Nebraska. It measured usability of promotional web text and says nothing about technical documentation. The skill does not use its figures as an argument; at most, its findings on scanning apply to navigation text.
+Nielsen Norman Group published a web-reading study run in 1997 on a tourism website about Nebraska. It measured usability of promotional web text and says nothing about technical documentation. The skill does not use its figures as an argument. Its findings on scanning are applied only to navigation text, such as landing pages and READMEs.
 
 Blog retellings and SEO articles about writing are not used as sources.
