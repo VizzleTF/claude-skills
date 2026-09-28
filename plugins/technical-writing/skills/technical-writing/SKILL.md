@@ -6,6 +6,10 @@ when_to_use: Use when asked to write, rewrite, review, shorten, restructure or p
 
 # Technical writing
 
+## Contents
+
+Glossary, Choosing the type, Routing, Branches, Core rules, Workflow, Sources.
+
 This skill writes and reviews documentation by type. It finds the reader first, picks one of 13 document types, and loads the rules for that type.
 
 ## Glossary
@@ -132,7 +136,7 @@ Documentation progress:
 
 The checklist tracks progress in the conversation. Keep it out of the document delivered to the reader, together with any mention of this skill or its files.
 
-**Step 5.** Edit in separate passes, largest unit first. Stephen King's rule of thumb from *On Writing*: the second draft is the first minus about 10%. Treat it as a guide.
+**Step 5.** Edit in separate passes, largest unit first. Stephen King gives the formula in *On Writing*: the second draft is the first minus 10%. This skill treats it as a rule of thumb.
 
 **Step 6.** Run the checker from any directory:
 

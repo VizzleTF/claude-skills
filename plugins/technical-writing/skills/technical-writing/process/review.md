@@ -27,15 +27,15 @@ Run the checker on the file before step 4 and use its output as input to steps 4
 
 | Group | Characteristic | Question for the reviewer |
 |---|---|---|
-| Easy to use | Task orientation | Is the page organized around what the reader does? |
-| Easy to use | Accuracy | Is every fact correct and checked? |
-| Easy to use | Completeness | Is everything the reader needs present, and nothing extra? |
-| Easy to understand | Clarity | Can each sentence be read only one way? |
-| Easy to understand | Concreteness | Are there examples, numbers and names where the reader needs them? |
-| Easy to understand | Style | Are voice, terms and tone consistent and suited to the type? |
-| Easy to find | Organization | Does the order match the reader's path? |
-| Easy to find | Retrievability | Can the reader find the page and the section by scanning or search? |
-| Easy to find | Visual effectiveness | Do tables, diagrams and screenshots help, and do they have text equivalents? |
+| *Easy to use* | Task orientation | Is the page organized around what the reader does? |
+| *Easy to use* | Accuracy | Is every fact correct and checked? |
+| *Easy to use* | Completeness | Is everything the reader needs present, and nothing extra? |
+| *Easy to understand* | Clarity | Can each sentence be read only one way? |
+| *Easy to understand* | Concreteness | Are there examples, numbers and names where the reader needs them? |
+| *Easy to understand* | Style | Are voice, terms and tone consistent and suited to the type? |
+| *Easy to find* | Organization | Does the order match the reader's path? |
+| *Easy to find* | Retrievability | Can the reader find the page and the section by scanning or search? |
+| *Easy to find* | Visual effectiveness | Do tables, diagrams and screenshots help, and do they have text equivalents? |
 
 ## Self-contained page test
 
