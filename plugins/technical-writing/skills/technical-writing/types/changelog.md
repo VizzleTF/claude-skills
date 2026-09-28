@@ -39,7 +39,7 @@ One line per change, as a rule of thumb. A change that needs a paragraph gets a 
 
 ## Differences from the core rules
 
-- **A release is a record.** The core rules fix or delete a wrong living document. A published version section is not rewritten. If a release was pulled, Keep a Changelog marks it `[YANKED]` next to the version; add a link to the version that replaces it. A correction goes into the next version's entries, and the old entry gets a link to that version. Typos and broken links are the only fixes made in place.
+- **A release is a record.** The core rules fix or delete a wrong living document. A published version section is not rewritten. If a release was pulled, Keep a Changelog marks it `[YANKED]` next to the version; add a link to the version that replaces it. A correction goes into the next version's entries, and the old entry gets a link to that version. Besides typos and broken links, the only changes to a published record are its status mark (`[YANKED]`, `superseded by`) and the link to its replacement.
 
 ## Forbidden
 
@@ -55,5 +55,5 @@ One line per change, as a rule of thumb. A change that needs a paragraph gets a 
 - [ ] Changes are grouped by the six types, in order.
 - [ ] Each breaking change opens its group, starts with `BREAKING:` and links to a migration guide.
 - [ ] Every entry states the effect on the user.
-- [ ] Published versions were not rewritten.
+- [ ] Published versions changed only their status mark and the link to their replacement.
 - [ ] A migration guide shows code before and after, and a verification step.

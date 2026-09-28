@@ -34,7 +34,7 @@ As long as the incident requires. The summary and impact fit on the first screen
 
 - **Past tense, no address to the reader.** Instructions address the reader as "you". A postmortem narrates events in the past tense and does not address the reader.
 - **Blameless.** Google SRE defines a blameless postmortem as focused "on identifying the contributing causes of the incident without indicting any individual or team". A cause is a gap in a system or process.
-- **A record is not rewritten.** When new facts change the account, write a new postmortem. The old one gets the status `superseded by` and a link to the new one. Typos and broken links are the only fixes made in place.
+- **A record is not rewritten.** When new facts change the account, write a new postmortem. The old one gets the status `superseded by` and a link to the new one. Besides typos and broken links, the only changes to a published record are its status mark (`[YANKED]`, `superseded by`) and the link to its replacement.
 
 ## Forbidden
 
@@ -51,4 +51,4 @@ As long as the incident requires. The summary and impact fit on the first screen
 - [ ] Causes name systems and processes.
 - [ ] Every follow-up action has an owner, a due date and a link.
 - [ ] Events are in the past tense.
-- [ ] New facts after publication went into a new record; the old one is marked superseded with a link.
+- [ ] New facts went into a new record; the old one changed only its status mark and the link to its replacement.

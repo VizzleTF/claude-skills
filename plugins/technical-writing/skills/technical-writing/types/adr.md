@@ -36,7 +36,7 @@ One or two pages for an ADR, following Nygard. A design doc may run longer; keep
 
 ## Differences from the core rules
 
-- **A record is not rewritten.** The core rules fix or delete a living document that is wrong. An ADR is a record: when a decision changes, write a new ADR with a `Supersedes: ADR-NNNN` line. In the old ADR, change only the status to `superseded by ADR-MMMM` with a link. Typos and broken links are the only fixes made in a record.
+- **A record is not rewritten.** The core rules fix or delete a living document that is wrong. An ADR is a record: when a decision changes, write a new ADR with a `Supersedes: ADR-NNNN` line. In the old ADR, set the status to `superseded by ADR-MMMM` with a link. Besides typos and broken links, the only changes to a published record are its status mark (`[YANKED]`, `superseded by`) and the link to its replacement.
 - **Full sentences in place of lists.** General style advice turns more than two items into a list. Context, decision and consequences are paragraphs, because the reasoning lives in the connections between the items. A list is fine for the alternatives when each item is a full sentence.
 
 ## Forbidden
@@ -54,5 +54,5 @@ One or two pages for an ADR, following Nygard. A design doc may run longer; keep
 - [ ] The decision is a paragraph that opens with "We will".
 - [ ] Consequences include the costs.
 - [ ] Alternatives say why each was rejected.
-- [ ] A replacement is a new record; the old one changed only its status and link.
+- [ ] A replacement is a new record; the old one changed only its status mark and the link to its replacement.
 - [ ] Context, decision and consequences are paragraphs.

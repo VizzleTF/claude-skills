@@ -4,7 +4,7 @@ A runbook tells the on-call engineer what to do when a specific alert fires. The
 
 ## When to use it and when not
 
-Use a runbook for one alert or one operational event with known steps. Google SRE recommends a playbook entry for each alert.
+Use a runbook for one alert or one operational event with known steps. Every alert that pages a person needs a runbook.
 
 Pick another type in these cases:
 
