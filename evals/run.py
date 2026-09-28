@@ -14,6 +14,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from statistics import median
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -148,7 +149,10 @@ def workdir(scenario=None):
         shutil.rmtree(d, ignore_errors=True)
 
 
-RATE_RE = re.compile(r"rate.?limit|usage limit|\b429\b|overloaded|\b529\b", re.I)
+RATE_RE = re.compile(r"rate.?limit|\b429\b|overloaded|\b529\b", re.I)
+# quota/session limits reset in hours: pausing is pointless, stop at once
+LIMIT_RE = re.compile(r"hit your (session |usage |weekly )?limit|session limit|usage limit|"
+                      r"limit.{0,40}\bresets\b", re.I)
 AUTH_RE = re.compile(r"not logged in|invalid api key|please run /login|authentication_error", re.I)
 
 
@@ -173,7 +177,9 @@ def _checked_call(argv, cwd, env, parse, attempts, prompt):
         except (OSError, subprocess.SubprocessError) as e:
             res = CallResult(1, "", f"{type(e).__name__}: {e}")
         ev = _result_event(res.stdout) or {}
-        blob = f"{ev.get('result', '')} {res.stderr}"
+        blob = f"{ev.get('result', '') if ev else res.stdout[-500:]} {res.stderr}"
+        if (res.returncode != 0 or ev.get("is_error")) and LIMIT_RE.search(blob):
+            raise RateLimited(blob.strip()[:300])
         if (res.returncode != 0 or ev.get("is_error")) and RATE_RE.search(blob):
             if rate_hits >= len(RATE_PAUSES):
                 raise RateLimited(blob.strip()[:300])
@@ -564,6 +570,31 @@ def model_section(results, model, participants, title):
     return lines
 
 
+def compactness(results, runs, participants):
+    """Median/mean words per participant and model; ratio of medians to writing-docs
+    on the scenarios both have."""
+    rows = []
+    for m, scs in runs:
+        words = {p: {} for p in participants}
+        for s in scs:
+            for p in participants:
+                meta = _read_json(results / "outputs" / m / p / f"{s.id}.json") or {}
+                if meta.get("status") == "ok":
+                    words[p][s.id] = meta["words"]
+        for p in participants:
+            if not words[p]:
+                continue
+            ratio = "—"
+            base = words.get("writing-docs", {})
+            common = sorted(set(words[p]) & set(base))
+            if common:
+                ratio = f"{median(words[p][i] for i in common) / median(base[i] for i in common):.2f}"
+            rows.append([m, p, f"{median(words[p].values()):g}", f"{_mean(words[p].values()):.1f}", ratio])
+    return ["## Компактность (слов в документе)", "",
+            *(_table(["Модель", "Участник", "Медиана", "Среднее", "Медиана / writing-docs"], rows)
+              if rows else ["нет данных"]), ""]
+
+
 def write_report(results, args, runs, participants):
     m0 = args.models[0]
     judged = _judgments(results, m0)
@@ -607,6 +638,7 @@ def write_report(results, args, runs, participants):
     lines += ["## Позиционные расхождения (> 1 балла между проходами)", "",
               *(_table(["Модель", "Сценарий", "Участник", "Критерии (проход 1/проход 2)"],
                        [[*k, ", ".join(v)] for k, v in flags.items()]) if flags else ["нет"]), ""]
+    lines += compactness(results, runs, participants)
     lines += ["## Упавшие вызовы", "", *([f"- {f}" for f in failed_calls(results)] or ["нет"]), ""]
     lines += ["## Слепой вердикт владельца", "",
               "Пары «writing-docs против нового скилла» лежат в `pairs/`, бланк — `verdict.md`. "

@@ -38,7 +38,7 @@ python3 evals/run.py [--models sonnet] [--core-models haiku,opus] [--judge-model
 
 If `writing-docs` is not found at `--baseline-path`, the runner prints a warning and runs without it. No blind pairs are made in that case.
 
-An interrupted run continues where it stopped: run the same command with the same `--date`. Finished outputs and judgments are not recomputed. A failed `claude` call is retried twice, then marked failed and listed in the report; the next run tries it again. On a rate limit the runner pauses 1, 3 and 10 minutes, then stops and prints the command to continue.
+An interrupted run continues where it stopped: run the same command with the same `--date`. Finished outputs and judgments are not recomputed. A failed `claude` call is retried twice, then marked failed and listed in the report; the next run tries it again. On a rate limit the runner pauses 1, 3 and 10 minutes, then stops and prints the command to continue. On a session or usage limit ("You've hit your session limit · resets …") it stops at once with exit code 3 and prints the same command; failed outputs and judgments are retried on that rerun, finished ones are kept.
 
 ## Isolation
 

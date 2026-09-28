@@ -109,7 +109,7 @@ LEGIT = "Soft skills and good technical writing matter; writing docs is a habit.
 def gen_stdout(p, prompt, extra="", reads=()):
     ref = hashlib.md5(prompt.encode()).hexdigest()[:8]
     text = (f"Using the {p} skill.\nDocumentation progress:\n- [x] Reader\n- [ ] Draft\n\n"
-            f"# Doc REF={ref}\nQUALITY={QUALITY[p]}\n{LEGIT}\n{extra}\n"
+            f"# Doc REF={ref}\nQUALITY={QUALITY[p]}\n{LEGIT}\n{extra}\n{'word ' * (10 * QUALITY[p])}\n"
             "Run python3 scripts/check.py doc.md\nCompare with writing-docs here.\n")
     events = [{"type": "system", "subtype": "init"}]
     if p != "none":
@@ -139,13 +139,13 @@ def judge_stdout(labels, qualities, second_pass):
 
 class FakeClaude:
     def __init__(self, fail=(), rate_limit=False, bad_judge=False, bad_second=False,
-                 auth=False, extra="", too_long=False):
+                 auth=False, extra="", too_long=False, session_limit=False):
         self.calls, self.judge_prompts, self.configs, self.who = [], [], [], []
         self.fail, self.rate_limit, self.bad_judge = set(fail), rate_limit, bad_judge
         self._judged = {}
         self.lock = threading.Lock()
         self.bad_second, self.auth, self.extra = bad_second, auth, extra
-        self.inputs, self.too_long = [], too_long
+        self.inputs, self.too_long, self.session_limit = [], too_long, session_limit
 
     def _record(self, argv, cwd, env):
         cfg = Path(env["CLAUDE_CONFIG_DIR"])
@@ -169,6 +169,9 @@ class FakeClaude:
         if self.rate_limit:
             return run.CallResult(1, json.dumps({"type": "result", "is_error": True,
                                                  "result": "API Error: 429 rate limit exceeded"}))
+        if self.session_limit:
+            return run.CallResult(1, json.dumps({"type": "result", "is_error": True,
+                                                 "result": "You've hit your session limit · resets 10:10pm (Europe/Nicosia)"}))
         if self.auth:
             return run.CallResult(1, json.dumps({"type": "result", "is_error": True,
                                                  "result": "Not logged in · Please run /login"}))
@@ -337,6 +340,24 @@ class GenerationTest(RunnerCase):
         self.assertIn("python3 evals/run.py", self.err)
         self.assertIn("--date 2026-01-02", self.err)
 
+    def test_session_limit_stops_at_once_with_resume_command(self):
+        code = self.main("--core-models", "", "--jobs", "1", fake=FakeClaude(session_limit=True))
+        self.assertEqual(code, 3)
+        self.assertEqual(len(self.fake.calls), 1)
+        self.assertEqual(self.sleeps, [])
+        self.assertIn("--date 2026-01-02", self.err)
+        self.assertFalse(list((self.results / "outputs").rglob("*.json")))
+
+    def test_failed_items_retried_on_rerun(self):
+        self.main("--core-models", "", fake=FakeClaude(fail={"writing-docs"}, bad_judge=True))
+        self.main("--core-models", "")
+        gen = [w for w in self.fake.who if w is not None]
+        self.assertEqual(sorted(gen), ["writing-docs", "writing-docs"])
+        self.assertEqual(len(self.fake.judge_prompts), 4)
+        for f in self.results.rglob("*.json"):
+            if f.parent.name != "pairs":
+                self.assertEqual(json.loads(f.read_text()).get("status"), "ok", f)
+
     def test_first_run_errors(self):
         self.assertEqual(self.main(which=None), 2)
         self.assertIn("claude", self.err)
@@ -476,6 +497,19 @@ class JudgeReportPairsTest(RunnerCase):
             self.assertRegex(section, r"\| technical-writing \|( 4\.0 \|){9}")
             self.assertIn("runbook-disk-full", section)
             self.assertNotIn("ambiguous-deploy", section)
+
+    def test_compactness_section(self):
+        self.main("--core-models", "", "--skip-judge")
+        out = self.results / "outputs" / "sonnet"
+        words = {p: json.loads((out / p / "runbook-disk-full.json").read_text())["words"] for p in QUALITY}
+        # every participant writes the same length in both scenarios, so median == mean == words
+        self.assertEqual(words["technical-writing"] - words["writing-docs"], 20)
+        report = (self.results / "report.md").read_text()
+        section = report.split("## Компактность")[1].split("\n## ")[0]
+        ratio = words["technical-writing"] / words["writing-docs"]
+        self.assertIn(f"| sonnet | technical-writing | {words['technical-writing']} | "
+                      f"{words['technical-writing']:.1f} | {ratio:.2f} |", section)
+        self.assertIn(f"| sonnet | writing-docs | {words['writing-docs']} | {words['writing-docs']:.1f} | 1.00 |", section)
 
     def test_verdict_order_recomputed_answers_kept(self):
         self.main("--core-models", "", "--skip-judge")
