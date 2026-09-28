@@ -75,13 +75,17 @@ LLM_MARKERS = {
 _DATE = r"20\d\d-\d\d(?:-\d\d)?|\d{1,2}[./]\d{1,2}[./]20\d\d"
 _MONTHS_EN = ("(?:January|February|March|April|May|June|July|August|September|October|"
               "November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)")
+# A number followed by a range word, another number or a unit is a quantity, not a year.
+_NOT_QTY = (r"(?!\s*(?:to|and|or|[-–—]|\d|%|(?:ms|s|secs?|seconds?|min|minutes?|h|hours?|"
+            r"days?|bytes?|[kmgt]i?b|px|pt|lines?|chars?|characters?|rows?|items?|requests?|"
+            r"users?|tokens?|words?|times|ports?|errors?|files?)\b))")
 DATED = {
     "en": [_DATE, r"(?:in|since|by|until|till|from|during|before|after|as of|early|mid|late)"
-           r"\s+(?:" + _MONTHS_EN + r"\s+)?20\d\d",
+           r"\s+(?:" + _MONTHS_EN + r"\s+)?20\d\d" + _NOT_QTY,
            _MONTHS_EN + r"\s+(?:\d{1,2},?\s+)?20\d\d", r"20\d\d\s+(?:release|version)",
            "currently", "as of", "at the moment", "at present", "nowadays",
            "latest version"],
-    "ru": [_DATE, r"20\d\d\s*(?:год\w*|г\.)", r"(?:в|с|до|к|по|от|на)\s+20\d\d",
+    "ru": [_DATE, r"20\d\d\s*(?:год\w*|г\.)", r"(?:в|с|до|к|по|от|на)\s+20\d\d(?=\s*(?:[.,;:!?)]|$))",
            r"(?:январ|феврал|март|апрел|ма[йяе]|июн|июл|август|сентябр|октябр|ноябр|декабр)\w*"
            r"\s+20\d\d",
            "сейчас", "в настоящее время", "на данный момент",
@@ -93,7 +97,7 @@ RU_YO = [
     (r"все равно", "всё равно"),
 ]
 
-ABBREVIATIONS = {"e.g", "i.e", "etc", "vs", "cf", "approx", "fig", "figs", "no", "nos", "vol",
+ABBREVIATIONS = {"e.g", "i.e", "etc", "vs", "cf", "approx", "fig", "figs", "vol",
                  "p", "pp", "ch", "sec", "eq", "cp", "т.е", "т.п", "т.д", "т.к", "др", "см"}
 
 
@@ -239,14 +243,34 @@ def _joined(block):
     return " ".join(parts), lambda off: lines[bisect.bisect_right(starts, off) - 1]
 
 
+# ponytail: a capital letter plus "." is an initial only before another initial or a
+# capitalized word that rarely starts a sentence; extend STARTERS if real text misfires.
+STARTERS = {"the", "then", "this", "that", "these", "those", "it", "if", "when", "use", "run",
+            "see", "a", "an", "in", "on", "for", "to", "we", "you", "after", "before", "now",
+            "next", "otherwise", "also", "but", "and", "or", "so", "there", "here", "do",
+            "это", "затем", "потом", "если", "когда", "теперь", "далее", "но", "и", "в", "на",
+            "так", "там", "здесь", "после", "перед", "не"}
+
+
+def _initial_follows(rest):
+    if re.match(r"[A-ZА-ЯЁ]\.", rest):
+        return True
+    m = re.match(r"([A-ZА-ЯЁ][a-zа-яё]+)", rest)
+    return bool(m) and m.group(1).lower() not in STARTERS
+
+
 def _sentences(text):
     """Yield (offset, sentence) pairs; a sentence may span line breaks."""
     start = 0
     for m in re.finditer(r"[.!?…]+[)\"»’]*(?=\s|$)", text):
         head = text[start:m.start()].split()
-        token = head[-1].lstrip("([«\"'*_").lower() if head else ""
+        word = head[-1].lstrip("([«\"'*_") if head else ""
+        token = word.lower()
         rest = text[m.end():].lstrip()
-        if token in ABBREVIATIONS or re.fullmatch(r"[^\W\d_]", token) and m.group() == ".":
+        if token in ABBREVIATIONS or token == "no" and rest[:1].isdigit():
+            continue
+        if m.group() == "." and re.fullmatch(r"[^\W\d_]", word) and (
+                word.islower() or _initial_follows(rest)):
             continue
         if rest and rest[0].islower():
             continue

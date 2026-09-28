@@ -62,6 +62,13 @@ class SentenceLength(unittest.TestCase):
             self.assertEqual(rules(check.check_text(text, "en", max_words=5)),
                              ["sentence-length"], text)
 
+    def test_no_and_single_capital_end_sentences(self):
+        # split: 2+2 and 3+2 words; unsplit 4 and 5 > 3
+        for text in ("Say no. Then stop.\n", "Pick option A. Then stop.\n"):
+            self.assertEqual(check.check_text(text, "en", max_words=3), [], text)
+        self.assertEqual(rules(check.check_text("See No. 5 for it.\n", "en", max_words=4)),
+                         ["sentence-length"])
+
     def test_inline_code_starting_a_sentence_splits(self):
         # 4 + 5 counted words; joined they would be 9 > 6
         text = "Run it now please. `kubectl` is the tool we use.\n"
@@ -148,6 +155,14 @@ class WordRules(unittest.TestCase):
             self.assertEqual(rules(check.check_text(text, lang)), ["dated-phrase"], text)
         self.assertEqual(check.check_text("Use port 2080 and a 2000 ms timeout.\n", "en"), [])
         self.assertEqual(check.check_text("Порт 2080 и таймаут 2000 мс.\n", "ru"), [])
+        for text, lang in (("Set it from 2000 to 5000 ms.\n", "en"),
+                           ("Buffers grow by 2048 bytes.\n", "en"),
+                           ("Лимит до 2048 символов.\n", "ru"),
+                           ("Задержка от 2000 до 3000 мс.\n", "ru")):
+            self.assertEqual(check.check_text(text, lang), [], text)
+        for text, lang in (("Shipped in 2026.\n", "en"), ("It works as of 2025.\n", "en"),
+                           ("Сделано в 2026 году.\n", "ru"), ("Работает с 2024.\n", "ru")):
+            self.assertEqual(rules(check.check_text(text, lang)), ["dated-phrase"], text)
 
 
 class RussianTypography(unittest.TestCase):
