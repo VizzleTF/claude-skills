@@ -4,7 +4,7 @@ A tutorial teaches a newcomer by walking them through one complete task. The rea
 
 ## When to use it and when not
 
-Use a tutorial when the reader is new to the product and wants to learn it through a guided exercise. The reader does not choose the task; the tutorial chooses it for them.
+Use a tutorial when the reader is new to the product and wants to learn it through a guided exercise. The tutorial chooses the task for the reader.
 
 Pick another type in these cases:
 

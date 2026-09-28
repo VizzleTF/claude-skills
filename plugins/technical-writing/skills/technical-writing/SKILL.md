@@ -62,7 +62,7 @@ The user's word ("description", "guide", "manual") names a form. The type comes 
 | docs, «документация», «доки» | Is this one page or a set? Who reads it first? | doc set branch |
 | notes, write-up | Does it record a decision, an incident, or a release? | ADR, postmortem, changelog |
 
-When the request does not settle the type, ask one question about the reader and offer a default answer. Example: "Who reads this: a new engineer learning the deploy, or someone deploying today? I will assume the second and write a how-to." If nobody can answer, state the assumption in one line and continue.
+When the request does not settle the type, ask one question about the reader and offer a default answer. Example: "Who reads this: a new engineer learning the deploy, or someone deploying today? I will assume the second and write a how-to." Do not wait for the reply: in the same response, continue with the default type, read its type file and draft.
 
 One document has one type. When a request needs two types, propose two documents and switch to the doc set branch.
 
@@ -114,7 +114,7 @@ This version holds English style rules. If the document is in another language, 
 
 **Placeholders and unknown facts.** Every placeholder, in any type, has the form `<UPPER_CASE>`: `<NAMESPACE>`, `<DATE>`. Never invent a fact: a date, a name, a command, a host, a claim that something was verified. When a fact is missing, ask at most one question and offer a default, as for an unknown type. Do not stop to wait for the answer: in the same response, draft with the default and put a visible placeholder where each fact goes. End the response with a short list of the questions that fill them.
 
-**Current.** Incorrect documentation is worse than missing documentation. Fix or delete a living document that is wrong. Never change the content of a record: write a newer record and mark the old one superseded. Besides typos and broken links, the only changes to a published record are its status mark (`[YANKED]`, `superseded by`) and the link to its replacement. Say which version a page applies to where it matters; avoid phrases that expire on a date.
+**Current.** Fix or delete a living document as soon as it is wrong. Never change the content of a record: write a newer record and mark the old one superseded. Besides typos and broken links, the only changes to a published record are its status mark (`[YANKED]`, `superseded by`) and the link to its replacement. Say which version a page applies to where it matters; avoid phrases that expire on a date.
 
 **Lengths are guides.** Numbers in the type and style files are rules of thumb with a source or marked as such. None of them is a hard limit.
 
@@ -136,13 +136,13 @@ Documentation progress:
 - [ ] 8. Cold reader test passed
 ```
 
-The checklist tracks progress in the conversation. Keep it out of the document delivered to the reader, together with any mention of this skill or its files.
+Run all eight steps in one response without pausing for confirmation. A step that cannot run is named in one line and skipped as its paragraph says. The checklist tracks progress in the conversation. Keep it out of the document delivered to the reader, together with any mention of this skill or its files.
 
-**Step 1.** Write one sentence: who reads the page, what they are trying to do, and in what state. If the type is still unclear, ask the one question from "Choosing the type".
+**Step 1.** Write one sentence: who reads the page, what they are trying to do, and in what state. If the type is still unclear, ask the one question from "Choosing the type" and continue with its default.
 
-**Step 2.** Before drafting, read `${CLAUDE_SKILL_DIR}/types/<type>.md` with the Read tool, then the style file and the pattern catalog. If the type file cannot be read, say so in one line and do not rebuild the skeleton from memory. The Skeleton, Forbidden and Type checklist sections of that file drive steps 3, 4 and 7.
+**Step 2.** Before drafting, read `${CLAUDE_SKILL_DIR}/types/<type>.md` with the Read tool, then the style file and the pattern catalog. If the type file cannot be read, say so in one line and do not rebuild the skeleton from memory. Still draft in the same response with the core rules only, and note that the type skeleton was not applied. The Skeleton, Forbidden and Type checklist sections of that file drive steps 3, 4 and 7.
 
-**Step 3.** Write out the parts listed in the Skeleton section of the type file, in its order. For page types (tutorial, how-to, runbook, explanation, README, ADR, postmortem, changelog) the parts become the headings of the draft. For troubleshooting, reference, conventions, docstring and CLI help or error message, the skeleton sets the order of parts inside each entry, table row or comment, not headings. Omit a part marked "when…" or "if any" when its condition does not hold. A required part with no known content gets a `<PLACEHOLDER>`; a runbook with no alert name gets `<ALERT_NAME>` as its title. Without the type file there is nothing to copy, so this box stays empty until step 2 is done.
+**Step 3.** Write out the parts listed in the Skeleton section of the type file, in its order. For page types (tutorial, how-to, runbook, explanation, README, ADR, postmortem, changelog) the parts become the headings of the draft. For troubleshooting, reference, conventions, docstring and CLI help or error message, the skeleton sets the order of parts inside each entry, table row or comment, not headings. Omit a part marked "when…" or "if any" when its condition does not hold. A required part with no known content gets a `<PLACEHOLDER>`; a runbook with no alert name gets `<ALERT_NAME>` as its title. Without the type file there is nothing to copy: this box stays empty and the draft follows the core rules only.
 
 **Step 4.** Fill each skeleton heading. Where a fact is missing, write a `<UPPER_CASE>` placeholder and add a question to the list at the end of the response.
 
@@ -161,7 +161,7 @@ It reports long sentences, stop words, LLM markers, broken links and dated phras
 
 **Step 7.** Go through the Type checklist of the type file item by item. Fix the draft for every item that fails, then tick the box.
 
-**Step 8.** Give the draft to a cold reader with only the reader's task: "You are a new engineer. Using only this page, deploy the service to staging. Report where you got stuck or had to guess." Use a subagent with no conversation context, or ask the user to show it to a person. Fix every place the reader stalled, then run steps 6 and 7 again.
+**Step 8.** Give the draft to a cold reader with only the reader's task: "You are a new engineer. Using only this page, deploy the service to staging. Report where you got stuck or had to guess." A short document gets the test too: give a subagent only the document and the task. When no subagent is available, make a separate pass reading the draft as the named reader. Fix every place the reader stalled, then run steps 6 and 7 again.
 
 ## Sources
 

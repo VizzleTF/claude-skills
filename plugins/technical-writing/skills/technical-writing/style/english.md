@@ -42,7 +42,7 @@ The verb carries the action. Choose it before anything else in the sentence.
 - **Use imperative mood for instructions.** "Run the migration." Put the condition first: "If the build fails, clear the cache."
 - **Use the simple present for facts and results.** "The command prints the version." Write "will" only for events that follow a user action at a later time.
 - **Keep one tense within a step or an entry.** A postmortem timeline stays in the past; a reference entry stays in the present.
-- **Match modal verbs to obligation.** "Must" for a requirement, "should" for a recommendation, "can" for an option. Do not mix "need to", "have to" and "must" for the same level.
+- **Match modal verbs to obligation.** "Must" for a requirement, "should" for a recommendation, "can" for ability or possibility. The MUST/SHOULD/MAY scale applies only to rules on a conventions page. Do not mix "need to", "have to" and "must" for the same level.
 - **Avoid verbs about the text itself.** `This section describes`, `we will discuss` and `it can be seen that` add a sentence about the text. Say the thing itself.
 
 ## Nominalizations

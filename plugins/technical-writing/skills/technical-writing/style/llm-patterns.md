@@ -105,4 +105,4 @@ Text written for the chat, left in the document.
 - Placeholders left unfilled: `[insert link]`, `TODO: add example`.
 - Praise for the request: `Great question`.
 
-Delete all of them. If information is missing, ask for it before writing, or mark the gap with an explicit placeholder that the reader can find.
+Delete all of them. If information is missing, draft anyway with a `<UPPER_CASE>` placeholder in the gap and list the questions that fill it at the end of the response.

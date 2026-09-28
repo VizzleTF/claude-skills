@@ -17,11 +17,12 @@ Keep a Changelog 1.1.0 gives the form of the file:
 
 1. An `Unreleased` section on top, collecting changes before the next release.
 2. One section per version, newest first, with the version and the release date in ISO 8601 form: `## [1.4.0] - YYYY-MM-DD`.
-3. Inside a version, changes grouped by type, in this order: Added, Changed, Deprecated, Removed, Fixed, Security.
+3. Inside a version, the breaking changes come first, one line each, starting with `BREAKING:`.
+4. Then the other changes, grouped by category in the Keep a Changelog order: Added, Changed, Deprecated, Removed, Fixed, Security.
 
-This type adds one rule for breaking changes. Each one stays in its group (usually Changed or Removed) and comes first within it. It starts with `BREAKING:` and links to the migration guide.
+The breaking-changes block is this skill's addition to Keep a Changelog. A breaking change whose migration takes more than one step links to the migration guide. A one-step migration is stated in the line itself: "`BREAKING:` Removed `--legacy`; use `--mode=classic`."
 
-Release notes follow the same order: breaking changes, then what the reader gains, then fixes.
+Release notes open with the breaking changes too, then what the reader gains, then fixes.
 
 A migration guide has a skeleton of its own:
 
@@ -46,14 +47,14 @@ One line per change, as a rule of thumb. A change that needs a paragraph gets a 
 - A dump of commit messages or `git log`.
 - Entries that describe the code change in place of its effect on the user: "Refactored the parser".
 - Dates in any format other than ISO 8601.
-- A breaking change buried in the Changed group without a mark.
+- A breaking change without the `BREAKING:` mark, or placed inside the category groups.
 - Deleting or rewriting the section of a published version.
 
 ## Type checklist
 
 - [ ] Versions are newest first, each with an ISO 8601 date.
-- [ ] Changes are grouped by the six types, in order.
-- [ ] Each breaking change opens its group, starts with `BREAKING:` and links to a migration guide.
+- [ ] Changes are grouped by the six categories, in order.
+- [ ] Breaking changes open the version section, each starts with `BREAKING:` and either links to a migration guide or states its one-step migration.
 - [ ] Every entry states the effect on the user.
 - [ ] Published versions changed only their status mark and the link to their replacement.
 - [ ] A migration guide shows code before and after, and a verification step.

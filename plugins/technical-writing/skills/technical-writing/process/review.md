@@ -19,7 +19,14 @@ Review goes from the largest unit to the smallest. A problem with the type or th
 5. **Sentences.** Characters as subjects, actions as verbs, no stray nominalizations, reasonable length.
 6. **Words.** Stop words, LLM patterns, evaluations that should be facts.
 
-Run the checker on the file before step 4 and use its output as input to steps 4 to 6.
+Before step 4, run the checker on the file, or on standard input for text pasted in the chat, and use its output as input to steps 4 to 6. `<SKILL_BASE_DIR>` is the base directory that Claude Code shows when the skill loads:
+
+```bash
+python3 <SKILL_BASE_DIR>/scripts/check.py --lang en <file>
+python3 <SKILL_BASE_DIR>/scripts/check.py --lang en - <<'EOF'
+<TEXT>
+EOF
+```
 
 ## Quality characteristics
 
