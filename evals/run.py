@@ -112,9 +112,11 @@ def load_scenarios(directory, pattern="*"):
     return out
 
 
-def call_claude(argv, cwd, env):
-    """The single place that runs the claude CLI. Tests replace it."""
-    p = subprocess.run(argv, cwd=cwd, env=env, capture_output=True, text=True, timeout=3600)
+def call_claude(argv, cwd, env, input=None):
+    """The single place that runs the claude CLI. Tests replace it.
+    The prompt goes through stdin: a single argv element is capped at 128 KiB on Linux."""
+    p = subprocess.run(argv, cwd=cwd, env=env, input=input, capture_output=True, text=True,
+                       timeout=3600)
     return CallResult(p.returncode, p.stdout, p.stderr)
 
 
@@ -162,11 +164,14 @@ def _result_event(stdout):
     return None
 
 
-def _checked_call(argv, cwd, env, parse, attempts):
+def _checked_call(argv, cwd, env, parse, attempts, prompt):
     """Run with retries. parse(CallResult) -> value or raises ValueError."""
     rate_hits, errors = 0, []
     while True:
-        res = call_claude(argv, cwd, env)
+        try:
+            res = call_claude(argv, cwd, env, input=prompt)
+        except (OSError, subprocess.SubprocessError) as e:
+            res = CallResult(1, "", f"{type(e).__name__}: {e}")
         ev = _result_event(res.stdout) or {}
         blob = f"{ev.get('result', '')} {res.stderr}"
         if (res.returncode != 0 or ev.get("is_error")) and RATE_RE.search(blob):
@@ -232,13 +237,13 @@ def generate(results, model, participant, scenario, baseline, stop):
             "--output-format", "stream-json", "--verbose", "--permission-mode", "acceptEdits"]
     if participant in PLUGIN_DIRS:
         argv += ["--plugin-dir", str(PLUGIN_DIRS[participant])]
-    argv.append(f"{scenario.prompt}\n\n{SUFFIX.get(scenario.lang, SUFFIX['en'])}")
+    prompt = f"{scenario.prompt}\n\n{SUFFIX.get(scenario.lang, SUFFIX['en'])}"
     meta = {"scenario": scenario.id, "model": model, "participant": participant}
     with isolated_config(baseline if participant == "writing-docs" else None) as cfg, \
             workdir(scenario) as wd:
         env = dict(os.environ, CLAUDE_CONFIG_DIR=str(cfg))
         try:
-            out = _checked_call(argv, wd, env, parse_stream, GEN_ATTEMPTS)
+            out = _checked_call(argv, wd, env, parse_stream, GEN_ATTEMPTS, prompt)
         except ValueError as e:
             _write_json(base.with_suffix(".json"), {**meta, "status": "failed", "error": str(e)})
             return
@@ -329,8 +334,8 @@ def failed_calls(results):
     return out
 
 
-TRACE_LINE = re.compile(
-    r"(?i)technical[- ]writing(-ru)?|writing[- ]docs|check\.py|CLAUDE_SKILL_DIR")
+TRACE_LINE = re.compile(  # skill ids only: plain "technical writing" is ordinary prose
+    r"(?i)\btechnical-writing(-ru)?\b|\bwriting-docs\b|check\.py|CLAUDE_SKILL_DIR")
 PROGRESS_HEAD = re.compile(r"(?i)documentation progress|прогресс документации")
 CHECK_ITEM = re.compile(r"^\s*[-*] \[[ xX]\]")
 
@@ -429,11 +434,11 @@ def judge(results, model, scenario, participants, judge_model, stop):
     for perm in (order, order[::-1])[len(passes):]:
         prompt = judge_prompt(scenario, [(lb, texts[p]) for lb, p in zip(labels, perm)])
         argv = ["claude", "-p", "--model", judge_model, "--no-session-persistence",
-                "--output-format", "json", "--json-schema", json.dumps(judge_schema(labels)), prompt]
+                "--output-format", "json", "--json-schema", json.dumps(judge_schema(labels))]
         with isolated_config() as cfg, workdir() as wd:
             try:
                 scores = _checked_call(argv, wd, dict(os.environ, CLAUDE_CONFIG_DIR=str(cfg)),
-                                       _parse_judgment(labels), JUDGE_ATTEMPTS)
+                                       _parse_judgment(labels), JUDGE_ATTEMPTS, prompt)
             except ValueError as e:
                 _write_json(path, {**meta, "status": "failed", "error": str(e), "passes": passes})
                 return

@@ -103,7 +103,7 @@ def participant_of(argv, env):
     return "writing-docs" if (cfg / "skills" / "writing-docs").is_symlink() else "none"
 
 
-LEGIT = "Soft skills matter for on-call engineers."
+LEGIT = "Soft skills and good technical writing matter; writing docs is a habit."
 
 
 def gen_stdout(p, prompt, extra=""):
@@ -132,12 +132,13 @@ def judge_stdout(labels, qualities, second_pass):
 
 class FakeClaude:
     def __init__(self, fail=(), rate_limit=False, bad_judge=False, bad_second=False,
-                 auth=False, extra=""):
+                 auth=False, extra="", too_long=False):
         self.calls, self.judge_prompts, self.configs, self.who = [], [], [], []
         self.fail, self.rate_limit, self.bad_judge = set(fail), rate_limit, bad_judge
         self._judged = {}
         self.lock = threading.Lock()
         self.bad_second, self.auth, self.extra = bad_second, auth, extra
+        self.inputs, self.too_long = [], too_long
 
     def _record(self, argv, cwd, env):
         cfg = Path(env["CLAUDE_CONFIG_DIR"])
@@ -150,9 +151,14 @@ class FakeClaude:
         self.calls.append(argv)
         self.who.append(None if "--json-schema" in argv else participant_of(argv, env))
 
-    def __call__(self, argv, cwd, env):
+    def __call__(self, argv, cwd, env, input=None):
         with self.lock:  # keep calls/configs/who aligned across worker threads
             self._record(argv, cwd, env)
+            self.inputs.append(input)
+        if max(map(len, argv)) > 131072:
+            raise OSError(7, "Argument list too long")
+        if self.too_long and "--json-schema" in argv:
+            raise OSError(7, "Argument list too long")
         if self.rate_limit:
             return run.CallResult(1, json.dumps({"type": "result", "is_error": True,
                                                  "result": "API Error: 429 rate limit exceeded"}))
@@ -160,7 +166,7 @@ class FakeClaude:
             return run.CallResult(1, json.dumps({"type": "result", "is_error": True,
                                                  "result": "Not logged in · Please run /login"}))
         if "--json-schema" in argv:
-            prompt = argv[-1]
+            prompt = input
             self.judge_prompts.append(prompt)
             labels = json.loads(argv[argv.index("--json-schema") + 1])["properties"]["scores"]["required"]
             ref = re.search(r"REF=(\w+)", prompt).group(1)
@@ -174,7 +180,7 @@ class FakeClaude:
         if p in self.fail:
             return run.CallResult(1, "", "boom")
         model = argv[argv.index("--model") + 1]  # one REF per model x scenario
-        return run.CallResult(0, gen_stdout(p, model + argv[-1], self.extra))
+        return run.CallResult(0, gen_stdout(p, model + input, self.extra))
 
 
 class RunnerCase(unittest.TestCase):
@@ -193,7 +199,8 @@ class RunnerCase(unittest.TestCase):
         self.sleeps = []
 
     def tearDown(self):
-        self.creds.chmod(stat.S_IRUSR | stat.S_IWUSR)
+        if self.creds.exists():
+            self.creds.chmod(stat.S_IRUSR | stat.S_IWUSR)
         self._tmp.cleanup()
 
     def main(self, *args, fake=None, which="/usr/bin/claude", env_extra=None):
@@ -303,7 +310,7 @@ class GenerationTest(RunnerCase):
         self.assertIn("ANTHROPIC_API_KEY", self.err)
         self.assertEqual(self.main("--skip-judge", "--core-models", "",
                                    env_extra={"ANTHROPIC_API_KEY": "x"}), 0)
-        self.assertEqual(self.fake.configs[0]["entries"], [])
+        self.assertFalse(any(".credentials.json" in c["entries"] for c in self.fake.configs))
         self.creds.write_text("{}")
 
     def test_missing_baseline_warns_and_drops_participant(self):
@@ -397,9 +404,21 @@ class JudgeReportPairsTest(RunnerCase):
         prompt = next(p for p in self.fake.judge_prompts if "disk-full" in p)
         for needle in ("notes.txt", "FIXTURE-CONTENT-42", "A runbook, not a how-to", "NodeDiskUsageHigh"):
             self.assertIn(needle, prompt)
-        gen = [a[-1] for a in self.fake.calls if "--json-schema" not in a]
+        gen = [i for a, i in zip(self.fake.calls, self.fake.inputs) if "--json-schema" not in a]
         self.assertTrue(gen)
         self.assertFalse(any("A runbook, not a how-to" in g for g in gen))
+
+    def test_prompts_go_through_stdin_and_oversize_call_fails_softly(self):
+        self.run_main_model()
+        for argv, inp in zip(self.fake.calls, self.fake.inputs):
+            self.assertTrue(inp)
+            self.assertNotIn(inp, argv)
+        code = self.main("--core-models", "", "--date", "2026-01-03", fake=FakeClaude(too_long=True))
+        self.assertEqual(code, 0, self.err)
+        j = json.loads((self.evals / "results" / "2026-01-03" / "judgments" / "sonnet" /
+                        "runbook-disk-full.json").read_text())
+        self.assertEqual(j["status"], "failed")
+        self.assertIn("Argument list too long", j["error"])
 
     def test_passed_first_judge_pass_is_reused(self):
         self.run_main_model(fake=FakeClaude(bad_second=True))
