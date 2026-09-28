@@ -192,9 +192,12 @@ def _checked_call(argv, cwd, env, parse, attempts, prompt):
                 raise ValueError("; ".join(errors))
 
 
+DENIED_RE = re.compile(r"(?i)permission|haven't granted|not allowed")
+
+
 def parse_stream(res):
     """Final text, Skill calls, cost and duration from stream-json output."""
-    skills, texts = [], []
+    skills, texts, reads, denied = [], [], {}, set()
     for line in res.stdout.splitlines():
         try:
             ev = json.loads(line)
@@ -204,15 +207,24 @@ def parse_stream(res):
             for block in ev.get("message", {}).get("content", []) or []:
                 if block.get("type") == "tool_use" and block.get("name") == "Skill":
                     skills.append(str(block.get("input", {}).get("skill", "")))
+                elif block.get("type") == "tool_use" and block.get("name") == "Read":
+                    reads[block.get("id")] = str(block.get("input", {}).get("file_path", ""))
                 elif block.get("type") == "text":
                     texts.append(block.get("text", ""))
+        elif ev.get("type") == "user":
+            content = ev.get("message", {}).get("content", [])
+            for block in content if isinstance(content, list) else []:
+                if (block.get("type") == "tool_result" and block.get("tool_use_id") in reads
+                        and block.get("is_error") and DENIED_RE.search(json.dumps(block.get("content")))):
+                    denied.add(block["tool_use_id"])
     ev = _result_event(res.stdout)
     if ev is None:
         raise ValueError("no result event in stream-json output")
     text = ev.get("result") or (texts[-1] if texts else "")
     if not text.strip():
         raise ValueError("empty final message")
-    return {"text": text, "skills": skills, "cost_usd": ev.get("total_cost_usd"),
+    return {"text": text, "skills": skills, "reads": [(p, i in denied) for i, p in reads.items()],
+            "cost_usd": ev.get("total_cost_usd"),
             "duration_ms": ev.get("duration_ms")}
 
 
@@ -235,8 +247,12 @@ def generate(results, model, participant, scenario, baseline, stop):
         return
     argv = ["claude", "-p", "--model", model, "--no-session-persistence",
             "--output-format", "stream-json", "--verbose", "--permission-mode", "acceptEdits"]
+    skill_dir = (PLUGIN_DIRS.get(participant) if participant != "writing-docs"
+                 else Path(os.path.realpath(baseline)))
     if participant in PLUGIN_DIRS:
         argv += ["--plugin-dir", str(PLUGIN_DIRS[participant])]
+    if skill_dir is not None:  # claude -p denies Read outside cwd without it
+        argv += ["--add-dir", str(skill_dir)]
     prompt = f"{scenario.prompt}\n\n{SUFFIX.get(scenario.lang, SUFFIX['en'])}"
     meta = {"scenario": scenario.id, "model": model, "participant": participant}
     with isolated_config(baseline if participant == "writing-docs" else None) as cfg, \
@@ -247,10 +263,15 @@ def generate(results, model, participant, scenario, baseline, stop):
         except ValueError as e:
             _write_json(base.with_suffix(".json"), {**meta, "status": "failed", "error": str(e)})
             return
+        root = os.path.realpath(skill_dir) if skill_dir is not None else None
+        files_read = sorted({os.path.relpath(os.path.realpath(p), root) for p, bad in out["reads"]
+                             if root and not bad and os.path.realpath(p).startswith(root + os.sep)})
+        read_denied = sum(bad for _, bad in out["reads"])
         text = out["text"].replace(str(wd) + "/", "").replace(str(wd), ".").replace(str(Path.home()), "~")
     fired = participant != "none" and any(s.split(":")[-1] == participant for s in out["skills"])
     _write_json(base.with_suffix(".json"), {
         **meta, "status": "ok", "skills": out["skills"], "skill_fired": fired,
+        "files_read": files_read, "read_denied": read_denied,
         "cost_usd": out["cost_usd"], "duration_ms": out["duration_ms"],
         "words": len(text.split())})
     base.with_suffix(".md").write_text(text.rstrip() + "\n", encoding="utf-8")
@@ -556,7 +577,7 @@ def write_report(results, args, runs, participants):
     lines += model_section(results, m0, participants, f"Участник × критерий ({m0})")
     for m, _ in runs[1:]:
         lines += model_section(results, m, participants, f"Ключевые сценарии ({m})")
-    rows = []
+    rows, denied = [], []
     for m, scs in runs[:1]:
         for s in scs:
             for p in participants:
@@ -564,9 +585,13 @@ def write_report(results, args, runs, participants):
                 fired = "—" if p == "none" or meta.get("status") != "ok" else (
                     "да" if meta.get("skill_fired") else "нет")
                 total = judged.get(s.id, {}).get("totals", {}).get(p)
-                rows.append([s.id, p, _f(total), meta.get("words", "—"), fired])
+                nread = "—" if fired == "—" else len(meta.get("files_read", []))
+                rows.append([s.id, p, _f(total), meta.get("words", "—"), fired, nread])
+                if meta.get("read_denied"):
+                    denied.append(f"{m} / {p} / {s.id}: {meta['read_denied']}")
     lines += [f"## По сценариям ({m0})", "",
-              *_table(["Сценарий", "Участник", "Итог", "Слов", "Скилл сработал"], rows), ""]
+              *_table(["Сценарий", "Участник", "Итог", "Слов", "Скилл сработал", "Файлы скилла прочитаны"], rows), "",
+              "## Отказы в чтении (Read вернул ошибку прав)", "", *([f"- {d}" for d in denied] or ["нет"]), ""]
     spread = sorted(((max(j["totals"].values()) - min(j["totals"].values()), sid, j)
                      for sid, j in judged.items()), key=lambda t: (-t[0], t[1]))[:5]
     lines += ["## Наибольшее расхождение между участниками", "", *_table(

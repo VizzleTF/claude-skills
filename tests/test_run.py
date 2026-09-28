@@ -106,7 +106,7 @@ def participant_of(argv, env):
 LEGIT = "Soft skills and good technical writing matter; writing docs is a habit."
 
 
-def gen_stdout(p, prompt, extra=""):
+def gen_stdout(p, prompt, extra="", reads=()):
     ref = hashlib.md5(prompt.encode()).hexdigest()[:8]
     text = (f"Using the {p} skill.\nDocumentation progress:\n- [x] Reader\n- [ ] Draft\n\n"
             f"# Doc REF={ref}\nQUALITY={QUALITY[p]}\n{LEGIT}\n{extra}\n"
@@ -116,6 +116,13 @@ def gen_stdout(p, prompt, extra=""):
         name = p if p == "writing-docs" else f"{p}:{p}"
         events.append({"type": "assistant", "message": {"content": [
             {"type": "tool_use", "name": "Skill", "input": {"skill": name}}]}})
+    for i, (path, denied) in enumerate(reads):
+        events.append({"type": "assistant", "message": {"content": [
+            {"type": "tool_use", "id": f"r{i}", "name": "Read", "input": {"file_path": path}}]}})
+        events.append({"type": "user", "message": {"content": [
+            {"type": "tool_result", "tool_use_id": f"r{i}", "is_error": denied,
+             "content": f"Claude requested permissions to read from {path}, but you haven't granted it yet."
+             if denied else "text"}]}})
     events.append({"type": "result", "subtype": "success", "is_error": False,
                    "result": text, "total_cost_usd": 0.01, "duration_ms": 1000})
     return "\n".join(json.dumps(e) for e in events) + "\n"
@@ -180,7 +187,13 @@ class FakeClaude:
         if p in self.fail:
             return run.CallResult(1, "", "boom")
         model = argv[argv.index("--model") + 1]  # one REF per model x scenario
-        return run.CallResult(0, gen_stdout(p, model + input, self.extra))
+        reads = []
+        if p == "writing-docs":  # read through the symlink in the temp config
+            reads = [(f"{env['CLAUDE_CONFIG_DIR']}/skills/writing-docs/SKILL.md", False)]
+        elif p != "none":
+            reads = [(str(ROOT / "plugins" / p / "skills" / p / "types" / "runbook.md"), False),
+                     ("/elsewhere/outside.md", True)]
+        return run.CallResult(0, gen_stdout(p, model + input, self.extra, reads))
 
 
 class RunnerCase(unittest.TestCase):
@@ -193,9 +206,12 @@ class RunnerCase(unittest.TestCase):
         self.creds.parent.mkdir()
         self.creds.write_text("{}")
         self.creds.chmod(0)  # the runner must never read it
+        self.baseline_real = self.tmp / "real-writing-docs"
+        self.baseline_real.mkdir()
+        (self.baseline_real / "SKILL.md").write_text("baseline")
         self.baseline = self.tmp / "home" / "skills" / "writing-docs"
-        self.baseline.mkdir(parents=True)
-        (self.baseline / "SKILL.md").write_text("baseline")
+        self.baseline.parent.mkdir(parents=True)
+        self.baseline.symlink_to(self.baseline_real)
         self.sleeps = []
 
     def tearDown(self):
@@ -264,6 +280,28 @@ class GenerationTest(RunnerCase):
         self.assertTrue(meta["skill_fired"])
         self.assertEqual(meta["cost_usd"], 0.01)
         self.assertEqual(meta["duration_ms"], 1000)
+
+    def test_add_dir_and_files_read(self):
+        self.main("--core-models", "", "--skip-judge")
+        for argv, who in zip(self.fake.calls, self.fake.who):
+            dirs = [argv[i + 1] for i, a in enumerate(argv) if a == "--add-dir"]
+            expect = {"writing-docs": [str(self.baseline_real)], "none": [],
+                      "technical-writing": [str(ROOT / "plugins" / "technical-writing")],
+                      "technical-writing-ru": [str(ROOT / "plugins" / "technical-writing-ru")]}[who]
+            self.assertEqual(dirs, expect, who)
+        out = self.results / "outputs" / "sonnet"
+        tw = json.loads((out / "technical-writing" / "runbook-disk-full.json").read_text())
+        self.assertEqual(tw["files_read"], ["skills/technical-writing/types/runbook.md"])
+        self.assertEqual(tw["read_denied"], 1)
+        wd = json.loads((out / "writing-docs" / "runbook-disk-full.json").read_text())
+        self.assertEqual(wd["files_read"], ["SKILL.md"])
+        self.assertEqual(wd["read_denied"], 0)
+        report = (self.results / "report.md").read_text()
+        self.assertIn("Файлы скилла прочитаны", report)
+        self.assertRegex(report, r"\| runbook-disk-full \| technical-writing \| — \| \d+ \| да \| 1 \|")
+        denied = report.split("## Отказы в чтении")[1].split("\n## ")[0]
+        self.assertIn("sonnet / technical-writing / runbook-disk-full", denied)
+        self.assertNotIn("writing-docs / runbook", denied)
 
     def test_dry_run_counts_and_calls_nothing(self):
         code = self.main("--dry-run", which=None)
