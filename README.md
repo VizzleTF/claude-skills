@@ -15,6 +15,8 @@ The two versions carry the same types and the same rules. Install one of them: b
 
 ## Install
 
+You need Claude Code with plugin marketplace support (`/plugin`). The checker `check.py` needs Python 3.
+
 In Claude Code, add the marketplace and install one plugin:
 
 ```
@@ -22,20 +24,13 @@ In Claude Code, add the marketplace and install one plugin:
 /plugin install technical-writing@vizzletf-skills
 ```
 
-For the Russian version, install `technical-writing-ru@vizzletf-skills` instead.
+For the Russian version, install `technical-writing-ru@vizzletf-skills` instead. From a shell, run the same steps as `claude plugin marketplace add VizzleTF/claude-skills` and `claude plugin install technical-writing@vizzletf-skills`.
 
-From a shell, the same steps are:
-
-```sh
-claude plugin marketplace add VizzleTF/claude-skills
-claude plugin install technical-writing@vizzletf-skills
-```
-
-Then ask Claude for a document, for example "Write a runbook for restarting the queue worker" or "Review this README". The skill loads by itself.
+Ask Claude "Write a runbook for restarting the queue worker". You get a runbook in chat: the alert name as the title, impact, diagnosis commands with their expected output, then actions.
 
 ## Check a document
 
-The skill ships `scripts/check.py`, a checker that needs only Python 3. It reports broken links and anchors, long sentences, stop words, LLM markers, dated phrases and, for Russian text, typography. From the repository root:
+From the repository root:
 
 ```sh
 python3 plugins/technical-writing/skills/technical-writing/scripts/check.py README.md docs/
@@ -45,47 +40,11 @@ python3 plugins/technical-writing/skills/technical-writing/scripts/check.py READ
 0 error(s), 0 warning(s) in 2 file(s)
 ```
 
-Run it with `--help` for options such as `--lang` and `--format json`.
+## Tests and comparison
 
-## Run the repository checks
+Run the tests and the parity check of the two versions: `python3 -m unittest discover -s tests` and `python3 tools/parity.py`.
 
-From the repository root, with Python 3:
-
-```sh
-python3 -m unittest discover -s tests
-python3 tools/parity.py
-```
-
-The tests are offline. `tools/parity.py` checks that both versions have the same files, sections and checklist items, and that the repository holds no private paths or secrets. It prints `parity: ok` when everything matches.
-
-## Compare with writing-docs
-
-`evals/run.py` runs every scenario in `evals/scenarios/` through four participants: `technical-writing`, `technical-writing-ru`, the earlier `writing-docs` skill and no skill. An Opus judge scores the outputs blind. You need Claude Code on `PATH` and a login.
-
-See the size of the run first; this calls nothing:
-
-```sh
-python3 evals/run.py --dry-run
-```
-
-Run generation, judging and the report:
-
-```sh
-python3 evals/run.py
-```
-
-Results land in `evals/results/<date>/`: the documents in `outputs/`, the judge's scores in `judgments/`, blind pairs in `pairs/`, the report in `report.md` and your verdict form in `verdict.md`.
-
-To give your own blind verdict on the pairs:
-
-1. Fill `verdict.md` from `pairs/` before you open `report.md`, `outputs/`, `judgments/` or `pairs/key.json`. They name the participants.
-2. Reveal who was who:
-
-   ```sh
-   python3 evals/run.py --reveal --date <date>
-   ```
-
-Flags, isolation and the verdict format are in [evals/README.md](evals/README.md).
+To compare the skills with the earlier `writing-docs` skill and give your own blind verdict, follow [evals/README.md](evals/README.md).
 
 ## Links
 
