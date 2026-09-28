@@ -18,7 +18,7 @@ A docstring:
 
 1. Summary line: what the function does, in one line.
 2. A blank line, then details the signature does not show: units, allowed ranges, side effects, exceptions raised, thread safety.
-3. Parameters and return value, in the format the project uses.
+3. Parameters and return value, in the format the project uses, each described only with what the signature does not show: units, ranges, invariants, meaning.
 4. An example, when the use is not obvious.
 
 A comment is one to three lines above the code it explains. John Ousterhout separates interface comments from implementation comments, among other kinds. An interface comment describes what the caller needs: the contract. An implementation comment describes how and why the code does its work inside. Keep them apart: the docstring carries the interface; comments inside the body carry the implementation.
@@ -40,7 +40,7 @@ One line when the name and the signature say the rest. More lines only for facts
 
 ## Forbidden
 
-- Restating the signature: "Takes a string and returns an int."
+- Restating the signature: "Takes a string and returns an int." This includes a parameter or return description that repeats a type or a default the signature already carries.
 - Comments that narrate the code line by line: `# increment i`.
 - Comments that record history: "changed by X in March". Version control holds history.
 - Units, ranges or side effects left to the reader to guess.
@@ -50,7 +50,7 @@ One line when the name and the signature say the rest. More lines only for facts
 
 - [ ] The summary line fits on one line.
 - [ ] In Python, the summary is imperative.
-- [ ] Nothing repeats the signature.
+- [ ] No description repeats a type or a default from the signature; each parameter and return value adds units, ranges, invariants or meaning.
 - [ ] Units, ranges, side effects and exceptions are stated.
 - [ ] Interface and implementation comments are kept apart.
 - [ ] Every comment says something the code does not.

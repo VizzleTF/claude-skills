@@ -1,7 +1,7 @@
 ---
 name: technical-writing
 description: Writes and reviews technical documentation by document type. Picks the type from the reader and the reader's situation, loads that type's skeleton and voice rules together with an English style guide and a catalog of LLM writing patterns, and works through a copyable checklist that ends with a text-checking script and a cold-reader test. Covers tutorials, how-to guides, runbooks, troubleshooting pages, reference, explanations, READMEs, team conventions, ADRs and design docs, postmortems, changelogs and release notes, docstrings and code comments, CLI help and error messages.
-when_to_use: Use when asked to write, rewrite, review, shorten, restructure or plan documentation or explanatory text, when a README, CHANGELOG, runbook, ADR or onboarding page is created or updated, or when a docstring, --help text or error message needs prose. Triggers include "write docs", "document this", "write a README", "write a guide", "write a runbook", "review this doc", "release notes", "design doc", "postmortem", «документация», «доки», «напиши README», «описание», «методичка», «инструкция», «ранбук», «ADR», «гайд», «отревьюй текст», «постмортем».
+when_to_use: Use when asked to write, rewrite, review, shorten, restructure or plan documentation or explanatory text, when a README, CHANGELOG, runbook, ADR or onboarding page is created or updated, or when a docstring, --help text or error message needs prose. Triggers include "write docs", "document this", "write a README", "write a guide", "write a runbook", "review this doc", "release notes", "design doc", "postmortem", «документация», «доки», «напиши README», «описание», «методичка», «инструкция», «ранбук», «ADR», «гайд», «отревьюй текст», «постмортем», "write a docstring", "document this function", «напиши docstring», «прокомментируй функцию».
 ---
 
 # Technical writing
@@ -17,7 +17,7 @@ This skill writes and reviews documentation by type. It finds the reader first, 
 - **Reader**: the person the document serves, with a task and a state (learning, working, under stress, looking up one fact).
 - **Type**: one of the 13 document types in the routing table.
 - **Type file**: the file in `types/` that holds the rules for one type.
-- **Skeleton**: the ordered sections a type requires.
+- **Skeleton**: the ordered parts a type requires: sections of a page, or parts of an entry, a table row or a comment.
 - **Core rules**: the rules in this file. They apply to every type unless the type file says otherwise.
 - **Living document**: a page that changes with the product and is fixed or deleted when it stops being true.
 - **Record**: a page that captures a moment. Besides typos and broken links, the only changes to a published record are its status mark (`[YANKED]`, `superseded by`) and the link to its replacement.
@@ -122,7 +122,7 @@ This version holds English style rules. If the document is in another language, 
 
 ## Workflow
 
-Copy this checklist into the response and tick items as they are done:
+Track this checklist internally and tick items as they are done. Do not print it:
 
 ```
 Documentation progress:
@@ -132,19 +132,19 @@ Documentation progress:
 - [ ] 4. First draft
 - [ ] 5. Edit passes: structure, paragraphs and cohesion, sentences, words
 - [ ] 6. check.py run (or reported as unavailable), every error fixed, every warning read
-- [ ] 7. Type checklist passed
+- [ ] 7. Type checklist passed, Forbidden list clear
 - [ ] 8. Cold reader test passed
 ```
 
-Run all eight steps in one response without pausing for confirmation. A step that cannot run is named in one line and skipped as its paragraph says. The checklist tracks progress in the conversation. Keep it out of the document delivered to the reader, together with any mention of this skill or its files.
+Run all eight steps in one response without pausing for confirmation. A step that cannot run is named in one line and skipped as its paragraph says. The response ends with the final document, given once: never a draft followed by a final version. After it comes the list of questions, if there is one. If the user named a file, write the document there; otherwise deliver it in the chat. Keep the checklist and any mention of this skill or its files out of the document.
 
-**Step 1.** Write one sentence: who reads the page, what they are trying to do, and in what state. If the type is still unclear, ask the one question from "Choosing the type" and continue with its default.
+**Step 1.** Settle in one sentence: who reads the page, what they are trying to do, and in what state. If the type is still unclear, ask the one question from "Choosing the type" and continue with its default.
 
 **Step 2.** Before drafting, read `${CLAUDE_SKILL_DIR}/types/<type>.md` with the Read tool, then the style file and the pattern catalog. If the type file cannot be read, say so in one line and do not rebuild the skeleton from memory. Still draft in the same response with the core rules only, and note that the type skeleton was not applied. The Skeleton, Forbidden and Type checklist sections of that file drive steps 3, 4 and 7.
 
-**Step 3.** Write out the parts listed in the Skeleton section of the type file, in its order. For page types (tutorial, how-to, runbook, explanation, README, ADR, postmortem, changelog) the parts become the headings of the draft. For troubleshooting, reference, conventions, docstring and CLI help or error message, the skeleton sets the order of parts inside each entry, table row or comment, not headings. Omit a part marked "when…" or "if any" when its condition does not hold. A required part with no known content gets a `<PLACEHOLDER>`; a runbook with no alert name gets `<ALERT_NAME>` as its title. Without the type file there is nothing to copy: this box stays empty and the draft follows the core rules only.
+**Step 3.** List the parts in the Skeleton section of the type file, in its order. For page types (tutorial, how-to, runbook, explanation, README, ADR, postmortem, changelog) the parts become the headings of the draft. For troubleshooting, reference, conventions, docstring and CLI help or error message, the skeleton sets the order of parts inside each entry, table row or comment, not headings. Omit a part marked "when…" or "if any" when its condition does not hold. A required part with no known content gets a placeholder; a runbook with no alert name gets `<ALERT_NAME>` as its title. Without the type file there is nothing to copy: this checklist item stays unticked and the draft follows the core rules only.
 
-**Step 4.** Fill each skeleton heading. Where a fact is missing, write a `<UPPER_CASE>` placeholder and add a question to the list at the end of the response.
+**Step 4.** Fill each skeleton part (heading, table row or field). Where a fact is missing, write a placeholder and add a question to the list at the end of the response.
 
 **Step 5.** Edit in separate passes, largest unit first. Stephen King gives the formula in *On Writing*: the second draft is the first minus 10%. This skill treats it as a rule of thumb.
 
@@ -159,7 +159,7 @@ EOF
 
 It reports long sentences, stop words, LLM markers, broken links and dated phrases. Fix every `error`. Read every `warning` and either fix it or keep the text for a reason you can state. If the checker cannot run, for example because Bash is not permitted, say so in one line and continue to step 7.
 
-**Step 7.** Go through the Type checklist of the type file item by item. Fix the draft for every item that fails, then tick the box.
+**Step 7.** Check the draft item by item against both the Type checklist and the Forbidden list of the type file. A failed item or a forbidden pattern sends the draft back to step 4. Tick this checklist item when both lists pass.
 
 **Step 8.** Give the draft to a cold reader with only the reader's task: "You are a new engineer. Using only this page, deploy the service to staging. Report where you got stuck or had to guess." A short document gets the test too: give a subagent only the document and the task. When no subagent is available, make a separate pass reading the draft as the named reader. Fix every place the reader stalled, then run steps 6 and 7 again.
 

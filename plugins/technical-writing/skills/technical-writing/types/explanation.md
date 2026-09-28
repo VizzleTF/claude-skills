@@ -14,14 +14,15 @@ Pick another type in these cases:
 
 ## Skeleton
 
-Connected prose, in four parts:
+Connected prose, in five parts:
 
-1. Context: the situation and the problem the design answers.
-2. How it works: the parts and how they interact. A diagram helps here.
-3. Alternatives: other designs, and why this one was chosen.
-4. Consequences: what this design makes simpler, what it makes harder, and where its limits are.
+1. Answer: the short answer to the question the page is about, in the first paragraph.
+2. Context: the situation and the problem the design answers.
+3. How it works: the parts and how they interact. A diagram helps here.
+4. Alternatives: other designs, and why this one was chosen.
+5. Consequences: what this design makes simpler, what it makes harder, and where its limits are.
 
-Minto's SCQA structure suits the opening: situation, complication, question, answer. The first paragraph states the answer; the rest supports it.
+This follows Minto's pyramid principle: the answer comes first, and the situation and complication follow as context. The rest of the page supports the answer.
 
 ## Voice and verbs
 

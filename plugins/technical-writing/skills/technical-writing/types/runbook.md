@@ -54,7 +54,7 @@ As short as the procedure allows. The reader should see the first action without
 - [ ] The title matches the alert name.
 - [ ] Impact and urgency come before diagnosis.
 - [ ] Every command is complete and copyable.
-- [ ] Every placeholder has the `<NAME>` form and a source for its value.
+- [ ] Every placeholder has the `<UPPER_CASE>` form and a source for its value.
 - [ ] Every action has verification and rollback, or says it has none, points to the recovery state captured in diagnosis, and names the escalation path.
 - [ ] Escalation names a contact and a time limit.
 - [ ] The last-verified line has a real date and name, or the `<DATE>` and `<NAME>` placeholders if nobody has run the runbook yet.
