@@ -68,7 +68,7 @@ One document has one type. When a request needs two types, propose two documents
 
 ## Routing
 
-Load exactly one type file, the style file and the pattern catalog. When a type file conflicts with the core rules, the type file wins.
+Read exactly one type file (workflow step 2), the style file and the pattern catalog. When a type file conflicts with the core rules, the type file wins.
 
 | Type | Type file |
 |---|---|
@@ -110,7 +110,9 @@ This version holds English style rules. If the document is in another language, 
 
 **Cohesion.** Start each sentence with what the reader already knows and end with the new information. The first sentence of a paragraph states its topic. A heading states the key message of its section, in plain words.
 
-**Examples run.** Every command and snippet works as written, with placeholders marked (`<NAMESPACE>`). After a step that can fail quietly, show what success looks like.
+**Examples run.** Every command and snippet works as written. After a step that can fail quietly, show what success looks like.
+
+**Placeholders and unknown facts.** Every placeholder, in any type, has the form `<UPPER_CASE>`: `<NAMESPACE>`, `<DATE>`. Never invent a fact: a date, a name, a command, a host, a claim that something was verified. When a fact is missing, ask at most one question and offer a default, as for an unknown type. Do not stop to wait for the answer: in the same response, draft with the default and put a visible placeholder where each fact goes. End the response with a short list of the questions that fill them.
 
 **Current.** Incorrect documentation is worse than missing documentation. Fix or delete a living document that is wrong. Never change the content of a record: write a newer record and mark the old one superseded. Besides typos and broken links, the only changes to a published record are its status mark (`[YANKED]`, `superseded by`) and the link to its replacement. Say which version a page applies to where it matters; avoid phrases that expire on a date.
 
@@ -125,26 +127,39 @@ Copy this checklist into the response and tick items as they are done:
 ```
 Documentation progress:
 - [ ] 1. Reader: who, their task, their state
-- [ ] 2. Type chosen; type file, style file and pattern catalog loaded
-- [ ] 3. Skeleton from the type file
+- [ ] 2. Type chosen; type file read with the Read tool, style file and pattern catalog read
+- [ ] 3. Skeleton parts from the type file written out
 - [ ] 4. First draft
 - [ ] 5. Edit passes: structure, paragraphs and cohesion, sentences, words
-- [ ] 6. check.py run, every error fixed, every warning read
+- [ ] 6. check.py run (or reported as unavailable), every error fixed, every warning read
 - [ ] 7. Type checklist passed
 - [ ] 8. Cold reader test passed
 ```
 
 The checklist tracks progress in the conversation. Keep it out of the document delivered to the reader, together with any mention of this skill or its files.
 
+**Step 1.** Write one sentence: who reads the page, what they are trying to do, and in what state. If the type is still unclear, ask the one question from "Choosing the type".
+
+**Step 2.** Before drafting, read `${CLAUDE_SKILL_DIR}/types/<type>.md` with the Read tool, then the style file and the pattern catalog. If the type file cannot be read, say so in one line and do not rebuild the skeleton from memory. The Skeleton, Forbidden and Type checklist sections of that file drive steps 3, 4 and 7.
+
+**Step 3.** Write out the parts listed in the Skeleton section of the type file, in its order. For page types (tutorial, how-to, runbook, explanation, README, ADR, postmortem, changelog) the parts become the headings of the draft. For troubleshooting, reference, conventions, docstring and CLI help or error message, the skeleton sets the order of parts inside each entry, table row or comment, not headings. Omit a part marked "when…" or "if any" when its condition does not hold. A required part with no known content gets a `<PLACEHOLDER>`; a runbook with no alert name gets `<ALERT_NAME>` as its title. Without the type file there is nothing to copy, so this box stays empty until step 2 is done.
+
+**Step 4.** Fill each skeleton heading. Where a fact is missing, write a `<UPPER_CASE>` placeholder and add a question to the list at the end of the response.
+
 **Step 5.** Edit in separate passes, largest unit first. Stephen King gives the formula in *On Writing*: the second draft is the first minus 10%. This skill treats it as a rule of thumb.
 
-**Step 6.** Run the checker from any directory:
+**Step 6.** Run the checker from any directory on the file, or pipe the draft through standard input when it exists only in the chat:
 
 ```bash
-python3 "${CLAUDE_SKILL_DIR}/scripts/check.py" <file>
+python3 "${CLAUDE_SKILL_DIR}/scripts/check.py" --lang en <file>
+python3 "${CLAUDE_SKILL_DIR}/scripts/check.py" --lang en - <<'EOF'
+<DRAFT>
+EOF
 ```
 
-It reports long sentences, stop words, LLM markers, broken links and dated phrases. Fix every `error`. Read every `warning` and either fix it or keep the text for a reason you can state.
+It reports long sentences, stop words, LLM markers, broken links and dated phrases. Fix every `error`. Read every `warning` and either fix it or keep the text for a reason you can state. If the checker cannot run, for example because Bash is not permitted, say so in one line and continue to step 7.
+
+**Step 7.** Go through the Type checklist of the type file item by item. Fix the draft for every item that fails, then tick the box.
 
 **Step 8.** Give the draft to a cold reader with only the reader's task: "You are a new engineer. Using only this page, deploy the service to staging. Report where you got stuck or had to guess." Use a subagent with no conversation context, or ask the user to show it to a person. Fix every place the reader stalled, then run steps 6 and 7 again.
 
