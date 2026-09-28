@@ -37,7 +37,7 @@ python3 plugins/technical-writing/skills/technical-writing/scripts/check.py READ
 ```
 
 ```
-0 error(s), 0 warning(s) in 2 file(s)
+0 error(s), 0 warning(s) in 8 file(s)
 ```
 
 ## Tests and comparison

@@ -3,6 +3,9 @@
 
 Usage: check.py [options] PATH [PATH ...]
 
+PATH "-" reads the document from stdin; its relative links resolve against the current
+directory.
+
 Checks prose only: fenced and inline code, tables (except for word lists),
 frontmatter, URLs and HTML comments are skipped. Sentences are joined across
 line breaks. If Vale is on PATH, its findings are merged into the report.
@@ -91,6 +94,18 @@ DATED = {
            "сейчас", "в настоящее время", "на данный момент",
            "на сегодняшний день", r"последн(?:яя|ей|юю) верси\w*", "недавно"],
 }
+
+# Dates a document type requires: the date of a Keep a Changelog version heading, and a
+# date in the value of a metadata line (up to the value's first sentence end).
+VERSION_DATE_RE = re.compile(r"^\s*\[?v?\d+(?:\.\d+)+[^\]\s]*\]?\s*[-–—]\s*(" + _DATE + ")")
+META_VALUE_RE = re.compile(
+    r"^[*_]*(?:status|date|last verified|статус|дата|последняя проверка)\s*[*_]*\s*:"
+    r"(.*?)(?=[.;!?](?:\s|$)|$)", re.I)
+DATE_RE = re.compile(_DATE)
+# ponytail: italics of 2+ words starting with a capital is a quoted name (*Easy to use*);
+# anything else in italics is emphasis. Lowercase names still warn; capitalize them.
+QUOTED_NAME_RE = re.compile(
+    r"(?<![*\w])([*_])(?=[A-ZА-ЯЁ])([^*_]*?\s[^*_]*?)(?<!\s)\1(?![*\w])")
 
 RU_YO = [
     (r"еще", "ещё"), (r"ее", "её"), (r"нее", "неё"),
@@ -340,6 +355,7 @@ def _analyze(text, lang, path, max_words, check_urls):
 
     def word_rules(t, where):
         spans = [m.span() for m in LLM_RE[lang].finditer(t)]
+        spans += [m.span() for m in QUOTED_NAME_RE.finditer(t)]
         words(LLM_RE[lang], t, where, "llm-marker",
               "LLM marker \"{}\": say it plainly or cut it")
         words(STOP_RE[lang], t, where, "stop-word",
@@ -361,8 +377,18 @@ def _analyze(text, lang, path, max_words, check_urls):
         if dashes > max(1, nwords / 40):
             out.append(Finding(block[0][0], "warning", "dash-density",
                                f"{dashes} em dashes in {nwords} words (guide: 1 per 40)"))
+        required, pos = [], 0
+        for _, t in block:
+            m = VERSION_DATE_RE.match(t)
+            if m:
+                required.append((pos + m.start(1), pos + m.end(1)))
+            m = META_VALUE_RE.match(t)
+            if m:
+                required += [(pos + m.start(1) + d.start(), pos + m.start(1) + d.end())
+                             for d in DATE_RE.finditer(m.group(1))]
+            pos += len(t) + 1
         words(DATED_RE[lang], text_, where, "dated-phrase",
-              "\"{}\" dates the text; state the version or cut it")
+              "\"{}\" dates the text; state the version or cut it", required)
         if lang != "ru":
             continue
         for m in re.finditer(r"\"[^\"]*\"|\"", text_):
@@ -433,10 +459,16 @@ def run_vale(files, verbose):
     return out
 
 
+STDIN = "<stdin>"
+
+
 def _collect(paths):
-    files = []
+    files, texts = [], {}
     for p in paths:
         path = Path(p)
+        if p == "-":
+            files.append(STDIN)
+            continue
         if path.is_dir():
             found = sorted(str(f) for f in path.rglob("*.md") if f.is_file())
             if not found:
@@ -446,10 +478,9 @@ def _collect(paths):
             files.append(p)
         else:
             return None, f"no such file or directory: {p}"
-    texts = {}
     for f in files:
         try:
-            data = Path(f).read_bytes()
+            data = sys.stdin.buffer.read() if f == STDIN else Path(f).read_bytes()
             if b"\0" in data:
                 raise UnicodeDecodeError("utf-8", data, 0, 1, "NUL byte")
             texts[f] = data.decode("utf-8")
@@ -464,7 +495,9 @@ def main(argv=None):
     parser = argparse.ArgumentParser(
         prog="check.py", description="Check Markdown prose: sentence length, stop words, "
         "LLM markers, dashes, broken links, dated phrases, Russian typography.")
-    parser.add_argument("paths", nargs="*", metavar="PATH", help="Markdown file or directory")
+    parser.add_argument("paths", nargs="*", metavar="PATH", help="Markdown file or "
+                        "directory; - reads stdin (relative links resolve against the "
+                        "current directory)")
     parser.add_argument("--lang", choices=["en", "ru", "auto"], default="auto")
     parser.add_argument("--max-words", type=int, help="sentence length guide "
                         "(default: 30 for en, 25 for ru)")
@@ -482,7 +515,7 @@ def main(argv=None):
         return 2
 
     results, no_prose = [], []
-    vale = run_vale(list(texts), args.verbose)
+    vale = run_vale([f for f in texts if f != STDIN], args.verbose)
     for f, text in texts.items():
         findings, doc = _analyze(text, args.lang, f, args.max_words, args.check_urls)
         findings = sorted(findings + vale.get(f, []), key=lambda x: (x.line, x.rule))

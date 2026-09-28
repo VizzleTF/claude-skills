@@ -115,6 +115,13 @@ class WordRules(unittest.TestCase):
         self.assertEqual(rules(found), ["stop-word"])
         self.assertEqual(found[0].line, 3)
 
+    def test_stop_word_in_quoted_name(self):
+        self.assertEqual(check.check_text("| *Easy to use* | Accuracy |\n", "en"), [])
+        self.assertEqual(check.check_text("Groups: *Easy to use* and *Easy to find*.\n", "en"), [])
+        for text in ("It is easy to use.\n", "It is *easy*.\n", "It is *really simply easy*.\n"):
+            found = rules(check.check_text(text, "en"))
+            self.assertTrue(found and set(found) == {"stop-word"}, text)
+
     def test_stop_word_ru(self):
         self.assertEqual(rules(check.check_text("Это очень важно.\n", "ru")), ["stop-word"])
         self.assertEqual(check.check_text("Это важно.\n", "ru"), [])
@@ -163,6 +170,25 @@ class WordRules(unittest.TestCase):
         for text, lang in (("Shipped in 2026.\n", "en"), ("It works as of 2025.\n", "en"),
                            ("Сделано в 2026 году.\n", "ru"), ("Работает с 2024.\n", "ru")):
             self.assertEqual(rules(check.check_text(text, lang)), ["dated-phrase"], text)
+
+    def test_required_dates_do_not_fire(self):
+        for text, lang in (("## [1.2.0] - 2026-09-28\n", "en"),
+                           ("Status: Accepted, 2026-09-28\n", "en"),
+                           ("**Date:** 2026-09-28\n", "en"),
+                           ("- Last verified: 2026-09-15 against v2.3\n", "en"),
+                           ("Статус: принято, 2026-09-28\n", "ru"),
+                           ("Дата: 2026-09-28\n", "ru"),
+                           ("Последняя проверка: 2026-09-15\n", "ru")):
+            self.assertEqual(check.check_text(text, lang), [], text)
+        text = "Status: Accepted\nDate: 2026-09-28\nIt works as of 2025.\n"
+        found = check.check_text(text, "en")
+        self.assertEqual([(f.line, f.rule) for f in found], [(3, "dated-phrase")])
+
+    def test_only_the_required_date_is_exempt(self):
+        found = check.check_text("Status: Accepted. It currently runs, as of 2025.\n", "en")
+        self.assertEqual(sorted(f.message.split('"')[1] for f in found), ["as of 2025", "currently"])
+        found = check.check_text("## [1.2.0] - 2026-09-28 currently broken\n", "en")
+        self.assertEqual([f.message.split('"')[1] for f in found], ["currently"])
 
 
 class RussianTypography(unittest.TestCase):
@@ -248,10 +274,10 @@ class Links(unittest.TestCase):
             ok.assert_called()
 
 
-def run_cli(*args, cwd=None):
+def run_cli(*args, cwd=None, input=None):
     return subprocess.run(
         [sys.executable, str(SCRIPT), *args],
-        capture_output=True, text=True, cwd=cwd, env={**os.environ, "PATH": ""},
+        capture_output=True, text=True, cwd=cwd, input=input, env={**os.environ, "PATH": ""},
     )
 
 
@@ -321,6 +347,24 @@ class Cli(unittest.TestCase):
         got = sorted((Path(f["path"]).name, f["rule"]) for f in data["findings"])
         self.assertEqual(got, [("a.md", "stop-word"), ("b.md", "dated-phrase")])
         self.assertEqual(set(data["findings"][0]), {"path", "line", "level", "rule", "message"})
+
+    def test_stdin(self):
+        r = run_cli("-", input="This is simply the fix.\n")
+        self.assertEqual(r.returncode, 0)
+        self.assertIn("<stdin>:1: warning stop-word:", r.stdout)
+        self.assertEqual(run_cli("-", input='Нажмите "OK".\n').returncode, 1)
+        self.assertEqual(run_cli("--lang", "en", "-", input='Нажмите "OK".\n').returncode, 0)
+        r = run_cli("-", input="")
+        self.assertEqual(r.returncode, 0)
+        self.assertIn("<stdin>: no prose to check", r.stdout)
+
+    def test_stdin_bad_bytes(self):
+        for data in (b"\x00binary", b"\xff\xfe bad"):
+            r = subprocess.run([sys.executable, str(SCRIPT), "-"], input=data,
+                               capture_output=True, env={**os.environ, "PATH": ""})
+            self.assertEqual(r.returncode, 2, data)
+            self.assertEqual(len(r.stderr.strip().splitlines()), 1, data)
+            self.assertNotIn(b"Traceback", r.stderr)
 
     def test_lang_flag(self):
         path = self.write("ru.md", 'Нажмите "OK".\n')
