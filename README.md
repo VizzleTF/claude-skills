@@ -50,6 +50,4 @@ python3 plugins/technical-writing/skills/write/scripts/check.py README.md
 ## Links
 
 - [README на русском](README.ru.md)
-- [Commands, structure and conventions of this repository](CLAUDE.md)
-- [A/B comparison with writing-docs](evals/README.md) and [where each writing-docs defect is fixed](docs/writing-docs-fixes.md)
 - [Changelog](plugins/technical-writing/CHANGELOG.md), license [MIT](LICENSE)

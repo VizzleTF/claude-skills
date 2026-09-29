@@ -50,6 +50,4 @@ python3 plugins/technical-writing-ru/skills/write/scripts/check.py --lang ru REA
 ## Ссылки
 
 - [README in English](README.md)
-- [Команды, структура и соглашения репозитория](CLAUDE.md)
-- [A/B-сравнение с writing-docs](evals/README.md) и [где исправлен каждый дефект writing-docs](docs/writing-docs-fixes.md)
 - [Changelog](plugins/technical-writing-ru/CHANGELOG.md), лицензия [MIT](LICENSE)
