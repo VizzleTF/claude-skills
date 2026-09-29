@@ -1,5 +1,5 @@
 ---
-description: Написать или отрецензировать explanation скиллом write.
+description: Почему система устроена именно так
 disable-model-invocation: true
 argument-hint: "[что описать]"
 ---

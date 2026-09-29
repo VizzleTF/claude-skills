@@ -1,5 +1,5 @@
 ---
-description: Write or review a readme with the write skill.
+description: First page of a project
 disable-model-invocation: true
 argument-hint: "[what to document]"
 ---

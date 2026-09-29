@@ -1,5 +1,5 @@
 ---
-description: Write or review a docstring with the write skill.
+description: Docstring or code comment
 disable-model-invocation: true
 argument-hint: "[what to document]"
 ---

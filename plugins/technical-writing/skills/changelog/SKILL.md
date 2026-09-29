@@ -1,5 +1,5 @@
 ---
-description: Write or review a changelog with the write skill.
+description: What changed between versions
 disable-model-invocation: true
 argument-hint: "[what to document]"
 ---

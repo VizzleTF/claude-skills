@@ -1,5 +1,5 @@
 ---
-description: Write or review a cli-help-errors with the write skill.
+description: --help text and error messages
 disable-model-invocation: true
 argument-hint: "[what to document]"
 ---

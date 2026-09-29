@@ -2,6 +2,12 @@
 
 Заметные изменения плагина `technical-writing-ru`. Формат по [Keep a Changelog 1.1.0](https://keepachangelog.com/ru/1.1.0/), версии по [Semantic Versioning](https://semver.org/lang/ru/).
 
+## [1.0.2] - 2026-09-29
+
+### Changed
+
+- Описания помещаются в одну строку меню: `write` говорит, что делает, команда типа называет своего читателя и документ.
+
 ## [1.0.1] - 2026-09-29
 
 ### Changed
@@ -22,5 +28,6 @@
 - `scripts/check.py` проверяет битые ссылки, длинные предложения, стоп-слова, кавычки, тире и приметы LLM; читает файлы, каталоги или stdin.
 - Сжатый вывод по умолчанию, с бюджетом слов для каждого типа.
 
+[1.0.2]: https://github.com/VizzleTF/claude-skills/releases/tag/technical-writing-ru--v1.0.2
 [1.0.1]: https://github.com/VizzleTF/claude-skills/releases/tag/technical-writing-ru--v1.0.1
 [1.0.0]: https://github.com/VizzleTF/claude-skills/releases/tag/technical-writing-ru--v1.0.0

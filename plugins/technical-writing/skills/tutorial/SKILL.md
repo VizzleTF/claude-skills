@@ -1,5 +1,5 @@
 ---
-description: Write or review a tutorial with the write skill.
+description: Lesson for a newcomer, one guided path
 disable-model-invocation: true
 argument-hint: "[what to document]"
 ---

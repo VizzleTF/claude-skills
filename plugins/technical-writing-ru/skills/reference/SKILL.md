@@ -1,5 +1,5 @@
 ---
-description: Написать или отрецензировать reference скиллом write.
+description: Факты для поиска: параметры, поля, лимиты
 disable-model-invocation: true
 argument-hint: "[что описать]"
 ---

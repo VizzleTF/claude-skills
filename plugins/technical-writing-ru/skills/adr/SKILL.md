@@ -1,5 +1,5 @@
 ---
-description: Написать или отрецензировать adr скиллом write.
+description: Запись о решении и его компромиссах
 disable-model-invocation: true
 argument-hint: "[что описать]"
 ---

@@ -1,5 +1,5 @@
 ---
-description: Write or review a troubleshooting with the write skill.
+description: Symptom or error, its cause and fix
 disable-model-invocation: true
 argument-hint: "[what to document]"
 ---

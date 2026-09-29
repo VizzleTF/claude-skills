@@ -1,5 +1,5 @@
 ---
-description: Написать или отрецензировать docstring скиллом write.
+description: Docstring или комментарий в коде
 disable-model-invocation: true
 argument-hint: "[что описать]"
 ---

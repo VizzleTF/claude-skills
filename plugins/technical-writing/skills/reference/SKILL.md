@@ -1,5 +1,5 @@
 ---
-description: Write or review a reference with the write skill.
+description: Facts to look up: options, fields, limits
 disable-model-invocation: true
 argument-hint: "[what to document]"
 ---

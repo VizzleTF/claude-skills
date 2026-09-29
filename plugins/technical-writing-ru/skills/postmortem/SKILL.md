@@ -1,5 +1,5 @@
 ---
-description: Написать или отрецензировать postmortem скиллом write.
+description: Запись об инциденте и мерах после него
 disable-model-invocation: true
 argument-hint: "[что описать]"
 ---

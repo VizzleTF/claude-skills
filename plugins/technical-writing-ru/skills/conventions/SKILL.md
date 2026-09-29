@@ -1,5 +1,5 @@
 ---
-description: Написать или отрецензировать conventions скиллом write.
+description: Правила, которым следует команда
 disable-model-invocation: true
 argument-hint: "[что описать]"
 ---

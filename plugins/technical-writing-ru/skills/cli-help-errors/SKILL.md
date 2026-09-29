@@ -1,5 +1,5 @@
 ---
-description: Написать или отрецензировать cli-help-errors скиллом write.
+description: Текст --help и сообщения об ошибках
 disable-model-invocation: true
 argument-hint: "[что описать]"
 ---

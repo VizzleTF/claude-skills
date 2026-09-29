@@ -1,5 +1,5 @@
 ---
-description: Write or review a explanation with the write skill.
+description: Why the system is built this way
 disable-model-invocation: true
 argument-hint: "[what to document]"
 ---

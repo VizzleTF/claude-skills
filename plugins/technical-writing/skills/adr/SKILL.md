@@ -1,5 +1,5 @@
 ---
-description: Write or review a adr with the write skill.
+description: Record of a decision and its trade-offs
 disable-model-invocation: true
 argument-hint: "[what to document]"
 ---

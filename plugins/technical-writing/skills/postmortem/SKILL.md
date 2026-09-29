@@ -1,5 +1,5 @@
 ---
-description: Write or review a postmortem with the write skill.
+description: Record of an incident and its follow-ups
 disable-model-invocation: true
 argument-hint: "[what to document]"
 ---

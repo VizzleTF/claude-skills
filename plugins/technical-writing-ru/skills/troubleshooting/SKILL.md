@@ -1,5 +1,5 @@
 ---
-description: Написать или отрецензировать troubleshooting скиллом write.
+description: Симптом или ошибка, причина и исправление
 disable-model-invocation: true
 argument-hint: "[что описать]"
 ---

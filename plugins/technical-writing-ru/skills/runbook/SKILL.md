@@ -1,5 +1,5 @@
 ---
-description: Написать или отрецензировать runbook скиллом write.
+description: Шаги дежурному по сработавшему алерту
 disable-model-invocation: true
 argument-hint: "[что описать]"
 ---

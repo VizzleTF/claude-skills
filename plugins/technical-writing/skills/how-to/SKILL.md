@@ -1,5 +1,5 @@
 ---
-description: Write or review a how-to with the write skill.
+description: Steps to one goal for someone mid-task
 disable-model-invocation: true
 argument-hint: "[what to document]"
 ---

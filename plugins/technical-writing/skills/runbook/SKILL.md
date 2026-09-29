@@ -1,5 +1,5 @@
 ---
-description: Write or review a runbook with the write skill.
+description: Steps for on-call when an alert fires
 disable-model-invocation: true
 argument-hint: "[what to document]"
 ---

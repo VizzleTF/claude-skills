@@ -1,5 +1,5 @@
 ---
-description: Написать или отрецензировать changelog скиллом write.
+description: Что изменилось между версиями
 disable-model-invocation: true
 argument-hint: "[что описать]"
 ---

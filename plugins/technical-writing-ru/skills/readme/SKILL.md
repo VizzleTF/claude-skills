@@ -1,5 +1,5 @@
 ---
-description: Написать или отрецензировать readme скиллом write.
+description: Первая страница проекта
 disable-model-invocation: true
 argument-hint: "[что описать]"
 ---

@@ -1,5 +1,5 @@
 ---
-description: Написать или отрецензировать how-to скиллом write.
+description: Шаги к одной цели для того, кто в работе
 disable-model-invocation: true
 argument-hint: "[что описать]"
 ---

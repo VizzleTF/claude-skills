@@ -1,5 +1,5 @@
 ---
-description: Write or review a conventions with the write skill.
+description: Rules the team follows
 disable-model-invocation: true
 argument-hint: "[what to document]"
 ---
