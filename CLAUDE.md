@@ -59,6 +59,7 @@ briefs/technical-writing.md         original brief; docs/writing-docs-fixes.md m
 ## Conventions
 
 - EN/RU parity: same paths except the style file; same H2, checklist-item and table-row counts per file. Edit both editions in the same change.
+- Versioning: any change to a plugin's files bumps its `version` in `plugin.json` only, never in `marketplace.json` (semver: patch for wording fixes, minor for new rules or types, major for changes that alter what documents the skill produces) and adds a `CHANGELOG.md` entry; release tag `<plugin>--v<version>`.
 - Every `types/*.md` has seven H2 in this order — EN: When to use it and when not, Skeleton, Voice and verbs, Length, Differences from the core rules, Forbidden, Type checklist; RU: Когда это он и когда нет, Каркас, Голос и глаголы, Объём, Отличия от общих правил, Запрещено, Чек-лист типа.
 - Files in `types/`, `style/`, `process/` must not link to or name other skill files.
 - Any skill `.md` over 100 lines starts with `## Contents` (RU: `## Содержание`).
