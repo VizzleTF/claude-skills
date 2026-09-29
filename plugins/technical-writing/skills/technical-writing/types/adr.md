@@ -32,7 +32,7 @@ State the decision in the active voice, as Nygard puts it: "We will …". The de
 
 ## Length
 
-One or two pages for an ADR, following Nygard. A design doc may run longer; keep the decision and its main consequences on the first page. This is a rule of thumb.
+Most ADRs fit in about 150 words: one short paragraph per part, one line per alternative. Nygard's one or two pages is the upper bound. A design doc may run longer; keep the decision and its main consequences on the first page. This is a rule of thumb.
 
 ## Differences from the core rules
 

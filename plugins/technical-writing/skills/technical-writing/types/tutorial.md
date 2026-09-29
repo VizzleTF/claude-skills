@@ -30,7 +30,7 @@ Show the expected result after every step that produces one: "The output should 
 
 ## Length
 
-A tutorial is as long as its one path. Aim for a session of 15 to 30 minutes and fewer than 15 steps; this is a rule of thumb. A longer path becomes a series of tutorials, each with its own visible result.
+A tutorial is as long as its one path. Aim for a session of 15 to 30 minutes and fewer than 15 steps, with one or two sentences between commands; this is a rule of thumb. A longer path becomes a series of tutorials, each with its own visible result.
 
 ## Differences from the core rules
 

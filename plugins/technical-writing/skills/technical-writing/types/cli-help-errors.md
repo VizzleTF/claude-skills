@@ -37,7 +37,7 @@ What went wrong is in the indicative: "The config file is missing." How to fix i
 
 ## Length
 
-An error message fits the terminal line or wraps to a few lines at most. Google's course asks for concise messages; this skill adds no fixed count. `--help` fits on one screen for a single command; longer material goes to a `help <topic>` page or to the documentation. These are rules of thumb.
+An error message takes one to three lines. Google's course asks for concise messages; the count is this skill's rule of thumb. `--help` fits on one screen for a single command; longer material goes to a `help <topic>` page or to the documentation.
 
 ## Differences from the core rules
 

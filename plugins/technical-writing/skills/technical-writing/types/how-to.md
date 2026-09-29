@@ -16,11 +16,11 @@ Pick another type in these cases:
 ## Skeleton
 
 1. Title as the task, in the imperative: "Add a package", "Rotate the API key".
-2. One line on what the guide achieves and when the reader needs it.
-3. Prerequisites: access, tools, versions, and the state the system must be in.
+2. When the title does not say it: one sentence on when the reader needs the guide.
+3. Prerequisites: access, tools, versions, and the state the system must be in; one line when they fit.
 4. Steps, numbered. One action per step.
 5. Verification: how the reader confirms the goal was reached, with the command and its expected output.
-6. If it did not work: the likely failures, what each looks like, and what to do.
+6. If it did not work, if any failures are known: what each looks like and what to do. Never invent a failure.
 
 ## Voice and verbs
 
@@ -32,12 +32,12 @@ Describe results in the present tense: "The command prints the new version."
 
 ## Length
 
-As long as the task, and no longer. A guide with more than about 10 steps usually holds two tasks; split it. This is a rule of thumb.
+About 150 words and at most about 10 steps. Prerequisites take one line when they fit. A longer guide usually holds two tasks; split it. This is a rule of thumb.
 
 ## Differences from the core rules
 
 - **Condition first.** Inside a step the condition comes before the action, even though the action is the main point. This is the order in which the reader acts.
-- **Error recovery.** Following Carroll's minimalism, the guide names the failures a reader is likely to hit and shows how to recover. Put this in the "If it did not work" section or at the step itself.
+- **Error recovery.** Following Carroll's minimalism, the guide names the known failures of the task and shows how to recover; it never invents one. Put this in the "If it did not work" section or at the step itself.
 
 ## Forbidden
 
@@ -55,4 +55,4 @@ As long as the task, and no longer. A guide with more than about 10 steps usuall
 - [ ] Every condition comes before its action.
 - [ ] Commands run as written; placeholders are marked, such as `<NAMESPACE>`.
 - [ ] A verification step shows the expected output.
-- [ ] Likely failures have a recovery.
+- [ ] Known failures have a recovery.

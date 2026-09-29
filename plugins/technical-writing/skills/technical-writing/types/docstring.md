@@ -31,7 +31,7 @@ In other languages, follow the project's convention. Javadoc uses the third pers
 
 ## Length
 
-One line when the name and the signature say the rest. More lines only for facts a caller would otherwise learn by reading the code or by failing. This is a rule of thumb.
+One line when the name and the signature say the rest, three to five lines at most otherwise. Extra lines hold only facts a caller would otherwise learn by reading the code or by failing. This is a rule of thumb.
 
 ## Differences from the core rules
 

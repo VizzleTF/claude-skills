@@ -28,7 +28,7 @@ Past tense for events: "The deploy started at 14:02 UTC." Causes name systems an
 
 ## Length
 
-As long as the incident requires. The summary and impact fit on the first screen. This is a rule of thumb.
+About 400 words for a typical incident. The summary and impact fit on the first screen. This is a rule of thumb.
 
 ## Differences from the core rules
 

@@ -32,7 +32,7 @@ Order each sentence and paragraph from known to new. The first sentence of a par
 
 ## Length
 
-As long as the understanding requires. A page that covers more than one question splits into one page per question. This is a rule of thumb.
+About 250 words for one question, one short paragraph per skeleton part. A page that covers more than one question splits into one page per question. This is a rule of thumb.
 
 ## Differences from the core rules
 

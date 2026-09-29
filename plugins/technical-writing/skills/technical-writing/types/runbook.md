@@ -16,11 +16,12 @@ Pick another type in these cases:
 
 1. Alert name, exactly as it appears in the alerting system, as the title.
 2. Impact and urgency: who is affected, how badly, and how fast to act.
-3. Diagnosis: commands that confirm the cause, each with the output that means "yes". Before an action that cannot be undone, diagnosis also records the state needed to recover (for example, the current replica count or the pending message IDs).
-4. Action. Every action has three parts:
+3. Diagnosis: commands that confirm the cause, each with the output that means "yes".
+4. Actions, one per step. Each step has:
+   - for an irreversible action, first: the command that captures the state needed to recover;
    - the command, complete and copyable;
-   - verification: the command that shows it worked and the expected output;
-   - rollback: the command that undoes it. When the action cannot be undone, say so, point to the state recorded in diagnosis, and name the escalation path.
+   - one verification line: a copyable command and its expected output;
+   - one rollback line, only when the action changes state: the command that undoes it, or for an irreversible action whom to escalate to.
 5. Final verification: how to confirm the alert has cleared.
 6. Escalation: who to call, how, and when (for example, "after 15 minutes without recovery").
 7. Last verified: the date someone last ran the runbook end to end, and who. A new runbook that nobody has run gets `Last verified: <DATE> by <NAME>`. Never invent the date or the name.
@@ -33,7 +34,7 @@ Placeholders are explicit and uppercase in angle brackets: `<NAMESPACE>`, `<POD_
 
 ## Length
 
-As short as the procedure allows. The reader should see the first action without scrolling past the impact section. This is a rule of thumb.
+About 250 words per alert or less: impact in two sentences, verification and rollback in one line each. The reader sees the first action without scrolling past the impact section. This is a rule of thumb.
 
 ## Differences from the core rules
 
@@ -43,8 +44,9 @@ As short as the procedure allows. The reader should see the first action without
 ## Forbidden
 
 - Partial commands, `...`, or commands the reader must edit in unmarked places.
-- An action without verification.
-- An action without rollback that does not say so explicitly, point to the recovery state captured in diagnosis, and name the escalation path. "No rollback needed" alone is forbidden.
+- A step without a verification line.
+- A state-changing action without a rollback line. An irreversible action without a capture command before it and an escalation contact after it.
+- Rollback lines on read-only steps, and recovery paragraphs.
 - Links in place of the commands.
 - A runbook without a last-verified line, or with an invented date or name.
 - Paragraphs of background above the first action.
@@ -55,6 +57,6 @@ As short as the procedure allows. The reader should see the first action without
 - [ ] Impact and urgency come before diagnosis.
 - [ ] Every command is complete and copyable.
 - [ ] Every placeholder has the `<UPPER_CASE>` form and a source for its value.
-- [ ] Every action has verification and rollback, or says it has none, points to the recovery state captured in diagnosis, and names the escalation path.
+- [ ] Every step has a verification command with expected output; every state-changing action has a rollback line; every irreversible action starts with a capture command and names an escalation contact.
 - [ ] Escalation names a contact and a time limit.
 - [ ] The last-verified line has a real date and name, or the `<DATE>` and `<NAME>` placeholders if nobody has run the runbook yet.

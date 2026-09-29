@@ -68,25 +68,7 @@ One document has one type. When a request needs two types, propose two documents
 
 ## Routing
 
-Read exactly one type file (workflow step 2), the style file and the pattern catalog. When a type file conflicts with the core rules, the type file wins.
-
-| Type | Type file |
-|---|---|
-| tutorial | [types/tutorial.md](types/tutorial.md) |
-| how-to | [types/how-to.md](types/how-to.md) |
-| runbook | [types/runbook.md](types/runbook.md) |
-| troubleshooting | [types/troubleshooting.md](types/troubleshooting.md) |
-| reference | [types/reference.md](types/reference.md) |
-| explanation | [types/explanation.md](types/explanation.md) |
-| README | [types/readme.md](types/readme.md) |
-| conventions | [types/conventions.md](types/conventions.md) |
-| ADR, design doc, RFC | [types/adr.md](types/adr.md) |
-| postmortem | [types/postmortem.md](types/postmortem.md) |
-| changelog, release notes, migration guide | [types/changelog.md](types/changelog.md) |
-| docstring, code comment | [types/docstring.md](types/docstring.md) |
-| CLI help, error message | [types/cli-help-errors.md](types/cli-help-errors.md) |
-
-Style: [style/english.md](style/english.md). Patterns to remove: [style/llm-patterns.md](style/llm-patterns.md).
+Read exactly one type file (workflow step 2), the style file and the pattern catalog. When a type file conflicts with the core rules, the type file wins. Type files: [tutorial](types/tutorial.md), [how-to](types/how-to.md), [runbook](types/runbook.md), [troubleshooting](types/troubleshooting.md), [reference](types/reference.md), [explanation](types/explanation.md), [README](types/readme.md), [conventions](types/conventions.md). Records, code and interface: [ADR, design doc, RFC](types/adr.md), [postmortem](types/postmortem.md), [changelog, release notes, migration guide](types/changelog.md), [docstring, code comment](types/docstring.md), [CLI help, error message](types/cli-help-errors.md). Style: [style/english.md](style/english.md). Patterns to remove: [style/llm-patterns.md](style/llm-patterns.md).
 
 This version holds English style rules. If the document is in another language, say so once, then apply the core rules, the type file and the pattern catalog, and skip the English style file. The catalog's examples are in English, and its patterns apply to a document in any language.
 
@@ -104,7 +86,7 @@ This version holds English style rules. If the document is in another language, 
 
 **Answer first.** Put the conclusion before the reasoning: in the page, the section, the paragraph and the list item. A tutorial opens with its goal instead. Type files list other exceptions.
 
-**Self-contained page.** Readers arrive from search. The first lines say what the page is and who it is for; prerequisites and context are restated where the reader needs them. Write the Docs calls this ARID: Accept (some) Repetition In Documentation. Normative facts (a default, a limit, a flag) live in one place, and other pages link to it. A runbook keeps its commands on the page.
+**Self-contained page.** Readers arrive from search. The title and one first sentence say what the page is and, when the title does not, who it is for. Prerequisites and context are restated where the reader needs them. Write the Docs calls this ARID: Accept (some) Repetition In Documentation. Normative facts (a default, a limit, a flag) live in one place, and other pages link to it. A runbook keeps its commands on the page.
 
 **One term per concept.** Pick one word for each concept, define it at first use, and keep it. A new word signals a new concept to the reader.
 
@@ -112,11 +94,11 @@ This version holds English style rules. If the document is in another language, 
 
 **Examples run.** Every command and snippet works as written. After a step that can fail quietly, show what success looks like.
 
-**Placeholders and unknown facts.** Every placeholder, in any type, has the form `<UPPER_CASE>`: `<NAMESPACE>`, `<DATE>`. Never invent a fact: a date, a name, a command, a host, a claim that something was verified. When a fact is missing, ask at most one question and offer a default, as for an unknown type. Do not stop to wait for the answer: in the same response, draft with the default and put a visible placeholder where each fact goes. End the response with a short list of the questions that fill them.
+**Placeholders and unknown facts.** Every placeholder, in any type, has the form `<UPPER_CASE>`: `<NAMESPACE>`, `<DATE>`. Never invent a fact: a date, a name, a command, a host, a claim that something was verified. Before drafting, ask at most one clarifying question, with a default answer: about the type when it is unclear, otherwise about the key missing fact. Do not wait for the reply: draft with the default in the same response and put a visible placeholder where each missing fact goes. End the response with at most three questions, one short line each, each about a placeholder in the document. Never ask the user to confirm an inference.
 
 **Current.** Fix or delete a living document as soon as it is wrong. Never change the content of a record: write a newer record and mark the old one superseded. Besides typos and broken links, the only changes to a published record are its status mark (`[YANKED]`, `superseded by`) and the link to its replacement. Say which version a page applies to where it matters; avoid phrases that expire on a date.
 
-**Lengths are guides.** Numbers in the type and style files are rules of thumb with a source or marked as such. None of them is a hard limit.
+**Compact.** Write the shortest document that lets the named reader do the task. The Length section of the type file gives a budget in words, lines or items. Rewrite the facts the user gave into the skeleton without expanding them. Add no reason, example, failure or caveat the user did not give. Leave out introductions, recaps, closing summaries and notes about the text. Write an optional skeleton part (marked "when…" or "if any") only when the reader needs it. State each fact once and give a single example. Use a table only for three or more comparable items; a part of one or two lines gets no heading. Every required part stays, with each condition, fact and command the reader needs. Numbers in the type and style files are rules of thumb with a source or marked as such.
 
 **Visual content.** Use a picture only where text does worse: architecture, a flow, a user interface. Keep diagrams as code (Mermaid or similar) so they change together with the text. Crop a screenshot to the area that matters, mark the action, write alt text, and keep the step in text too. Put data in a table. A caption says what the reader should notice.
 
@@ -130,15 +112,15 @@ Documentation progress:
 - [ ] 2. Type chosen; type file read with the Read tool, style file and pattern catalog read
 - [ ] 3. Skeleton parts from the type file written out
 - [ ] 4. First draft
-- [ ] 5. Edit passes: structure, paragraphs and cohesion, sentences, words
-- [ ] 6. check.py run (or reported as unavailable), every error fixed, every warning read
+- [ ] 5. Edit passes: structure, paragraphs and cohesion, sentences, words; cut toward the type's budget
+- [ ] 6. check.py run when available, every error fixed, every warning read
 - [ ] 7. Type checklist passed, Forbidden list clear
 - [ ] 8. Cold reader test passed
 ```
 
-Run all eight steps in one response without pausing for confirmation. A step that cannot run is named in one line and skipped as its paragraph says. The response ends with the final document, given once: never a draft followed by a final version. After it comes the list of questions, if there is one. If the user named a file, write the document there; otherwise deliver it in the chat. Keep the checklist and any mention of this skill or its files out of the document.
+Run all eight steps in one response without pausing for confirmation. A step that cannot run is skipped as its paragraph says. Say nothing about skipped checks in steps 6 and 8 and offer no additions: the response is the document and its questions. The response ends with the final document, given once: never a draft followed by a final version. After it comes the list of questions, if there is one. With no questions the response ends with the document: no note on assumptions or on what was left out. If the user named a file, write the document there; otherwise deliver it in the chat. Keep the checklist and any mention of this skill or its files out of the document.
 
-**Step 1.** Settle in one sentence: who reads the page, what they are trying to do, and in what state. If the type is still unclear, ask the one question from "Choosing the type" and continue with its default.
+**Step 1.** Settle in one sentence: who reads the page, what they are trying to do, and in what state. If the type or a key fact is unclear, ask the one clarifying question the core rules allow and continue with its default.
 
 **Step 2.** Before drafting, read `${CLAUDE_SKILL_DIR}/types/<type>.md` with the Read tool, then the style file and the pattern catalog. If the type file cannot be read, say so in one line and do not rebuild the skeleton from memory. Still draft in the same response with the core rules only, and note that the type skeleton was not applied. The Skeleton, Forbidden and Type checklist sections of that file drive steps 3, 4 and 7.
 
@@ -146,7 +128,7 @@ Run all eight steps in one response without pausing for confirmation. A step tha
 
 **Step 4.** Fill each skeleton part (heading, table row or field). Where a fact is missing, write a placeholder and add a question to the list at the end of the response.
 
-**Step 5.** Edit in separate passes, largest unit first. Stephen King gives the formula in *On Writing*: the second draft is the first minus 10%. This skill treats it as a rule of thumb.
+**Step 5.** Edit in separate passes, largest unit first. Stephen King gives the formula in *On Writing*: the second draft is the first minus 10%. A separate last pass cuts the draft toward the budget in the Length section of the type file. Delete in this order. First go sentences on what the page covers and facts stated twice. Then go reasons and examples the user did not give, and closing summaries. Last go optional parts the reader can do without and questions with no placeholder behind them. Where the budget is in words, count them. Stop when only required parts and the conditions, facts and commands the reader needs remain, even above the budget: it is a guide.
 
 **Step 6.** Run the checker from any directory on the file, or pipe the draft through standard input when it exists only in the chat:
 
@@ -157,7 +139,7 @@ python3 "${CLAUDE_SKILL_DIR}/scripts/check.py" --lang en - <<'EOF'
 EOF
 ```
 
-It reports long sentences, stop words, LLM markers, broken links and dated phrases. Fix every `error`. Read every `warning` and either fix it or keep the text for a reason you can state. If the checker cannot run, for example because Bash is not permitted, say so in one line and continue to step 7.
+It reports long sentences, stop words, LLM markers, broken links and dated phrases. Fix every `error`. Read every `warning` and either fix it or keep the text for a reason you can state. If the checker cannot run, for example because Bash is not permitted, continue to step 7 without comment.
 
 **Step 7.** Check the draft item by item against both the Type checklist and the Forbidden list of the type file. A failed item or a forbidden pattern sends the draft back to step 4. Tick this checklist item when both lists pass.
 

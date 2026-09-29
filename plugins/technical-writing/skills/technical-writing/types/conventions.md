@@ -36,7 +36,7 @@ State at the top of the page that the words carry these meanings. Every rule car
 
 ## Length
 
-One entry per rule, a few lines each. A rule that needs a page of justification belongs in an ADR, linked from the rule. This is a rule of thumb.
+One to three lines per rule. A rule that needs a page of justification belongs in an ADR, linked from the rule. This is a rule of thumb.
 
 ## Differences from the core rules
 

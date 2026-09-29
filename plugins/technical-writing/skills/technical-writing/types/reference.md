@@ -34,7 +34,7 @@ Indicative, third person: "Sets the connection timeout", "Returns the list of us
 
 ## Length
 
-One entry per item, every entry as short as its fields. The length of the page follows the size of the system. This is a rule of thumb.
+One entry per item, every entry as short as its fields: a table row or a few lines, with no prose between entries. The length of the page follows the size of the system. This is a rule of thumb.
 
 ## Differences from the core rules
 

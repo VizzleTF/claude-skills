@@ -26,7 +26,7 @@ The description is in the indicative: "Parses YAML into typed structs." Installa
 
 ## Length
 
-One screen before the links, as a rule of thumb. Steve Krug's advice for navigation pages applies here: readers scan, so cut *happy talk* and instructions nobody reads. Everything beyond the first result moves to linked pages.
+One screen before the links, about 100 words, as a rule of thumb. Steve Krug's advice for navigation pages applies here: readers scan, so cut *happy talk* and instructions nobody reads. Everything beyond the first result moves to linked pages.
 
 ## Differences from the core rules
 

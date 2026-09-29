@@ -31,7 +31,7 @@ The cause is in the indicative: "The database is not running." The action is in 
 
 ## Length
 
-One row per real problem. The page grows as problems are found and shrinks when fixes ship. This is a rule of thumb.
+One entry per real problem, one or two lines each. The page grows as problems are found and shrinks when fixes ship. This is a rule of thumb.
 
 ## Differences from the core rules
 
