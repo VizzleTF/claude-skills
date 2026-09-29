@@ -1,0 +1,13 @@
+{
+  "scenario": "conventions-brannock-terraform",
+  "model": "sonnet",
+  "participant": "none",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.206786,
+  "duration_ms": 70972,
+  "words": 1495
+}

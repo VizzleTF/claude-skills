@@ -1,0 +1,13 @@
+{
+  "scenario": "real-etcd-postmortem",
+  "model": "haiku",
+  "participant": "technical-writing-ru",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.1405109,
+  "duration_ms": 120449,
+  "words": 1985
+}

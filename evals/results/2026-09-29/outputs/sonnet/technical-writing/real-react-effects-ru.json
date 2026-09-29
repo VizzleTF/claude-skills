@@ -1,0 +1,19 @@
+{
+  "scenario": "real-react-effects-ru",
+  "model": "sonnet",
+  "participant": "technical-writing",
+  "status": "ok",
+  "skills": [
+    "technical-writing:technical-writing"
+  ],
+  "skill_fired": true,
+  "files_read": [
+    "skills/technical-writing/process/review.md",
+    "skills/technical-writing/style/llm-patterns.md",
+    "skills/technical-writing/types/explanation.md"
+  ],
+  "read_denied": 0,
+  "cost_usd": 0.22813440000000001,
+  "duration_ms": 60907,
+  "words": 798
+}

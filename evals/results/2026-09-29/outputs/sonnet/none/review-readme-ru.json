@@ -1,0 +1,13 @@
+{
+  "scenario": "review-readme-ru",
+  "model": "sonnet",
+  "participant": "none",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.1685514,
+  "duration_ms": 37919,
+  "words": 895
+}

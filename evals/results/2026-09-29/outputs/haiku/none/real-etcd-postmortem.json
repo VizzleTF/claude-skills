@@ -1,0 +1,13 @@
+{
+  "scenario": "real-etcd-postmortem",
+  "model": "haiku",
+  "participant": "none",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.0689033,
+  "duration_ms": 68367,
+  "words": 2211
+}

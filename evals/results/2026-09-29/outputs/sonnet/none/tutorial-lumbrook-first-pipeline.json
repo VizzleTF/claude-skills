@@ -1,0 +1,13 @@
+{
+  "scenario": "tutorial-lumbrook-first-pipeline",
+  "model": "sonnet",
+  "participant": "none",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.055695800000000004,
+  "duration_ms": 12292,
+  "words": 496
+}

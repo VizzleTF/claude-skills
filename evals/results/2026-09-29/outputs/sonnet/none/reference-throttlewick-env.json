@@ -1,0 +1,13 @@
+{
+  "scenario": "reference-throttlewick-env",
+  "model": "sonnet",
+  "participant": "none",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.048315800000000006,
+  "duration_ms": 6001,
+  "words": 199
+}

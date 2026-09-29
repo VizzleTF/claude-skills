@@ -1,0 +1,13 @@
+{
+  "scenario": "real-fd-readme",
+  "model": "sonnet",
+  "participant": "none",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.179988,
+  "duration_ms": 34469,
+  "words": 375
+}

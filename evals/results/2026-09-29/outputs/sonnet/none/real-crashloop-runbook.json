@@ -1,0 +1,13 @@
+{
+  "scenario": "real-crashloop-runbook",
+  "model": "sonnet",
+  "participant": "none",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.2238544,
+  "duration_ms": 71086,
+  "words": 1849
+}

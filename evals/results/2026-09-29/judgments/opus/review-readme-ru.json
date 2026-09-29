@@ -1,0 +1,175 @@
+{
+  "scenario": "review-readme-ru",
+  "model": "opus",
+  "judge_model": "opus",
+  "participants": [
+    "writing-docs",
+    "technical-writing",
+    "technical-writing-ru",
+    "none"
+  ],
+  "status": "ok",
+  "passes": [
+    {
+      "order": [
+        "none",
+        "technical-writing-ru",
+        "technical-writing",
+        "writing-docs"
+      ],
+      "scores": {
+        "none": {
+          "type": 4,
+          "skeleton": 5,
+          "accuracy": 5,
+          "answer_first": 4,
+          "scannable": 5,
+          "voice": 5,
+          "no_llm_patterns": 5,
+          "concise": 3,
+          "actionable": 5
+        },
+        "technical-writing-ru": {
+          "type": 5,
+          "skeleton": 5,
+          "accuracy": 5,
+          "answer_first": 5,
+          "scannable": 5,
+          "voice": 5,
+          "no_llm_patterns": 5,
+          "concise": 5,
+          "actionable": 5
+        },
+        "technical-writing": {
+          "type": 5,
+          "skeleton": 5,
+          "accuracy": 4,
+          "answer_first": 4,
+          "scannable": 4,
+          "voice": 5,
+          "no_llm_patterns": 5,
+          "concise": 4,
+          "actionable": 5
+        },
+        "writing-docs": {
+          "type": 4,
+          "skeleton": 5,
+          "accuracy": 3,
+          "answer_first": 5,
+          "scannable": 5,
+          "voice": 5,
+          "no_llm_patterns": 4,
+          "concise": 2,
+          "actionable": 5
+        }
+      }
+    },
+    {
+      "order": [
+        "writing-docs",
+        "technical-writing",
+        "technical-writing-ru",
+        "none"
+      ],
+      "scores": {
+        "writing-docs": {
+          "type": 4,
+          "skeleton": 5,
+          "accuracy": 4,
+          "answer_first": 5,
+          "scannable": 5,
+          "voice": 5,
+          "no_llm_patterns": 4,
+          "concise": 3,
+          "actionable": 5
+        },
+        "technical-writing": {
+          "type": 5,
+          "skeleton": 4,
+          "accuracy": 4,
+          "answer_first": 4,
+          "scannable": 4,
+          "voice": 5,
+          "no_llm_patterns": 4,
+          "concise": 4,
+          "actionable": 4
+        },
+        "technical-writing-ru": {
+          "type": 5,
+          "skeleton": 5,
+          "accuracy": 4,
+          "answer_first": 5,
+          "scannable": 4,
+          "voice": 5,
+          "no_llm_patterns": 5,
+          "concise": 5,
+          "actionable": 5
+        },
+        "none": {
+          "type": 3,
+          "skeleton": 5,
+          "accuracy": 5,
+          "answer_first": 3,
+          "scannable": 5,
+          "voice": 5,
+          "no_llm_patterns": 4,
+          "concise": 2,
+          "actionable": 5
+        }
+      }
+    }
+  ],
+  "scores": {
+    "writing-docs": {
+      "type": 4.0,
+      "skeleton": 5.0,
+      "accuracy": 3.5,
+      "answer_first": 5.0,
+      "scannable": 5.0,
+      "voice": 5.0,
+      "no_llm_patterns": 4.0,
+      "concise": 2.5,
+      "actionable": 5.0
+    },
+    "technical-writing": {
+      "type": 5.0,
+      "skeleton": 4.5,
+      "accuracy": 4.0,
+      "answer_first": 4.0,
+      "scannable": 4.0,
+      "voice": 5.0,
+      "no_llm_patterns": 4.5,
+      "concise": 4.0,
+      "actionable": 4.5
+    },
+    "technical-writing-ru": {
+      "type": 5.0,
+      "skeleton": 5.0,
+      "accuracy": 4.5,
+      "answer_first": 5.0,
+      "scannable": 4.5,
+      "voice": 5.0,
+      "no_llm_patterns": 5.0,
+      "concise": 5.0,
+      "actionable": 5.0
+    },
+    "none": {
+      "type": 3.5,
+      "skeleton": 5.0,
+      "accuracy": 5.0,
+      "answer_first": 3.5,
+      "scannable": 5.0,
+      "voice": 5.0,
+      "no_llm_patterns": 4.5,
+      "concise": 2.5,
+      "actionable": 5.0
+    }
+  },
+  "totals": {
+    "writing-docs": 4.333333333333333,
+    "technical-writing": 4.388888888888889,
+    "technical-writing-ru": 4.888888888888889,
+    "none": 4.333333333333333
+  },
+  "position_flags": []
+}

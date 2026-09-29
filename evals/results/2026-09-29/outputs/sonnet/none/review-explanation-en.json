@@ -1,0 +1,13 @@
+{
+  "scenario": "review-explanation-en",
+  "model": "sonnet",
+  "participant": "none",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.116798,
+  "duration_ms": 24433,
+  "words": 860
+}

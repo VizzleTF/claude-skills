@@ -1,0 +1,13 @@
+{
+  "scenario": "real-kubeadm-troubleshooting",
+  "model": "sonnet",
+  "participant": "technical-writing-ru",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.1317032,
+  "duration_ms": 36719,
+  "words": 1077
+}

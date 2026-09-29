@@ -1,0 +1,18 @@
+{
+  "scenario": "cli-help-errors-vendle",
+  "model": "opus",
+  "participant": "technical-writing-ru",
+  "status": "ok",
+  "skills": [
+    "technical-writing-ru:technical-writing-ru"
+  ],
+  "skill_fired": true,
+  "files_read": [
+    "skills/technical-writing-ru/style/llm-patterns.md",
+    "skills/technical-writing-ru/types/cli-help-errors.md"
+  ],
+  "read_denied": 0,
+  "cost_usd": 0.3190074,
+  "duration_ms": 37490,
+  "words": 291
+}

@@ -1,0 +1,13 @@
+{
+  "scenario": "real-etcd-postmortem",
+  "model": "sonnet",
+  "participant": "none",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.2903264,
+  "duration_ms": 102625,
+  "words": 2470
+}

@@ -1,0 +1,182 @@
+{
+  "scenario": "cli-help-errors-vendle",
+  "model": "haiku",
+  "judge_model": "opus",
+  "participants": [
+    "writing-docs",
+    "technical-writing",
+    "technical-writing-ru",
+    "none"
+  ],
+  "status": "ok",
+  "passes": [
+    {
+      "order": [
+        "technical-writing-ru",
+        "writing-docs",
+        "technical-writing",
+        "none"
+      ],
+      "scores": {
+        "technical-writing-ru": {
+          "type": 5,
+          "skeleton": 3,
+          "accuracy": 3,
+          "answer_first": 5,
+          "scannable": 4,
+          "voice": 4,
+          "no_llm_patterns": 5,
+          "concise": 5,
+          "actionable": 3
+        },
+        "writing-docs": {
+          "type": 5,
+          "skeleton": 5,
+          "accuracy": 5,
+          "answer_first": 5,
+          "scannable": 5,
+          "voice": 4,
+          "no_llm_patterns": 5,
+          "concise": 4,
+          "actionable": 4
+        },
+        "technical-writing": {
+          "type": 4,
+          "skeleton": 4,
+          "accuracy": 3,
+          "answer_first": 2,
+          "scannable": 4,
+          "voice": 5,
+          "no_llm_patterns": 4,
+          "concise": 2,
+          "actionable": 5
+        },
+        "none": {
+          "type": 5,
+          "skeleton": 4,
+          "accuracy": 5,
+          "answer_first": 5,
+          "scannable": 5,
+          "voice": 4,
+          "no_llm_patterns": 5,
+          "concise": 5,
+          "actionable": 4
+        }
+      }
+    },
+    {
+      "order": [
+        "none",
+        "technical-writing",
+        "writing-docs",
+        "technical-writing-ru"
+      ],
+      "scores": {
+        "none": {
+          "type": 5,
+          "skeleton": 4,
+          "accuracy": 4,
+          "answer_first": 5,
+          "scannable": 4,
+          "voice": 5,
+          "no_llm_patterns": 5,
+          "concise": 5,
+          "actionable": 4
+        },
+        "technical-writing": {
+          "type": 5,
+          "skeleton": 4,
+          "accuracy": 3,
+          "answer_first": 4,
+          "scannable": 4,
+          "voice": 5,
+          "no_llm_patterns": 4,
+          "concise": 3,
+          "actionable": 5
+        },
+        "writing-docs": {
+          "type": 5,
+          "skeleton": 4,
+          "accuracy": 5,
+          "answer_first": 5,
+          "scannable": 5,
+          "voice": 5,
+          "no_llm_patterns": 5,
+          "concise": 5,
+          "actionable": 4
+        },
+        "technical-writing-ru": {
+          "type": 5,
+          "skeleton": 3,
+          "accuracy": 2,
+          "answer_first": 5,
+          "scannable": 4,
+          "voice": 5,
+          "no_llm_patterns": 5,
+          "concise": 5,
+          "actionable": 3
+        }
+      }
+    }
+  ],
+  "scores": {
+    "writing-docs": {
+      "type": 5.0,
+      "skeleton": 4.5,
+      "accuracy": 5.0,
+      "answer_first": 5.0,
+      "scannable": 5.0,
+      "voice": 4.5,
+      "no_llm_patterns": 5.0,
+      "concise": 4.5,
+      "actionable": 4.0
+    },
+    "technical-writing": {
+      "type": 4.5,
+      "skeleton": 4.0,
+      "accuracy": 3.0,
+      "answer_first": 3.0,
+      "scannable": 4.0,
+      "voice": 5.0,
+      "no_llm_patterns": 4.0,
+      "concise": 2.5,
+      "actionable": 5.0
+    },
+    "technical-writing-ru": {
+      "type": 5.0,
+      "skeleton": 3.0,
+      "accuracy": 2.5,
+      "answer_first": 5.0,
+      "scannable": 4.0,
+      "voice": 4.5,
+      "no_llm_patterns": 5.0,
+      "concise": 5.0,
+      "actionable": 3.0
+    },
+    "none": {
+      "type": 5.0,
+      "skeleton": 4.0,
+      "accuracy": 4.5,
+      "answer_first": 5.0,
+      "scannable": 4.5,
+      "voice": 4.5,
+      "no_llm_patterns": 5.0,
+      "concise": 5.0,
+      "actionable": 4.0
+    }
+  },
+  "totals": {
+    "writing-docs": 4.722222222222222,
+    "technical-writing": 3.888888888888889,
+    "technical-writing-ru": 4.111111111111111,
+    "none": 4.611111111111111
+  },
+  "position_flags": [
+    {
+      "participant": "technical-writing",
+      "criterion": "answer_first",
+      "pass1": 2,
+      "pass2": 4
+    }
+  ]
+}

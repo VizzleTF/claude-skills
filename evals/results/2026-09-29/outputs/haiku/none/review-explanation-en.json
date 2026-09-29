@@ -1,0 +1,13 @@
+{
+  "scenario": "review-explanation-en",
+  "model": "haiku",
+  "participant": "none",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.0303216,
+  "duration_ms": 14794,
+  "words": 399
+}

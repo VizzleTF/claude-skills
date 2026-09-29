@@ -1,0 +1,13 @@
+{
+  "scenario": "troubleshooting-orbisk-agent",
+  "model": "sonnet",
+  "participant": "none",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.1928706,
+  "duration_ms": 46330,
+  "words": 421
+}

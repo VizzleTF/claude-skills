@@ -1,0 +1,13 @@
+{
+  "scenario": "review-explanation-en",
+  "model": "sonnet",
+  "participant": "technical-writing-ru",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.0717296,
+  "duration_ms": 18496,
+  "words": 741
+}

@@ -1,0 +1,13 @@
+{
+  "scenario": "real-k8s-probes",
+  "model": "sonnet",
+  "participant": "none",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.2524442,
+  "duration_ms": 83213,
+  "words": 2237
+}

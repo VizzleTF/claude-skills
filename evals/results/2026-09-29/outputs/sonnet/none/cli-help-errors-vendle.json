@@ -1,0 +1,13 @@
+{
+  "scenario": "cli-help-errors-vendle",
+  "model": "sonnet",
+  "participant": "none",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.0471558,
+  "duration_ms": 7584,
+  "words": 221
+}

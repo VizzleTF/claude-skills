@@ -80,8 +80,8 @@ Workflow (в чек-листе):
 
 - CLI по §5 плюс `--reveal`. Значения по умолчанию: `sonnet`; core-модели `haiku,opus`; судья `opus`; 4 участника; `--jobs 3`; дата — сегодня.
 - Коды выхода: 0 — успех; 1 — `--reveal` отказал; 2 — ошибка запуска; 3 — rate limit, в stderr команда продолжения.
-- `load_scenarios(dir, pattern="*") -> list[Scenario(id, lang, kind, expect: list, core: bool, fixtures, facts: list, prompt)]`; если `id` не совпадает с именем файла — `ValueError`.
-- `call_claude(argv, cwd, env) -> CallResult(returncode, stdout, stderr)`. Константы, которые подменяют тесты: `EVALS_DIR`, `CREDENTIALS`, `sleep`, `RATE_PAUSES`, `CRIT_KEYS`.
+- `load_scenarios(dir, pattern="*") -> list[Scenario(id, lang, kind, expect: list, core: bool, fixtures, facts: list, prompt, expect_notes: list = [])]`; `CRIT_KEYS` = type, skeleton, accuracy, answer_first, scannable, voice, no_llm_patterns, concise, actionable; судья видит facts, expect_notes («Expectations for the answer») и тексты фикстур; если `id` не совпадает с именем файла — `ValueError`.
+- `call_claude(argv, cwd, env, input=None) -> CallResult(returncode, stdout, stderr)`; промпт идёт через stdin, не через argv. Константы, которые подменяют тесты: `EVALS_DIR`, `CREDENTIALS`, `sleep`, `RATE_PAUSES`, `CRIT_KEYS`.
 - Раскладка результатов:
   - `results/<date>/outputs/<model>/<participant>/<id>.{md,json}`; в `.json`: status, skills, skill_fired, cost_usd, duration_ms, words, error;
   - `judgments/<model>/<id>.json`;
@@ -94,7 +94,64 @@ Workflow (в чек-листе):
 ### Из таска 03 — сценарии
 
 - Сценариев 28: по 14 на `en` и `ru`. По `kind`: create 13, review 7, update 5, ambiguous 3. С `core: true` — 8.
-- Заголовок сценария, поля в этом порядке: `id`, `lang`, `kind`, `expect`, `core`, `[fixtures]`, затем `facts:` со строками `- `, пустая строка и текст запроса.
+- Заголовок сценария, поля в этом порядке: `id`, `lang`, `kind`, `expect`, `core`, `[fixtures]`, `[expect_notes:` со строками `- ]`, затем `facts:` со строками `- `, пустая строка и текст запроса.
 - `expect` — список через запятую без пробелов, несколько значений только у `ambiguous`. `fixtures` — путь `<dir>/` относительно `evals/fixtures/`. Промпты называют фикстуры по имени файла в рабочем каталоге.
 - Рубрика: 1–5 по каждому критерию, «n/a» нет. Ответ на `ambiguous`, который состоит только из уточняющего вопроса, получает 3 по skeleton, accuracy и actionability.
 - Реальные документы: 9 фикстур `real-*`, источники в `evals/fixtures/SOURCES.md`.
+
+### Из таска 01 — check.py и parity
+
+- Запуск: `check.py [--lang en|ru|auto] [--max-words N] [--format text|json] [--check-urls] [--strict] [--verbose] PATH...`. Коды выхода 0/1/2.
+- Вывод: строка `path:line: level rule: message`, в конце сводка `N error(s), M warning(s) in K file(s)`. JSON: `{findings:[{path,line,level,rule,message}], errors, warnings, files, no_prose}`.
+- `check_text(text, lang, path="<text>", *, max_words=None, check_urls=False) -> list[Finding]`, где `Finding = (line, level, rule, message)`.
+- Правила уровня error: `broken-link`, `ru-quotes`, `ru-dash`. Уровня warning: `sentence-length`, `stop-word`, `llm-marker`, `dash-density`, `dated-phrase`, `ru-yo`, `ru-nbsp`. Правило `vale` берёт уровень из Vale.
+- `tools/parity.py`: запуск без аргументов из корня, строки `path: message`, в конце `parity: ok` или `parity: N problem(s)`; функция `check_repo(root) -> list[str]`.
+- Эвристики:
+  - `dash-density`: не больше `max(1, слов/40)` тире на абзац.
+  - `ru-yo` ловит «еще», «ее», «нее», «все равно».
+  - Голое имя файла скилла в `types/`, `style/`, `process/` считается ссылкой.
+  - Примеры внутри inline code не срабатывают.
+- Тесты: `python3 -m unittest discover -s tests` (77).
+
+### Из таска 05 — EN types
+
+- 13 файлов, в каждом 49–60 строк. Структура: 1 H1, 7 H2 в заданном порядке, H3 нет.
+- Строки таблиц: conventions 5, reference 7, troubleshooting 4, в остальных файлах 0.
+- Пункты `- [ ]`: adr 7, changelog 6, cli-help-errors 6, conventions 5, docstring 6, explanation 5, how-to 7, postmortem 6, readme 6, reference 6, runbook 7, troubleshooting 5, tutorial 8.
+- Где стоят исключения из ядра:
+  - правка записи — adr, postmortem (новая запись, у старой `superseded by`), changelog ([YANKED], исправление идёт в следующую версию);
+  - полные предложения вместо списков — adr, explanation;
+  - «мы», третье лицо, прошедшее время — tutorial, reference, postmortem;
+  - цель первой строкой — tutorial;
+  - повтор допустим — readme, tutorial, runbook.
+- ADR: форма Nygard плюс «Alternatives considered» (практика design doc). `Supersedes:` в новой записи, у старой меняется только статус `superseded by ADR-MMMM`.
+- Changelog: «BREAKING первыми» — надстройка скилла над Keep a Changelog. Дата `YYYY-MM-DD` в code.
+- Каждый раздел Length кончается «rule of thumb» или ссылкой на источник. conventions.md ссылается на RFC 2119.
+- После ремонта таска 05 (RU повторяет формулировки):
+  - ADR: решение — абзац, который начинается с «We will».
+  - conventions: у каждого правила слово из шкалы RFC 2119, голого повелительного нет.
+  - changelog: BREAKING-пункт стоит первым внутри своей группы с префиксом `BREAKING:` и ссылкой на гайд миграции; у `[YANKED]` ссылка на версию-замену.
+  - postmortem: не дописывается; новые факты — новая запись, у старой `superseded by` со ссылкой.
+  - `--help`: у каждой строки одна форма на выбор — повелительное, изъявительное или именная группа.
+
+### Из таска 06 — RU ядро
+
+- Глоссарий EN → RU:
+
+  | EN | RU |
+  |---|---|
+  | reader | читатель |
+  | type | тип |
+  | type file | файл типа |
+  | skeleton | каркас |
+  | core rules | общие правила |
+  | living document | живой документ |
+  | record | запись |
+  | superseded | замещена |
+  | finding | замечание |
+  | cold reader | холодный читатель |
+
+- Разделы типа: «Когда это он и когда нет», «Каркас», «Голос и глаголы», «Объём», «Отличия от общих правил», «Запрещено», «Чек-лист типа».
+- Разделы SKILL.md: Содержание, Глоссарий, Выбор типа (### Слова запроса), Маршрут, Ветки, Общие правила, Порядок работы, Источники. Ветки: «Создать», «Ревью», «Набор документов».
+- Имена типов в теле всех RU-файлов пишутся латиницей, как имена файлов (reference, runbook…). Русские слова типов — только в `when_to_use` и в таблице «Слова запроса». «Запись» значит только record; элемент справочника — «пункт», строка лога — «строка». Ревью — «ревью».
+- Цитаты из англоязычных источников остаются на языке оригинала, в «ёлочках»; вложенные кавычки — „лапки“.

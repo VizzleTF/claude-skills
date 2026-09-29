@@ -51,4 +51,5 @@ To compare the skills with the earlier `writing-docs` skill and give your own bl
 - [Where each writing-docs defect is fixed](docs/writing-docs-fixes.md)
 - [English skill](plugins/technical-writing/skills/technical-writing/SKILL.md) and [Russian skill](plugins/technical-writing-ru/skills/technical-writing-ru/SKILL.md)
 - [The brief the skills were built from](briefs/technical-writing.md)
+- Comparison results: [2026-09-29 verdict](evals/results/2026-09-29/verdict.md) (fill before opening the [report](evals/results/2026-09-29/report.md))
 - License: [MIT](LICENSE)

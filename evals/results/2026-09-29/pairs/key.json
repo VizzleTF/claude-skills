@@ -1,0 +1,117 @@
+{
+  "model": "sonnet",
+  "pairs": {
+    "adr-supersede": {
+      "X": "technical-writing-ru",
+      "Y": "writing-docs"
+    },
+    "adr-veyrun-advisory-locks": {
+      "X": "technical-writing-ru",
+      "Y": "writing-docs"
+    },
+    "ambiguous-deploy-instruction": {
+      "X": "technical-writing-ru",
+      "Y": "writing-docs"
+    },
+    "ambiguous-devops-onboarding": {
+      "X": "technical-writing-ru",
+      "Y": "writing-docs"
+    },
+    "ambiguous-service-description": {
+      "X": "writing-docs",
+      "Y": "technical-writing-ru"
+    },
+    "changelog-pellmark-4-0": {
+      "X": "writing-docs",
+      "Y": "technical-writing"
+    },
+    "cli-help-errors-vendle": {
+      "X": "technical-writing",
+      "Y": "writing-docs"
+    },
+    "conventions-brannock-terraform": {
+      "X": "writing-docs",
+      "Y": "technical-writing-ru"
+    },
+    "docstring-quarrybill-prorate": {
+      "X": "technical-writing",
+      "Y": "writing-docs"
+    },
+    "explanation-tamrisk-cache": {
+      "X": "technical-writing-ru",
+      "Y": "writing-docs"
+    },
+    "howto-varnholt-flag-rollout": {
+      "X": "technical-writing-ru",
+      "Y": "writing-docs"
+    },
+    "postmortem-quenby-index-lock": {
+      "X": "writing-docs",
+      "Y": "technical-writing-ru"
+    },
+    "readme-tarnlog": {
+      "X": "technical-writing-ru",
+      "Y": "writing-docs"
+    },
+    "real-backstage-adr": {
+      "X": "writing-docs",
+      "Y": "technical-writing"
+    },
+    "real-crashloop-runbook": {
+      "X": "technical-writing",
+      "Y": "writing-docs"
+    },
+    "real-etcd-postmortem": {
+      "X": "technical-writing",
+      "Y": "writing-docs"
+    },
+    "real-fd-readme": {
+      "X": "writing-docs",
+      "Y": "technical-writing"
+    },
+    "real-flask-changelog": {
+      "X": "technical-writing",
+      "Y": "writing-docs"
+    },
+    "real-k8s-probes": {
+      "X": "technical-writing",
+      "Y": "writing-docs"
+    },
+    "real-kubeadm-troubleshooting": {
+      "X": "technical-writing",
+      "Y": "writing-docs"
+    },
+    "real-react-effects-ru": {
+      "X": "technical-writing-ru",
+      "Y": "writing-docs"
+    },
+    "real-react-useid-ru": {
+      "X": "technical-writing-ru",
+      "Y": "writing-docs"
+    },
+    "reference-throttlewick-env": {
+      "X": "technical-writing",
+      "Y": "writing-docs"
+    },
+    "review-explanation-en": {
+      "X": "technical-writing",
+      "Y": "writing-docs"
+    },
+    "review-readme-ru": {
+      "X": "writing-docs",
+      "Y": "technical-writing-ru"
+    },
+    "runbook-disk-full": {
+      "X": "writing-docs",
+      "Y": "technical-writing"
+    },
+    "troubleshooting-orbisk-agent": {
+      "X": "writing-docs",
+      "Y": "technical-writing-ru"
+    },
+    "tutorial-lumbrook-first-pipeline": {
+      "X": "technical-writing",
+      "Y": "writing-docs"
+    }
+  }
+}

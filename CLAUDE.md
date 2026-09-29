@@ -62,8 +62,8 @@ briefs/technical-writing.md         original brief; docs/writing-docs-fixes.md m
 - Every `types/*.md` has seven H2 in this order — EN: When to use it and when not, Skeleton, Voice and verbs, Length, Differences from the core rules, Forbidden, Type checklist; RU: Когда это он и когда нет, Каркас, Голос и глаголы, Объём, Отличия от общих правил, Запрещено, Чек-лист типа.
 - Files in `types/`, `style/`, `process/` must not link to or name other skill files.
 - Any skill `.md` over 100 lines starts with `## Contents` (RU: `## Содержание`).
-- SKILL.md ≤ 170 lines; frontmatter `description` + `when_to_use` ≤ 1536 chars; triggers go only in `when_to_use` (needs Cyrillic and Latin), never in `description`.
-- Record rule: in a record (ADR, postmortem, released changelog entry) only typos and broken links are fixed; new facts go in a new record, the old one gets `superseded by`.
+- SKILL.md ≤ 170 lines (kept at ~150); frontmatter `description` + `when_to_use` ≤ 1536 chars; triggers go only in `when_to_use` (needs Cyrillic and Latin), never in `description`.
+- Record rule: in a record (ADR, postmortem, released changelog entry) only typos, broken links, the status mark (`[YANKED]`, `superseded by`) and the link to its replacement change; new facts go in a new record.
 - RU texts: type names in Latin as file names; English quotes stay in original inside «ёлочки», nested „лапки“; «запись» means record only.
 - Skill texts obey their own rules: no aphorisms, no "not X but Y", no rule of three, sparse dashes, one term per concept. Word examples go in inline code so check.py skips them.
 - Code, comments, script messages in English. Commits: Conventional Commits in English, no AI attribution or co-author trailers.
@@ -86,7 +86,10 @@ briefs/technical-writing.md         original brief; docs/writing-docs-fixes.md m
 - `claude --bare` needs an API key (login is not used), so isolation uses a temp `CLAUDE_CONFIG_DIR` instead.
 - parity treats a bare skill file name (e.g. `review.md`) in `types/` `style/` `process/` as a link; rephrase instead of naming the file.
 - parity fails on private paths (home or Windows user dirs) and token-shaped strings in any tracked file, this CLAUDE.md included.
-- check.py over the EN skill prints 10 `stop-word "easy"` warnings on the italic IBM DQTI group names (`process/review.md`, `sources.md`); expected, errors must be 0.
+- check.py over both skills must print `0 error(s), 0 warning(s)`; capitalised italics (`*Easy to use*`) count as quoted names, lower-case italics still warn.
+- Under `claude -p`, Read of a plugin's files outside cwd is denied; the runner passes `--add-dir <skill dir>` per participant and records `files_read` / `read_denied`.
+- Session/usage-limit messages stop the runner with exit 3; rerun the printed command (same `--date`) and failed items are retried.
+- Output compactness is a product requirement: each type file's Length sets a budget, and report.md has a «Компактность» section comparing medians with writing-docs.
 - Skill texts must pass their own check.py; a new stop word or dash in a rule file shows up as a warning.
 
 ## Как здесь работает Autopilot

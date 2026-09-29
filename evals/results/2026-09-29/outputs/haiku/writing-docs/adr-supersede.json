@@ -1,0 +1,13 @@
+{
+  "scenario": "adr-supersede",
+  "model": "haiku",
+  "participant": "writing-docs",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.0557732,
+  "duration_ms": 29900,
+  "words": 212
+}

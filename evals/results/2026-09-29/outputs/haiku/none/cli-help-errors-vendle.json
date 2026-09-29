@@ -1,0 +1,13 @@
+{
+  "scenario": "cli-help-errors-vendle",
+  "model": "haiku",
+  "participant": "none",
+  "status": "ok",
+  "skills": [],
+  "skill_fired": false,
+  "files_read": [],
+  "read_denied": 0,
+  "cost_usd": 0.027404900000000003,
+  "duration_ms": 21660,
+  "words": 144
+}
