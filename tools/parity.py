@@ -12,8 +12,8 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-EN = "plugins/technical-writing/skills/technical-writing"
-RU = "plugins/technical-writing-ru/skills/technical-writing-ru"
+EN = "plugins/technical-writing/skills/write"
+RU = "plugins/technical-writing-ru/skills/write"
 TYPES = ["tutorial", "how-to", "runbook", "troubleshooting", "reference", "explanation",
          "readme", "conventions", "adr", "postmortem", "changelog", "docstring",
          "cli-help-errors"]
@@ -152,6 +152,27 @@ def check_skill(root, base, out):
                 out.append(f"{path}: when_to_use needs triggers in both Cyrillic and Latin script")
 
 
+def check_commands(root, base, out):
+    """Each type has a user-only command skill next to the main one; nothing else lives there."""
+    skills = (root / base).parent
+    rel = base.rsplit("/", 1)[0]
+    allowed = {Path(base).name, *TYPES}
+    for d in sorted(p for p in skills.iterdir() if p.is_dir()):
+        if d.name not in allowed:
+            out.append(f"{rel}/{d.name}: unexpected skill directory; allowed are "
+                       f"{Path(base).name} and one command per type")
+    for t in TYPES:
+        path = f"{rel}/{t}/SKILL.md"
+        if not (root / path).is_file():
+            out.append(f"{path}: missing (command skill for the {t} type)")
+            continue
+        fm = frontmatter((root / path).read_text(encoding="utf-8", errors="replace"))
+        if not fm.get("description"):
+            out.append(f"{path}: frontmatter has no description")
+        if fm.get("disable-model-invocation") != "true":
+            out.append(f"{path}: command skills need disable-model-invocation: true")
+
+
 def check_pair(root, out):
     en, ru = root / EN, root / RU
     # Style files are language-specific: each version's own is required (check_skill),
@@ -215,6 +236,7 @@ def check_repo(root: Path) -> list:
             out.append(f"{base}: skill directory not found")
     for base in present:
         check_skill(root, base, out)
+        check_commands(root, base, out)
     if len(present) == 2:
         check_pair(root, out)
     check_private_paths(root, out)

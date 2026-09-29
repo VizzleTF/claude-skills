@@ -13,8 +13,8 @@ from pathlib import Path
 from unittest import mock
 
 ROOT = Path(__file__).resolve().parent.parent
-SCRIPT = ROOT / "plugins/technical-writing/skills/technical-writing/scripts/check.py"
-SCRIPT_RU = ROOT / "plugins/technical-writing-ru/skills/technical-writing-ru/scripts/check.py"
+SCRIPT = ROOT / "plugins/technical-writing/skills/write/scripts/check.py"
+SCRIPT_RU = ROOT / "plugins/technical-writing-ru/skills/write/scripts/check.py"
 
 _spec = importlib.util.spec_from_file_location("check", SCRIPT)
 check = importlib.util.module_from_spec(_spec)

@@ -113,7 +113,7 @@ def gen_stdout(p, prompt, extra="", reads=()):
             "Run python3 scripts/check.py doc.md\nCompare with writing-docs here.\n")
     events = [{"type": "system", "subtype": "init"}]
     if p != "none":
-        name = p if p == "writing-docs" else f"{p}:{p}"
+        name = p if p == "writing-docs" else f"{p}:write"
         events.append({"type": "assistant", "message": {"content": [
             {"type": "tool_use", "name": "Skill", "input": {"skill": name}}]}})
     for i, (path, denied) in enumerate(reads):
@@ -194,7 +194,7 @@ class FakeClaude:
         if p == "writing-docs":  # read through the symlink in the temp config
             reads = [(f"{env['CLAUDE_CONFIG_DIR']}/skills/writing-docs/SKILL.md", False)]
         elif p != "none":
-            reads = [(str(ROOT / "plugins" / p / "skills" / p / "types" / "runbook.md"), False),
+            reads = [(str(ROOT / "plugins" / p / "skills" / "write" / "types" / "runbook.md"), False),
                      ("/elsewhere/outside.md", True)]
         return run.CallResult(0, gen_stdout(p, model + input, self.extra, reads))
 
@@ -279,7 +279,7 @@ class GenerationTest(RunnerCase):
         self.assertIn("QUALITY=5", (out / "runbook-disk-full.md").read_text())
         meta = json.loads((out / "runbook-disk-full.json").read_text())
         self.assertEqual(meta["status"], "ok")
-        self.assertEqual(meta["skills"], ["technical-writing:technical-writing"])
+        self.assertEqual(meta["skills"], ["technical-writing:write"])
         self.assertTrue(meta["skill_fired"])
         self.assertEqual(meta["cost_usd"], 0.01)
         self.assertEqual(meta["duration_ms"], 1000)
@@ -294,7 +294,7 @@ class GenerationTest(RunnerCase):
             self.assertEqual(dirs, expect, who)
         out = self.results / "outputs" / "sonnet"
         tw = json.loads((out / "technical-writing" / "runbook-disk-full.json").read_text())
-        self.assertEqual(tw["files_read"], ["skills/technical-writing/types/runbook.md"])
+        self.assertEqual(tw["files_read"], ["skills/write/types/runbook.md"])
         self.assertEqual(tw["read_denied"], 1)
         wd = json.loads((out / "writing-docs" / "runbook-disk-full.json").read_text())
         self.assertEqual(wd["files_read"], ["SKILL.md"])
@@ -381,6 +381,14 @@ class GenerationTest(RunnerCase):
 
 
 NAMES = re.compile(r"(?i)writing-docs|technical-writing|Documentation progress|check\.py|\[\.\.\.\]")
+
+
+class ScrubTest(unittest.TestCase):
+    def test_new_and_old_skill_ids(self):
+        text = ("Keep me.\nSkill technical-writing:write ran.\nSkill technical-writing-ru:write ran.\n"
+                "Old technical-writing:technical-writing id.\nRead skills/write/types/adr.md\n"
+                "Ran /technical-writing:runbook.\nKeep me too.")
+        self.assertEqual(run.scrub(text), "Keep me.\nKeep me too.")
 
 
 class JudgeReportPairsTest(RunnerCase):

@@ -15,12 +15,12 @@ For instructions and style rules in Russian, install `technical-writing-ru@vizzl
 
 ## Example
 
-Ask Claude `Write a runbook for the alert QueueWorkerDown`. You get a runbook: impact, diagnosis, actions with a verification command each, escalation.
+Ask Claude `Write a runbook for the alert QueueWorkerDown`, or run `/technical-writing:runbook alert QueueWorkerDown`. The main command is `/technical-writing:write`; each of the 13 types has its own command. You get a runbook: impact, diagnosis, actions with a verification command each, escalation.
 
 Check a Markdown file with the bundled checker, from the repository root:
 
 ```sh
-python3 plugins/technical-writing/skills/technical-writing/scripts/check.py README.md
+python3 plugins/technical-writing/skills/write/scripts/check.py README.md
 ```
 
 ```

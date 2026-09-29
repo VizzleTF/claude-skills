@@ -274,7 +274,8 @@ def generate(results, model, participant, scenario, baseline, stop):
                              if root and not bad and os.path.realpath(p).startswith(root + os.sep)})
         read_denied = sum(bad for _, bad in out["reads"])
         text = out["text"].replace(str(wd) + "/", "").replace(str(wd), ".").replace(str(Path.home()), "~")
-    fired = participant != "none" and any(s.split(":")[-1] == participant for s in out["skills"])
+    # Plugin skills report as "<plugin>:write" (1.0.0 used "<plugin>:<plugin>"), the baseline bare.
+    fired = participant != "none" and any(s.split(":")[0] == participant for s in out["skills"])
     _write_json(base.with_suffix(".json"), {
         **meta, "status": "ok", "skills": out["skills"], "skill_fired": fired,
         "files_read": files_read, "read_denied": read_denied,
@@ -361,8 +362,9 @@ def failed_calls(results):
     return out
 
 
-TRACE_LINE = re.compile(  # skill ids only: plain "technical writing" is ordinary prose
-    r"(?i)\btechnical-writing(-ru)?\b|\bwriting-docs\b|check\.py|CLAUDE_SKILL_DIR")
+TRACE_LINE = re.compile(  # skill ids only: plain "technical writing" is ordinary prose;
+    # covers "technical-writing[-ru]:write", the old "<plugin>:<plugin>" and type commands.
+    r"(?i)\btechnical-writing(-ru)?\b|\bwriting-docs\b|\bskills/write/|check\.py|CLAUDE_SKILL_DIR")
 PROGRESS_HEAD = re.compile(r"(?i)documentation progress|прогресс документации")
 CHECK_ITEM = re.compile(r"^\s*[-*] \[[ xX]\]")
 

@@ -1,6 +1,6 @@
 {
   "name": "technical-writing-ru",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Пишет и ревьюит документацию по типу документа. Инструкции на русском.",
   "author": {
     "name": "VizzleTF"

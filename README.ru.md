@@ -15,12 +15,12 @@
 
 ## Пример
 
-Попросите Claude: `Напиши ранбук для алерта QueueWorkerDown`. Получится runbook: влияние, диагностика, действия с командой проверки у каждого, эскалация.
+Попросите Claude: `Напиши ранбук для алерта QueueWorkerDown` или запустите `/technical-writing-ru:runbook алерт QueueWorkerDown`. Основная команда — `/technical-writing-ru:write`, у каждого из 13 типов есть своя. Получится runbook: влияние, диагностика, действия с командой проверки у каждого, эскалация.
 
 Проверьте Markdown-файл встроенным скриптом из корня репозитория:
 
 ```sh
-python3 plugins/technical-writing-ru/skills/technical-writing-ru/scripts/check.py --lang ru README.ru.md
+python3 plugins/technical-writing-ru/skills/write/scripts/check.py --lang ru README.ru.md
 ```
 
 ```

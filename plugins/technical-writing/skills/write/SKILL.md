@@ -1,5 +1,5 @@
 ---
-name: technical-writing
+name: write
 description: Writes and reviews technical documentation by document type. Picks the type from the reader and the reader's situation, loads that type's skeleton and voice rules together with an English style guide and a catalog of LLM writing patterns, and works through a copyable checklist that ends with a text-checking script and a cold-reader test. Covers tutorials, how-to guides, runbooks, troubleshooting pages, reference, explanations, READMEs, team conventions, ADRs and design docs, postmortems, changelogs and release notes, docstrings and code comments, CLI help and error messages.
 when_to_use: Use when asked to write, rewrite, review, shorten, restructure or plan documentation or explanatory text, when a README, CHANGELOG, runbook, ADR or onboarding page is created or updated, or when a docstring, --help text or error message needs prose. Triggers include "write docs", "document this", "write a README", "write a guide", "write a runbook", "review this doc", "release notes", "design doc", "postmortem", «документация», «доки», «напиши README», «описание», «методичка», «инструкция», «ранбук», «ADR», «гайд», «отревьюй текст», «постмортем», "write a docstring", "document this function", «напиши docstring», «прокомментируй функцию».
 ---
@@ -120,7 +120,7 @@ Documentation progress:
 
 Run all eight steps in one response without pausing for confirmation. A step that cannot run is skipped as its paragraph says. Say nothing about skipped checks in steps 6 and 8 and offer no additions: the response is the document and its questions. The response ends with the final document, given once: never a draft followed by a final version. After it comes the list of questions, if there is one. With no questions the response ends with the document: no note on assumptions or on what was left out. If the user named a file, write the document there; otherwise deliver it in the chat. Keep the checklist and any mention of this skill or its files out of the document.
 
-**Step 1.** Settle in one sentence: who reads the page, what they are trying to do, and in what state. If the type or a key fact is unclear, ask the one clarifying question the core rules allow and continue with its default.
+**Step 1.** If the arguments start with `type=<type>`, that type is already chosen: skip choosing and go to step 2 with it. Settle in one sentence: who reads the page, what they are trying to do, and in what state. If the type or a key fact is unclear, ask the one clarifying question the core rules allow and continue with its default.
 
 **Step 2.** Before drafting, read `${CLAUDE_SKILL_DIR}/types/<type>.md` with the Read tool, then the style file and the pattern catalog. If the type file cannot be read, say so in one line and do not rebuild the skeleton from memory. Still draft in the same response with the core rules only, and note that the type skeleton was not applied. The Skeleton, Forbidden and Type checklist sections of that file drive steps 3, 4 and 7.
 

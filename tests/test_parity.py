@@ -13,8 +13,8 @@ _spec = importlib.util.spec_from_file_location("parity", ROOT / "tools/parity.py
 parity = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(parity)
 
-EN = "plugins/technical-writing/skills/technical-writing"
-RU = "plugins/technical-writing-ru/skills/technical-writing-ru"
+EN = "plugins/technical-writing/skills/write"
+RU = "plugins/technical-writing-ru/skills/write"
 TYPES = ["tutorial", "how-to", "runbook", "troubleshooting", "reference", "explanation",
          "readme", "conventions", "adr", "postmortem", "changelog", "docstring",
          "cli-help-errors"]
@@ -28,13 +28,16 @@ CHECK_PY = (ROOT / EN / "scripts/check.py").read_text(encoding="utf-8")
 PRIVATE = "/ho" + "me/someone/notes"  # split so this file does not trip the check itself
 
 
+COMMAND = "---\ndescription: Write a doc.\ndisable-model-invocation: true\n---\n\nRun write.\n"
+
+
 def type_file(lang):
     body = "".join(f"## {s}\n\nText.\n\n" for s in SECTIONS[lang])
     return f"# Type\n\n{body}- [ ] One check.\n"
 
 
 def skill_md(lang, when="Use when writing docs. Triggers: «документация», \"write docs\"."):
-    return (f"---\nname: technical-writing\ndescription: Writes docs.\nwhen_to_use: {when}\n---\n\n"
+    return (f"---\nname: write\ndescription: Writes docs.\nwhen_to_use: {when}\n---\n\n"
             "# Technical writing\n\n## Workflow\n\n- [ ] Reader.\n- [ ] Type.\n\n"
             "| a | b |\n|---|---|\n| 1 | 2 |\n\nSee [types/adr.md](types/adr.md).\n")
 
@@ -52,6 +55,9 @@ def build(root):
         for name, text in files.items():
             (d / name).parent.mkdir(parents=True, exist_ok=True)
             (d / name).write_text(text, encoding="utf-8")
+        for t in TYPES:
+            (d.parent / t).mkdir()
+            (d.parent / t / "SKILL.md").write_text(COMMAND, encoding="utf-8")
 
 
 class Parity(unittest.TestCase):
@@ -75,6 +81,15 @@ class Parity(unittest.TestCase):
 
     def test_good_tree_is_clean(self):
         self.assertEqual(parity.check_repo(self.root), [])
+
+    def test_command_skills(self):
+        cmds = EN.rsplit("/", 1)[0]
+        (self.root / cmds / "adr/SKILL.md").unlink()
+        self.write(f"{cmds}/runbook/SKILL.md", COMMAND.replace("true", "false"))
+        self.write(f"{cmds}/extra/SKILL.md", COMMAND)
+        self.assertReports(f"{cmds}/adr/SKILL.md", "missing")
+        self.assertReports(f"{cmds}/runbook/SKILL.md", "disable-model-invocation")
+        self.assertReports(f"{cmds}/extra", "unexpected")
 
     def test_missing_skill_dirs(self):
         shutil.rmtree(self.root / "plugins")

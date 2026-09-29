@@ -11,7 +11,7 @@ Run from the repo root. Python 3, stdlib only.
 python3 -m unittest discover -s tests          # all tests, offline
 python3 tools/parity.py                         # structure + EN/RU parity; prints "parity: ok"
 claude plugin validate .                        # marketplace + plugin manifests
-python3 plugins/technical-writing/skills/technical-writing/scripts/check.py plugins/technical-writing/skills/technical-writing/   # text checks (dir or files)
+python3 plugins/technical-writing/skills/write/scripts/check.py plugins/technical-writing/skills/write/   # text checks (dir or files)
 python3 evals/run.py --dry-run                  # size of an eval run, calls nothing
 python3 evals/run.py                            # full A/B run: generation, judge, report (costs money/quota)
 python3 evals/run.py --reveal --date YYYY-MM-DD # after the owner fills verdict.md
@@ -21,14 +21,15 @@ python3 evals/run.py --reveal --date YYYY-MM-DD # after the owner fills verdict.
 
 ```
 .claude-plugin/marketplace.json     lists both plugins
-plugins/technical-writing/          EN plugin (.claude-plugin/plugin.json + skills/technical-writing/)
-plugins/technical-writing-ru/       RU plugin, same layout (skills/technical-writing-ru/)
-  skills/<name>/SKILL.md            entry: glossary, type choice, routing, core rules, workflow
-  skills/<name>/types/              13 document types, one file each
-  skills/<name>/style/              english.md | russian.md, llm-patterns.md
-  skills/<name>/process/            doc-set.md, review.md
-  skills/<name>/scripts/check.py    text checker (byte-identical in both plugins)
-  skills/<name>/sources.md          where each rule comes from
+plugins/technical-writing/          EN plugin (.claude-plugin/plugin.json + skills/)
+plugins/technical-writing-ru/       RU plugin, same layout
+  skills/write/SKILL.md             main skill /<plugin>:write: glossary, type choice, routing, core rules, workflow
+  skills/<type>/SKILL.md            13 user-only commands /<plugin>:<type>; run write with `type=<type> $ARGUMENTS`
+  skills/write/types/               13 document types, one file each
+  skills/write/style/               english.md | russian.md, llm-patterns.md
+  skills/write/process/             doc-set.md, review.md
+  skills/write/scripts/check.py     text checker (byte-identical in both plugins)
+  skills/write/sources.md           where each rule comes from
 tools/parity.py                     repo-wide structure/parity/secret checks
 evals/                              run.py, rubric.md, scenarios/, fixtures/, results/<date>/
 tests/                              test_check.py, test_parity.py, test_run.py
@@ -37,7 +38,7 @@ briefs/technical-writing.md         original brief; docs/writing-docs-fixes.md m
 
 ## Key files
 
-- `plugins/technical-writing/skills/technical-writing/scripts/check.py` — CLI `check.py [--lang en|ru|auto] [--max-words N] [--format text|json] [--check-urls] [--strict] [--verbose] PATH...`, exit 0/1/2; API `check_text(text, lang, path="<text>", *, max_words=None, check_urls=False) -> list[Finding]`, `Finding = (line, level, rule, message)`.
+- `plugins/technical-writing/skills/write/scripts/check.py` — CLI `check.py [--lang en|ru|auto] [--max-words N] [--format text|json] [--check-urls] [--strict] [--verbose] PATH...`, exit 0/1/2; API `check_text(text, lang, path="<text>", *, max_words=None, check_urls=False) -> list[Finding]`, `Finding = (line, level, rule, message)`.
 - check.py rules: errors `broken-link`, `ru-quotes`, `ru-dash`; warnings `sentence-length`, `stop-word`, `llm-marker`, `dash-density`, `dated-phrase`, `ru-yo`, `ru-nbsp`; `vale` if Vale is on PATH. Text output `path:line: level rule: message` + summary `N error(s), M warning(s) in K file(s)`.
 - `tools/parity.py` — no args, exit 0/1, lines `path: message`, last line `parity: ok` or `parity: N problem(s)`; API `check_repo(root) -> list[str]`. Limits live as constants at the top (`SKILL_MD_MAX_LINES`, `FRONTMATTER_MAX_CHARS`, `LONG_FILE_LINES`, `SECTIONS`).
 - `evals/run.py` — API `load_scenarios(dir, pattern="*") -> list[Scenario]` (raises `ValueError` if `id` ≠ file name) and `call_claude(argv, cwd, env, input=None) -> CallResult`, the only place that spawns `claude`; tests patch it plus `EVALS_DIR`, `CREDENTIALS`, `sleep`, `RATE_PAUSES`, `CRIT_KEYS`.
@@ -50,7 +51,7 @@ briefs/technical-writing.md         original brief; docs/writing-docs-fixes.md m
 - Two skill editions with identical file paths; only the style file differs (`style/english.md` ↔ `style/russian.md`). Language comes from the text, not file names.
 - `SKILL.md` routes to exactly one `types/<type>.md` plus the style file and `style/llm-patterns.md`; rule files never point to each other, only SKILL.md routes.
 - `scripts/check.py` exists in both plugins and must stay byte-identical; `parity.py` imports the EN copy to share fence parsing.
-- `parity.py` checks: required layout, file-set parity, byte-identical `.py`, per-file counts of h1–h6 / `- [ ]` items / table rows (EN vs RU), type H2 order, `## Contents` on long files, SKILL.md limits and frontmatter, no skill-file links in `types/` `style/` `process/`, and secrets/private paths in every tracked file outside `.autopilot/`.
+- `parity.py` checks: required layout, file-set parity, byte-identical `.py`, per-file counts of h1–h6 / `- [ ]` items / table rows (EN vs RU), type H2 order, `## Contents` on long files, `write/SKILL.md` limits and frontmatter, the 13 type commands (`disable-model-invocation: true`, no other skill dirs), no skill-file links in `types/` `style/` `process/`, and secrets/private paths in every tracked file outside `.autopilot/`.
 - `evals/run.py` flow: load scenarios → generate each scenario × model × participant (`technical-writing`, `technical-writing-ru`, `writing-docs` baseline, `none`) → scrub skill traces → opus judge scores labels A–D twice with order reversed → `report.md` + blind pairs + `verdict.md`.
 - Isolation: every `claude -p` call gets a fresh temp `CLAUDE_CONFIG_DIR` holding only symlinks (credentials, and `skills/writing-docs` for the baseline) and a temp workdir with the fixtures; both removed afterwards. Plugins load via `--plugin-dir`.
 - Results: `evals/results/<date>/{outputs/<model>/<participant>/<id>.{md,json}, judgments/<model>/<id>.json, pairs/<id>.md, pairs/key.json, report.md, verdict.md}`; reruns with the same `--date` resume. Meant to be committed; home path written as `~`.
@@ -63,7 +64,7 @@ briefs/technical-writing.md         original brief; docs/writing-docs-fixes.md m
 - Every `types/*.md` has seven H2 in this order — EN: When to use it and when not, Skeleton, Voice and verbs, Length, Differences from the core rules, Forbidden, Type checklist; RU: Когда это он и когда нет, Каркас, Голос и глаголы, Объём, Отличия от общих правил, Запрещено, Чек-лист типа.
 - Files in `types/`, `style/`, `process/` must not link to or name other skill files.
 - Any skill `.md` over 100 lines starts with `## Contents` (RU: `## Содержание`).
-- SKILL.md ≤ 170 lines (kept at ~150); frontmatter `description` + `when_to_use` ≤ 1536 chars; triggers go only in `when_to_use` (needs Cyrillic and Latin), never in `description`.
+- `write/SKILL.md` ≤ 170 lines (kept at ~150); frontmatter `description` + `when_to_use` ≤ 1536 chars; triggers go only in `when_to_use` (needs Cyrillic and Latin), never in `description`.
 - Record rule: in a record (ADR, postmortem, released changelog entry) only typos, broken links, the status mark (`[YANKED]`, `superseded by`) and the link to its replacement change; new facts go in a new record.
 - RU texts: type names in Latin as file names; English quotes stay in original inside «ёлочки», nested „лапки“; «запись» means record only.
 - Skill texts obey their own rules: no aphorisms, no "not X but Y", no rule of three, sparse dashes, one term per concept. Word examples go in inline code so check.py skips them.
@@ -83,6 +84,7 @@ briefs/technical-writing.md         original brief; docs/writing-docs-fixes.md m
 
 ## Gotchas
 
+- Plugin skills are always `/<plugin>:<skill>`, the skill name is the directory name; `${CLAUDE_SKILL_DIR}` is substituted only in the invoked skill's SKILL.md, not in files read with Read.
 - Prompts go to `claude` via stdin: a single argv element is capped at 128 KiB on Linux; fixture-heavy prompts hit it.
 - `claude --bare` needs an API key (login is not used), so isolation uses a temp `CLAUDE_CONFIG_DIR` instead.
 - parity treats a bare skill file name (e.g. `review.md`) in `types/` `style/` `process/` as a link; rephrase instead of naming the file.
