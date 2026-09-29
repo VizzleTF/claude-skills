@@ -1,7 +1,7 @@
 window.STATE =
 {
   "slug": "technical-writing-skills",
-  "dir": "2026-09-28-technical-writing-skills--wip",
+  "dir": "2026-09-28-technical-writing-skills",
   "title": "Скиллы technical-writing и technical-writing-ru",
   "mode": "semi",
   "depth": "deep",
@@ -47,8 +47,8 @@ window.STATE =
   "memoryFile": "CLAUDE.md",
   "skillDir": "/mnt/c/Users/IVAN/.claude/skills/autopilot",
   "startedAt": "2026-09-28T16:21:22+03:00",
-  "updatedAt": "2026-09-29T10:57:02+03:00",
-  "finishedAt": null,
+  "updatedAt": "2026-09-29T11:26:39+03:00",
+  "finishedAt": "2026-09-29T11:26:39+03:00",
   "stages": [
     {
       "id": "preflight",
@@ -96,14 +96,15 @@ window.STATE =
     },
     {
       "id": "final",
-      "status": "active",
-      "startedAt": "2026-09-28T17:18:02+03:00"
+      "status": "done",
+      "startedAt": "2026-09-28T17:18:02+03:00",
+      "finishedAt": "2026-09-29T11:26:39+03:00"
     }
   ],
   "requirements": {
-    "total": 69,
-    "done": 0,
-    "inTicket": 66,
+    "total": 70,
+    "done": 69,
+    "inTicket": 0,
     "inSpec": 0,
     "placeholder": 0,
     "deferred": 1,
@@ -547,14 +548,15 @@ window.STATE =
       "zone": [
         "evals/results/"
       ],
-      "status": "in-progress",
+      "status": "done",
       "startedAt": "2026-09-28T18:00:57+03:00",
       "retries": 0,
       "repairs": 1,
       "handoffs": 0,
       "repairFindings": [
         "квота сессии: 12 генераций Opus и все 41 оценка упали; раннер не распознал «session limit»; tw на Sonnet медиана 667 слов против 384 у writing-docs"
-      ]
+      ],
+      "finishedAt": "2026-09-29T11:26:39+03:00"
     },
     {
       "id": "C1",
@@ -621,7 +623,7 @@ window.STATE =
   ],
   "singlePass": null,
   "tests": {
-    "passed": 92,
+    "passed": 96,
     "failed": 0
   },
   "debt": {

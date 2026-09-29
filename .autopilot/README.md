@@ -19,4 +19,4 @@
 
 | Начат | Папка | Статус | Итог |
 |---|---|---|---|
-| 2026-09-28 | `2026-09-28-technical-writing-skills--wip` | в работе | — |
+| 2026-09-28 | `2026-09-28-technical-writing-skills` | сдан | Скиллы technical-writing и technical-writing-ru, проверки, раннер A/B; документы короче writing-docs; слепые пары ждут вердикта владельца |
