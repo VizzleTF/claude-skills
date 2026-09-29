@@ -21,8 +21,8 @@ Uniform entries. Every entry has the same fields in the same order:
 | Name | The exact name as typed: `timeout`, `--dry-run`, `GET /users`. |
 | Type | Data type or kind of value. |
 | Default | The value when nothing is set, or "required". |
-| Limits | Allowed range, units, formats. |
-| Example | A working value or call. |
+| Limits | Allowed range, units, formats, when there are any. |
+| Example | A working value or call, when type and limits do not show the format. |
 
 Add a description sentence after the name when the name does not say enough. Order entries the way the reader searches: alphabetically, or in the order of the file or the API.
 
@@ -34,7 +34,7 @@ Indicative, third person: "Sets the connection timeout", "Returns the list of us
 
 ## Length
 
-One entry per item, every entry as short as its fields: a table row or a few lines, with no prose between entries. The length of the page follows the size of the system. This is a rule of thumb.
+One entry per item, every entry as short as its fields, with no prose between entries. Entries that fit in one row go in one table, a column per field, with no heading per entry. A column that is empty for most entries is dropped, and its few values go into the description. An entry gets its own heading only when it needs more than a row. A fact that holds for every entry, such as the version or what happens on an invalid value, is stated once under the title. The length of the page follows the size of the system. This is a rule of thumb.
 
 ## Differences from the core rules
 

@@ -30,7 +30,7 @@ Show the expected result after every step that produces one: "The output should 
 
 ## Length
 
-A tutorial is as long as its one path. Aim for a session of 15 to 30 minutes and fewer than 15 steps, with one or two sentences between commands; this is a rule of thumb. A longer path becomes a series of tutorials, each with its own visible result.
+A tutorial is as long as its one path. Aim for a session of 15 to 30 minutes and fewer than 15 steps; this is a rule of thumb. Outside its command and output, a step has at most two sentences: the action and what to notice. No sentence repeats what the heading or the command already says. Explain only where a step would look arbitrary. When the last output is the visible result, one sentence after it says what it proves: no recap of what the reader did. A longer path becomes a series of tutorials, each with its own visible result.
 
 ## Differences from the core rules
 
@@ -38,7 +38,7 @@ A tutorial is as long as its one path. Aim for a session of 15 to 30 minutes and
 - **"We" in place of "you".** The tutorial speaks as a teacher working beside the reader.
 - **Short explanations stay.** Diátaxis says "Ruthlessly minimise explanation". This type keeps a minimum: one or two sentences where a step would otherwise look arbitrary, with a link to the full explanation. A tutorial with zero explanation leaves the reader copying commands without learning.
 - **Repetition is allowed.** Restate prerequisites and context on the page so the reader never leaves the path. Normative facts (a default value, a limit) stay in the reference; link to them.
-- **Error recovery.** Following Carroll's minimalism, show what a common mistake looks like at the step where it happens and how to get back on the path.
+- **Error recovery.** Following Carroll's minimalism, show what a common mistake looks like at the step where it happens and how to get back on the path. Do this only for a mistake and its output that the user gave; otherwise leave it out and ask nothing about it.
 
 ## Forbidden
 
@@ -55,6 +55,6 @@ A tutorial is as long as its one path. Aim for a session of 15 to 30 minutes and
 - [ ] One path, no branches.
 - [ ] Each step has one action and its expected output.
 - [ ] Every explanation is one or two sentences and links to more.
-- [ ] Common mistakes have a way back.
+- [ ] Each mistake the user described has a way back.
 - [ ] The end shows a visible result and links to what next.
 - [ ] A cold reader finished the tutorial without help.

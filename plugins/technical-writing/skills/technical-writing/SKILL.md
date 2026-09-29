@@ -76,7 +76,7 @@ This version holds English style rules. If the document is in another language, 
 
 **Create.** Follow the workflow checklist below from step 1.
 
-**Review.** Identify the type of the existing text, load its type file, the style file and the pattern catalog, then follow [process/review.md](process/review.md). Report findings; rewrite only when asked. A record under review stays as written: propose a new record that supersedes it.
+**Review.** Identify the type of the existing text, load its type file, the style file and the pattern catalog, then follow [process/review.md](process/review.md). The report is the document of this branch, also when the request asks for the final or complete document. Rewrite only when the user asks to rewrite, rework or fix the text. Then give the reworked document within its type's budget and at most three lines on what changed, with no findings list. A record under review stays as written: propose a new record that supersedes it.
 
 **Doc set.** For "document this project", a request that needs several types, or a docs audit, follow [process/doc-set.md](process/doc-set.md). Then run the create branch for each page in priority order.
 

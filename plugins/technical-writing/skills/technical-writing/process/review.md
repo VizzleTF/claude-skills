@@ -64,11 +64,9 @@ An ADR, a postmortem or a published changelog entry records a moment. The review
 
 ## Report format
 
-Report findings as a table, largest problems first. Each row names one problem.
+Report only findings that are wrong (a fact, a command, a link) or that stop the reader from finding or doing what they came for. Leave out matters of taste and minor style. Merge findings with one cause into one line, for example all filler phrases. Give a numbered list ordered by impact on the reader, at most ten items, one line each: where, what, fix.
 
-| Where | What | How to fix |
-|---|---|---|
-| "Install" section, step 3 | The command uses `--force`, removed in version 2 of the tool | Replace with `tool install --replace <PACKAGE>` |
-| Whole page | Steps and design rationale are mixed | Split into a how-to and an explanation; link them |
+1. "Install" section, step 3: the command uses `--force`, removed in version 2 of the tool. Replace with `tool install --replace <PACKAGE>`.
+2. Whole page: steps and design rationale are mixed. Split into a how-to and an explanation; link them.
 
-"Where" is a section name, a heading or a quoted phrase that the author can search for. "What" states the problem as a fact. "How to fix" gives the replacement text or the concrete action. After the table, give a one-line verdict: ready, ready after the listed fixes, or needs restructuring first. Rewrite the page only if the user asks.
+"Where" is a section name, a heading or a quoted phrase that the author can search for. "What" states the problem as a fact; a fact you could not check is marked "not verified" in its line. The fix gives the replacement text or the concrete action. Do not restate the document, and name its reader or type only when the type is a finding. Say nothing about checks that could not run. After the list, give a one-line verdict: ready, ready after the listed fixes, or needs restructuring first. Rewrite the page only if the user asks.
