@@ -72,21 +72,21 @@ for (const surface of ['terminal', 'desktop'] as const) {
     const ui = await open($, surface)
     expect(await lines(ui)).toEqual(DEFAULT_IDS)
 
-    await ui.press({ key: 'w-0-0' })
+    await ui.press({ key: 'w-0-2' })
     await ui.press({ key: 'right' })
-    expect((await lines(ui))[0]!.slice(0, 2)).toEqual(['cache', 'context'])
+    expect((await lines(ui))[0]!.slice(0, 4)).toEqual(['project', 'goal', 'cache', 'context'])
     await ui.press({ key: 'down' })
-    expect(await lines(ui)).toEqual([['cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'compact', 'actions'], ['context']])
+    expect(await lines(ui)).toEqual([['project', 'goal', 'cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'compact', 'actions'], ['context']])
 
     await ui.select({ key: 'add', value: 'cwd' })
-    expect(await lines(ui)).toEqual([['cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'compact', 'actions'], ['context', 'cwd']])
+    expect(await lines(ui)).toEqual([['project', 'goal', 'cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'compact', 'actions'], ['context', 'cwd']])
     await ui.select({ key: 'opt-style', value: 'full' })
     expect((await ui.find({ key: 'opt-style' }))?.props.value).toBe('full')
     await ui.press({ key: 'toggle' })
     expect((await ui.find({ key: 'w-1-1' }))?.text).toContain('off')
 
     await ui.press({ key: 'remove' })
-    expect(await lines(ui)).toEqual([['cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'compact', 'actions'], ['context']])
+    expect(await lines(ui)).toEqual([['project', 'goal', 'cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'compact', 'actions'], ['context']])
 
     await ui.select({ key: 'preset', value: 'full' })
     expect(await lines(ui)).toEqual(ids(PRESETS.full!))
@@ -103,7 +103,7 @@ for (const surface of ['terminal', 'desktop'] as const) {
     expect((await ui.find({ key: 'err-alerts-context' }))?.text).toMatch(/0 to 100/)
     expect((await ui.find({ key: 'alerts-context' }))?.props.value).toBe('80')
 
-    await ui.press({ key: 'w-0-0' })
+    await ui.press({ key: 'w-0-2' })
     await ui.input({ key: 'priority', text: 'lots' })
     expect((await ui.find({ key: 'err-priority' }))?.text).toMatch(/whole number/)
     await ui.input({ key: 'opt-barWidth', text: '99' })

@@ -145,3 +145,15 @@ export function reduceModelSwitch(s: TidemarkSnapshot, model: string, at: number
   if (!s.model || baseModel(s.model) === baseModel(model)) return { model }
   return { model, effort: null, cache: s.cache ? { at, warm: false } : null, cacheTtl: null, breakdown: null, ctx: null }
 }
+
+const GOALS = 50
+
+// Where the project note lives: the session directory's `.claude/tidemark-project.txt`.
+export const notePath = (cwd: string) => `${cwd.replace(/\/$/, '')}/.claude/tidemark-project.txt`
+
+// The goals kept per session id, this one's set (or dropped when null), the last GOALS sessions kept.
+export function withGoal(goals: Record<string, string> | undefined, id: string, text: string | null): Record<string, string> {
+  const { [id]: _, ...rest } = goals ?? {}
+  const next = text === null ? rest : { ...rest, [id]: text }
+  return Object.fromEntries(Object.entries(next).slice(-GOALS))
+}

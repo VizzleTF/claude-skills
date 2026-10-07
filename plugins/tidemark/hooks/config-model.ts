@@ -63,7 +63,7 @@ const items = (...ids: WidgetId[]): WidgetItem[] => ids.map(widget => ({ widget 
 
 export const DEFAULT_CONFIG: Config = {
   version: 1,
-  lines: [items('context', 'cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'compact', 'actions')],
+  lines: [items('project', 'goal', 'context', 'cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'compact', 'actions')],
   style: { separator: 'pipe', icons: 'text' },
   pane: { sections: SECTION_IDS.map(id => ({ id, enabled: true })) },
   alerts: { enabled: false, context: 80, quota5h: 90, quota7d: 90, cacheSeconds: 60 },

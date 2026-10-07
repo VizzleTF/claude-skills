@@ -263,9 +263,11 @@ test('effort support: a level asked with /effort and sent lower is stored as ski
   expect(writes).toContainEqual({ version: '2.1.292', skip: { [MODEL]: ['max'] } })
 })
 
-test('goal and project note: set by command, the note read at start and written to disk, both kept by /clear', async ($, on) => {
+test('goal and project note: by command or the field it opens; the note from disk, the goal per session id', async ($, on) => {
   const NOTE = '/u/dev/proj/.claude/tidemark-project.txt'
-  const disk = new Map([[NOTE, '  ship the band  \n']])
+  const disk = new Map([[NOTE, '  tidemark  \n']])
+  const opened: string[] = []
+  const closed: string[] = []
   on('session.cwd', () => ({ value: '/u/dev/proj' }))
   on('fs.read', ($, e) => {
     if (!disk.has(e.path)) throw new Error('ENOENT')
@@ -275,24 +277,49 @@ test('goal and project note: set by command, the note read at start and written 
     disk.set(e.path, e.text)
     return { value: undefined }
   })
-  const s = await start($, on, world())
-  expect(await s.field('project')).toBe('ship the band')
-  expect(await s.field('goal')).toBe(null)
-
-  expect(await $.command.run({ command: 'tidemark-goal', args: ' fix the cache ' })).toEqual({})
+  on('ui.open', ($, e) => { opened.push(e.id); return { value: { isPlaced: true } } })
+  on('ui.close', ($, e) => { closed.push(e.id); return { value: undefined } })
+  const w = world()
+  const s = await start($, on, w, { goals: { s1: 'fix the cache', old: 'gone' } })
+  await s.clock.advance(100)
+  expect(await s.field('project')).toBe('tidemark')
   expect(await s.field('goal')).toBe('fix the cache')
-  await $.command.run({ command: 'tidemark-project', args: 'tidemark v2' })
+
+  // With text: set at once, nothing opens.
+  expect(await $.command.run({ command: 'tidemark-project', args: 'tidemark v2' })).toEqual({})
   expect(await s.field('project')).toBe('tidemark v2')
   expect(disk.get(NOTE)).toBe('tidemark v2')
+  expect(opened).toEqual([])
 
+  // Without text: a field holding the current goal; Enter sets it, kept under the session id, and closes.
+  await $.command.run({ command: 'tidemark-goal', args: '' })
+  expect(opened).toEqual(['tidemark-goal'])
+  const pane = await $.ui.mount({
+    plugin: 'tidemark', surface: 'terminal', component: 'Pane', requestId: 'tidemark-goal',
+    props: { title: 'tidemark goal', isFocused: true, bodyColumns: 80, placement: 'inline', scroll: { offset: 0, bodyRows: 3 }, view: {} },
+  })
+  expect((await pane.find({ key: 'text' }))?.props.value).toBe('fix the cache')
+  await pane.input({ key: 'text', text: ' ship 0.1.9 ' })
+  expect(await s.field('goal')).toBe('ship 0.1.9')
+  expect(closed).toEqual(['tidemark-goal'])
+  expect(s.writes).toContainEqual({ old: 'gone', s1: 'ship 0.1.9' })
+
+  // /clear keeps both; another session id brings its own goal.
   await $.classic.SessionStart({ source: 'clear' })
-  expect(await s.field('goal')).toBe('fix the cache')
+  expect(await s.field('goal')).toBe('ship 0.1.9')
+  expect(await s.field('project')).toBe('tidemark v2')
+  w.id = 's2'
+  await measure($, 10_000)
+  expect(await s.field('goal')).toBe(null)
   expect(await s.field('project')).toBe('tidemark v2')
 
-  // No text clears; the note's file is emptied, not left stale.
-  await $.command.run({ command: 'tidemark-goal', args: '' })
-  await $.command.run({ command: 'tidemark-project', args: '  ' })
-  expect(await s.field('goal')).toBe(null)
+  // An empty field clears; the note's file is emptied, not left stale.
+  await $.command.run({ command: 'tidemark-project', args: '' })
+  const note = await $.ui.mount({
+    plugin: 'tidemark', surface: 'terminal', component: 'Pane', requestId: 'tidemark-project',
+    props: { title: 'tidemark project', isFocused: true, bodyColumns: 80, placement: 'inline', scroll: { offset: 0, bodyRows: 3 }, view: {} },
+  })
+  await note.input({ key: 'text', text: '  ' })
   expect(await s.field('project')).toBe(null)
   expect(disk.get(NOTE)).toBe('')
 })

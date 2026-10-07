@@ -11,7 +11,7 @@ import { LONG_TTL_MS as CACHE_TTL_MS, SHORT_TTL_MS, baseModel, defaultTtl, learn
 import type { EffortSupport } from './model-utils'
 import { EMPTY_PROBES, applyProbeResult, planProbes } from './probes'
 import type { ProbeOutcome, ProbeRequest } from './probes'
-import { addAgentStep, pick, reduceCompact, reduceContext, reduceModelSwitch, reduceResumed, reduceStep, themeOf } from './snapshot-reducers'
+import { addAgentStep, notePath, pick, reduceCompact, reduceContext, reduceModelSwitch, reduceResumed, reduceStep, themeOf } from './snapshot-reducers'
 
 export type Snapshot = TidemarkSnapshot
 
@@ -21,9 +21,8 @@ const TICK_MS = 30_000
 const STORE_LIMITS = 'limits'
 // What requests showed of each model's effort levels (EffortSupport); the band reads it under the same key.
 export const STORE_EFFORTS = 'effortSupport'
-// Commands that set the band's goal (this session) and project note (kept in the session directory).
-export const GOAL = 'tidemark-goal'
-export const PROJECT = 'tidemark-project'
+// Each session's goal by session id (withGoal); the notes module writes it under the same key.
+export const STORE_GOALS = 'goals'
 
 const NO_STATS: TidemarkCacheStats = { input: 0, output: 0, read: 0, write: 0, last: 0 }
 export const EMPTY_SNAPSHOT: Snapshot = {
@@ -77,6 +76,10 @@ async function syncSession($: EngineInterface): Promise<boolean> {
   await set($, () => ({ sessionId: id }))
   const changed = previous !== null && previous !== id
   if (changed) await resetConversation($, await $.clock.now())
+  if (previous !== id) {
+    const goals = await $.store.get(STORE_GOALS).catch(() => undefined) as Record<string, string> | undefined
+    await set($, () => ({ goal: goals?.[id] ?? null }))
+  }
   return changed
 }
 
@@ -251,12 +254,6 @@ async function alert($: EngineInterface) {
   for (const text of toasts) $.ui.toast(text)
 }
 
-// The project note, kept in the session directory so it outlives the session.
-async function projectFile($: EngineInterface): Promise<string | null> {
-  const cwd = await $.session.cwd().catch(() => null)
-  return cwd ? `${cwd.replace(/\/$/, '')}/.claude/tidemark-project.txt` : null
-}
-
 async function snapshotStart($: EngineInterface): Promise<void> {
     tick?.cancel()
     tick = $.clock.every(TICK_MS, async () => {
@@ -270,8 +267,8 @@ async function snapshotStart($: EngineInterface): Promise<void> {
       const now = await $.clock.now()
       await set($, () => ({ startedAt: now }))
     }
-    const file = await projectFile($)
-    const note = file ? (await $.fs.read(file).catch(() => '')).trim() : ''
+    const cwd = await $.session.cwd().catch(() => null)
+    const note = cwd ? (await $.fs.read(notePath(cwd)).catch(() => '')).trim() : ''
     if (note) await set($, () => ({ project: note }))
     await readTheme($)
     await readActiveAgents($)
@@ -408,19 +405,6 @@ export function registerSnapshot(on: On, commands: { name: string; description: 
     if (e.command === 'theme') await readTheme($)
     refreshSoon($)
     return result
-  })
-
-  // No text: a command's text is a transcript row the model reads too. Blank args clear the note.
-  on('command.run', { command: [GOAL, PROJECT] }, async ($, e) => {
-    const text = e.args.trim() || null
-    if (e.command === GOAL) {
-      await set($, () => ({ goal: text }))
-      return {}
-    }
-    await set($, () => ({ project: text }))
-    const file = await projectFile($)
-    if (file) await $.fs.write(file, text ?? '').catch(logTo($, 'project note'))
-    return {}
   })
 
   on('config.set', { key: ['theme', 'autoCompact'] }, async ($, e, next) => {

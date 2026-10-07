@@ -2,6 +2,14 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.9] - 2026-10-07
+
+### Changed
+
+- `/tidemark-goal` and `/tidemark-project` without text open a field with the current value: Enter sets it, an empty field clears it.
+- The goal is kept per session id in the plugin store, so a restart and `--resume` keep it.
+- `project` and `goal` are in the default line; each stays hidden until set.
+
 ## [0.1.8] - 2026-10-07
 
 ### Added
@@ -86,6 +94,7 @@ All notable changes to the `tidemark` plugin. The format follows [Keep a Changel
 - A `/compact` button under the band once the context fills `compact.at` percent of the window (70 by default).
 - Threshold toasts for context, quota and the prompt cache, off by default.
 
+[0.1.9]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.9
 [0.1.8]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.8
 [0.1.7]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.7
 [0.1.6]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.6

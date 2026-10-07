@@ -13,7 +13,7 @@
 - Limits
 - Troubleshooting
 
-This reference covers tidemark 0.1.8. The config is read from two JSON files, the project file over the global one. A top-level key in the project file replaces the same key of the global file whole: to add one widget in a project, repeat the whole `lines` in the project file. Until a file exists, the default config applies; `Save` in the editor creates the file and its directories. A hand edit is picked up on the next prompt or within 30 seconds. An unknown key, widget or option and an invalid value are dropped, and the editor shows a warning. A file that does not parse is skipped: the band shows a dim `⚠ config`, and the editor shows the path and the error.
+This reference covers tidemark 0.1.9. The config is read from two JSON files, the project file over the global one. A top-level key in the project file replaces the same key of the global file whole: to add one widget in a project, repeat the whole `lines` in the project file. Until a file exists, the default config applies; `Save` in the editor creates the file and its directories. A hand edit is picked up on the next prompt or within 30 seconds. An unknown key, widget or option and an invalid value are dropped, and the editor shows a warning. A file that does not parse is skipped: the band shows a dim `⚠ config`, and the editor shows the path and the error.
 
 ## Commands
 
@@ -21,8 +21,8 @@ This reference covers tidemark 0.1.8. The config is read from two JSON files, th
 |---|---|
 | `/tidemark` | The details pane. Section `context`: the auto-compaction threshold, `/context` categories, the five heaviest MCP servers. Section `cacheQuota`: hit rate, tokens, quota exhaustion forecast. Section `agents`: the session and the last 8 subagents |
 | `/tidemark-config` | The editor: preview, lines, widgets and their options, style, pane sections, alerts, the compact button, presets. Edits go to a draft. The `save to` field picks the file: `global` or `project`. `Save` writes the draft to that file and applies it, `Revert` drops it |
-| `/tidemark-goal <text>` | Nothing; sets the goal the `goal` widget shows for this session. `/clear` keeps it, no text clears it |
-| `/tidemark-project <text>` | Nothing; sets the note the `project` widget shows and keeps it in `.claude/tidemark-project.txt` in the session's directory, read at the next start. No text clears it |
+| `/tidemark-goal [text]` | With text, nothing: sets the goal the `goal` widget shows. Without, a field holding the current goal: Enter sets it, an empty field clears it, Esc closes. The goal is kept per session: `/clear`, a restart and `--resume` keep it |
+| `/tidemark-project [text]` | The same for the project name the `project` widget shows. It is kept in `.claude/tidemark-project.txt` in the session's directory, so every session there shows it |
 
 ## Config files
 
@@ -190,7 +190,7 @@ A preset is picked in the editor, changes the draft and is written on `Save`.
 |---|---|
 | `minimal` | context, quota5h |
 | `classic` | context, cache, quota5h, quota7d |
-| `default` | context, cache, quota5h, quota7d, model, git, flex, compact, actions |
+| `default` | project, goal, context, cache, quota5h, quota7d, model, git, flex, compact, actions |
 | `full` | 1: project, goal, context, cache, quota5h, quota7d, cost; 2: model, cwd, git, sessionTime, compactions, tokenSpeed, agents |
 | `powerline` | `default` with `separator: "powerline"` and `icons: "nerd"` |
 
