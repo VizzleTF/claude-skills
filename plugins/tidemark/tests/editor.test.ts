@@ -76,17 +76,17 @@ for (const surface of ['terminal', 'desktop'] as const) {
     await ui.press({ key: 'right' })
     expect((await lines(ui))[0]!.slice(0, 2)).toEqual(['cache', 'context'])
     await ui.press({ key: 'down' })
-    expect(await lines(ui)).toEqual([['cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'actions'], ['context']])
+    expect(await lines(ui)).toEqual([['cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'compact', 'actions'], ['context']])
 
     await ui.select({ key: 'add', value: 'cwd' })
-    expect(await lines(ui)).toEqual([['cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'actions'], ['context', 'cwd']])
+    expect(await lines(ui)).toEqual([['cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'compact', 'actions'], ['context', 'cwd']])
     await ui.select({ key: 'opt-style', value: 'full' })
     expect((await ui.find({ key: 'opt-style' }))?.props.value).toBe('full')
     await ui.press({ key: 'toggle' })
     expect((await ui.find({ key: 'w-1-1' }))?.text).toContain('off')
 
     await ui.press({ key: 'remove' })
-    expect(await lines(ui)).toEqual([['cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'actions'], ['context']])
+    expect(await lines(ui)).toEqual([['cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'compact', 'actions'], ['context']])
 
     await ui.select({ key: 'preset', value: 'full' })
     expect(await lines(ui)).toEqual(ids(PRESETS.full!))
@@ -169,6 +169,23 @@ for (const surface of ['terminal', 'desktop'] as const) {
     expect(project.alerts.context).toBe(70)
     expect(JSON.parse(disk.get(GLOBAL)!)).toEqual(global)
     expect((await ui.find({ key: 'alerts-context' }))?.props.value).toBe('70')
+  })
+
+  test(`a hand edit since the session loaded the file survives Save; with a draft, Save asks twice (${surface})`, async ($, on) => {
+    const { disk } = host(on, { [GLOBAL]: JSON.stringify({ version: 1, lines: [['context']] }) })
+    const ui = await open($, surface)
+    // Edited by hand after the session loaded it, before any timer or prompt picked the edit up.
+    disk.set(GLOBAL, JSON.stringify({ version: 1, lines: [['context', 'actions']] }))
+    await ui.press({ key: 'save' })
+    expect(ids(JSON.parse(disk.get(GLOBAL)!))).toEqual([['context', 'actions']])
+
+    disk.set(GLOBAL, JSON.stringify({ version: 1, lines: [['model']] }))
+    await ui.select({ key: 'separator', value: 'dot' })
+    await ui.press({ key: 'save' })
+    expect(JSON.parse(disk.get(GLOBAL)!).lines).toEqual([['model']])
+    expect((await ui.find({ type: 'Text', text: /changed since the editor loaded/ }))).toBeDefined()
+    await ui.press({ key: 'save' })
+    expect(JSON.parse(disk.get(GLOBAL)!).style.separator).toBe('dot')
   })
 
   test(`a broken file: its path and error shown, Save over it asks twice (${surface})`, async ($, on) => {

@@ -189,7 +189,7 @@ for (const surface of ['terminal', 'desktop'] as const) {
     // The small buttons at the right edge: config opens the editor, compact compacts.
     await ui.press({ key: 'tidemark-actions-config' })
     expect(opened).toEqual(['tidemark', 'tidemark-config'])
-    await ui.press({ key: 'tidemark-actions-compact' })
+    await ui.press({ key: 'tidemark-compact-compact' })
     expect(compacted).toBe(1)
   })
 

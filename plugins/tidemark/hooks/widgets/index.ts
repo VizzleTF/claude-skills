@@ -7,6 +7,7 @@ import { cache } from './cache'
 import { claudeStatus } from './claudeStatus'
 import { command } from './command'
 import { actions } from './actions'
+import { compact } from './compact'
 import { compactions } from './compactions'
 import { context } from './context'
 import { cost } from './cost'
@@ -25,5 +26,5 @@ export { gainTier, pctTier } from './kit'
 
 export const WIDGETS: Record<TidemarkWidgetId, WidgetDef> = {
   context, cache, quota5h, quota7d, cost, agents, model, git, cwd, sessionTime, compactions, tokenSpeed, command, claudeStatus, gitPr, flex,
-  actions,
+  compact, actions,
 }

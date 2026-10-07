@@ -3,7 +3,7 @@
 export type TidemarkWidgetId =
   | 'context' | 'cache' | 'quota5h' | 'quota7d' | 'cost' | 'agents' | 'model' | 'git' | 'cwd'
   | 'sessionTime' | 'compactions' | 'tokenSpeed' | 'command' | 'claudeStatus' | 'gitPr' | 'flex'
-  | 'actions'
+  | 'compact' | 'actions'
 
 export type TidemarkWidgetItem = {
   widget: TidemarkWidgetId

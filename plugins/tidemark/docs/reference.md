@@ -13,7 +13,7 @@
 - Limits
 - Troubleshooting
 
-This reference covers tidemark 0.1.6. The config is read from two JSON files, the project file over the global one. A top-level key in the project file replaces the same key of the global file whole: to add one widget in a project, repeat the whole `lines` in the project file. Until a file exists, the default config applies; `Save` in the editor creates the file and its directories. A hand edit is picked up on the next prompt or within 30 seconds. An unknown key, widget or option and an invalid value are dropped, and the editor shows a warning. A file that does not parse is skipped: the band shows a dim `⚠ config`, and the editor shows the path and the error.
+This reference covers tidemark 0.1.7. The config is read from two JSON files, the project file over the global one. A top-level key in the project file replaces the same key of the global file whole: to add one widget in a project, repeat the whole `lines` in the project file. Until a file exists, the default config applies; `Save` in the editor creates the file and its directories. A hand edit is picked up on the next prompt or within 30 seconds. An unknown key, widget or option and an invalid value are dropped, and the editor shows a warning. A file that does not parse is skipped: the band shows a dim `⚠ config`, and the editor shows the path and the error.
 
 ## Commands
 
@@ -35,7 +35,7 @@ This reference covers tidemark 0.1.6. The config is read from two JSON files, th
 |---|---|---|---|
 | `$schema` | string | `https://raw.githubusercontent.com/VizzleTF/claude-skills/main/plugins/tidemark/config.schema.json` | the JSON Schema a code editor uses to suggest keys and values; `Save` writes it |
 | `version` | number | `1` | `1` only; the key may be left out |
-| `lines` | array of band rows; a row is an array of widgets | one row: `context`, `cache`, `quota5h`, `quota7d`, `model`, `git`, `flex`, `actions` | 1–3 rows; extra rows are dropped |
+| `lines` | array of band rows; a row is an array of widgets | one row: `context`, `cache`, `quota5h`, `quota7d`, `model`, `git`, `flex`, `compact`, `actions` | 1–3 rows; extra rows are dropped |
 | `style.separator` | string | `pipe` (` │ `) | `pipe`, `space`, `dot` (` · `), `powerline` (`▶` arrows, Nerd Font glyphs with `icons: "nerd"`), `custom` |
 | `style.custom` | string | none | the separator when `separator: "custom"` |
 | `style.icons` | string | `text` | `text`, `nerd` (Nerd Font glyphs instead of labels and powerline arrows) |
@@ -102,7 +102,8 @@ While a row is wider than the window, the visible widget with the lowest `priori
 | `command` | the first line of your command's output, `?` on failure | 20 |
 | `claudeStatus` | `● ok`, `● minor`, `● major`, `● critical` from status.claude.com | 20 |
 | `gitPr` | `#123 ✓`, `✗` or `…` for the current branch's PR or MR; needs `gh` or `glab` signed in, hidden without them or without a PR | 20 |
-| `actions` | small buttons: `⇲` compacts the conversation as `/compact` does, `⚙` opens `/tidemark-config`; hidden until the session reports | 10 |
+| `compact` | a `/compact` button: compacts the conversation as `/compact` does; hidden on a subagent's transcript and until the session reports | 10 |
+| `actions` | a small `⚙` button that opens `/tidemark-config`; hidden until the session reports | 10 |
 | `flex` | nothing; splits the row into groups: one `flex` sends the widgets after it to the right edge, two put the widgets between them in the middle | never narrowed away |
 
 Figures are coloured on a 10-colour scale from blue to red by the used share.
@@ -115,7 +116,8 @@ Some parts of the band are buttons or links. A click works on the desktop and in
 | the `quota5h` or `quota7d` label | runs `/usage` |
 | the `cache` label | opens the `/tidemark` pane |
 | the model name, the effort | the next model of `cycle`, the next effort level (see `model` above) |
-| `⇲` and `⚙` in `actions` | compacts the conversation; opens `/tidemark-config` |
+| `/compact` in `compact` | compacts the conversation |
+| `⚙` in `actions` | opens `/tidemark-config` |
 | the `gitPr` number | opens the PR in the browser |
 | the `claudeStatus` word | opens status.claude.com |
 
@@ -162,7 +164,6 @@ A row takes its first two `flex`; any other is dropped. The groups spread across
 | `git` | `ttl` | integer, s | `5` | 1–3600 |
 | `git` | `fetch` | integer, s | `300` | 0–86400; `0` turns `git fetch` off |
 | `cwd` | `style` | string | `project` | `project`, `basename`, `short`, `full` |
-| `actions` | `compact` | boolean | `true` | the `⇲` button |
 | `actions` | `config` | boolean | `true` | the `⚙` button |
 | `compactions` | `hideZero` | boolean | `true` | |
 | `command` | `command` | string | empty | run as `sh -c <command>` |
@@ -185,7 +186,7 @@ A preset is picked in the editor, changes the draft and is written on `Save`.
 |---|---|
 | `minimal` | context, quota5h |
 | `classic` | context, cache, quota5h, quota7d |
-| `default` | context, cache, quota5h, quota7d, model, git, flex, actions |
+| `default` | context, cache, quota5h, quota7d, model, git, flex, compact, actions |
 | `full` | 1: context, cache, quota5h, quota7d, cost; 2: model, cwd, git, sessionTime, compactions, tokenSpeed, agents |
 | `powerline` | `default` with `separator: "powerline"` and `icons: "nerd"` |
 

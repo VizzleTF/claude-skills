@@ -42,7 +42,8 @@ export const WIDGET_OPTIONS: Record<WidgetId, Record<string, OptionSpec>> = {
   claudeStatus: { ttl: int(30, 3600, 300) },
   gitPr: { githubHosts: { kind: 'strings', default: [] }, ttl: int(10, 3600, 120) },
   flex: {},
-  actions: { compact: bool(true), config: bool(true) },
+  compact: {},
+  actions: { config: bool(true) },
 }
 
 export const WIDGET_IDS = Object.keys(WIDGET_OPTIONS) as WidgetId[]
@@ -63,7 +64,7 @@ const items = (...ids: WidgetId[]): WidgetItem[] => ids.map(widget => ({ widget 
 
 export const DEFAULT_CONFIG: Config = {
   version: 1,
-  lines: [items('context', 'cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'actions')],
+  lines: [items('context', 'cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'compact', 'actions')],
   style: { separator: 'pipe', icons: 'text' },
   pane: { sections: SECTION_IDS.map(id => ({ id, enabled: true })) },
   alerts: { enabled: false, context: 80, quota5h: 90, quota7d: 90, cacheSeconds: 60 },
@@ -341,6 +342,16 @@ export function registerConfig(on: On): void {
       await ensureTick($)
       await refresh($).catch(logTo($, 'config load'))
     }
+  })
+
+  // After `/reload-plugins` neither of the above runs until the next prompt; the band's first draw starts
+  // the timer and checks the files.
+  on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
+    if (!tick) {
+      await ensureTick($)
+      await check($).catch(logTo($, 'config check'))
+    }
+    return next(e)
   })
 
   on('prompt.submit', async ($, e, next) => {

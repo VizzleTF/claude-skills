@@ -31,12 +31,12 @@ const SNAP: TidemarkSnapshot = {
 const texts = (lines: Line[]) => lines.map(l => l.map(s => s.spans.map(x => x.text).join('')).join(' │ '))
 
 // The default line without the flex and the buttons, which the text joins below cannot place.
-const FIGURES = { ...DEFAULT_CONFIG, lines: [DEFAULT_CONFIG.lines[0]!.filter(i => i.widget !== 'flex' && i.widget !== 'actions')] }
+const FIGURES = { ...DEFAULT_CONFIG, lines: [DEFAULT_CONFIG.lines[0]!.filter(i => !['flex', 'compact', 'actions'].includes(i.widget))] }
 
 test('the default config: one line, git hidden while its probe is empty, the buttons at the right edge', () => {
   const lines = buildLines(DEFAULT_CONFIG, SNAP, {}, 200, NOW)
-  expect(lines[0]!.map(s => s.widget)).toEqual(['context', 'cache', 'quota5h', 'quota7d', 'model', 'flex', 'actions'])
-  expect(lines[0]!.at(-1)!.spans.map(s => [s.text.trim(), s.press])).toEqual([['⇲', 'compact'], ['⚙', 'config']])
+  expect(lines[0]!.map(s => s.widget)).toEqual(['context', 'cache', 'quota5h', 'quota7d', 'model', 'flex', 'compact', 'actions'])
+  expect(lines[0]!.slice(-2).flatMap(w => w.spans.map(s => [s.text.trim(), s.press]))).toEqual([['/compact', 'compact'], ['⚙', 'config']])
   expect(texts(buildLines(FIGURES, SNAP, {}, 200, NOW))).toEqual(['ctx ■■■□□□□□□□ 27% 271k/1M ▁▁▃█▁▇▁ ↑3.4k │ cache warm 38m │ 5h 42% ↻ 2h34m │ 7d 63% ↻ 2d7h │ opus 5.5 · high'])
 })
 

@@ -2,6 +2,17 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.7] - 2026-10-07
+
+### Changed
+
+- The compact button is its own widget `compact`, drawn as `/compact`, so it can sit anywhere in the band. `actions` keeps only `⚙`, and its `compact` option is gone. The default line ends with `flex`, `compact`, `actions`.
+
+### Fixed
+
+- After `/reload-plugins` a hand edit of the config waited for the next prompt; the band's first draw now checks the files.
+- `Save` in the editor wrote the config the session had loaded and dropped a hand edit made since. It now builds on the files as they are; with unsaved changes over a file edited by hand it asks for a second `Save`.
+
 ## [0.1.6] - 2026-10-07
 
 ### Added
@@ -65,6 +76,7 @@ All notable changes to the `tidemark` plugin. The format follows [Keep a Changel
 - A `/compact` button under the band once the context fills `compact.at` percent of the window (70 by default).
 - Threshold toasts for context, quota and the prompt cache, off by default.
 
+[0.1.7]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.7
 [0.1.6]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.6
 [0.1.5]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.5
 [0.1.4]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.4

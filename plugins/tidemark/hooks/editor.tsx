@@ -75,6 +75,10 @@ async function save($: EngineInterface) {
   if (!path) return note(`no ${s.target} config path`)
   if (loaded.error?.includes(`${path}: `) && !s.confirm) return note(`${path} does not load; Save again to overwrite it`, true)
   const before = await readFiles($, [global, project])
+  // The files as they are now: a hand edit since the session last loaded them is the base, never lost.
+  const onDisk = loadFromTexts(before)
+  const edited = JSON.stringify(onDisk.config) !== JSON.stringify(loaded.config)
+  if (edited && s.draft !== null && !s.confirm) return note('the config files changed since the editor loaded them; Revert to load them, or Save again to overwrite', true)
   const globalOnly = loadFromTexts(before.filter(f => f.path === global)).config
   const projectFile = before.find(f => f.path === project)
   let projectKeys: string[] = []
@@ -85,7 +89,7 @@ async function save($: EngineInterface) {
     // A project file that does not parse overrides nothing.
   }
   try {
-    await $.fs.write(path, configText(saveContent(s.draft ?? loaded.config, loaded.config, globalOnly, projectKeys, s.target)))
+    await $.fs.write(path, configText(saveContent(s.draft ?? onDisk.config, onDisk.config, globalOnly, projectKeys, s.target)))
   } catch (err) {
     return note(`save failed: ${err instanceof Error ? err.message : String(err)}`)
   }
