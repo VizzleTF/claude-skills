@@ -34,7 +34,8 @@
                 "command",
                 "claudeStatus",
                 "gitPr",
-                "flex"
+                "flex",
+                "actions"
               ]
             },
             {
@@ -725,6 +726,47 @@
                 "options": {
                   "type": "object",
                   "properties": {},
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "widget"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "widget": {
+                  "const": "actions"
+                },
+                "enabled": {
+                  "type": "boolean",
+                  "default": true
+                },
+                "label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "priority": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000
+                },
+                "options": {
+                  "type": "object",
+                  "properties": {
+                    "compact": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "config": {
+                      "type": "boolean",
+                      "default": true
+                    }
+                  },
                   "additionalProperties": false
                 }
               },

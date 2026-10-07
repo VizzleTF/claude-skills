@@ -76,17 +76,17 @@ for (const surface of ['terminal', 'desktop'] as const) {
     await ui.press({ key: 'right' })
     expect((await lines(ui))[0]!.slice(0, 2)).toEqual(['cache', 'context'])
     await ui.press({ key: 'down' })
-    expect(await lines(ui)).toEqual([['cache', 'quota5h', 'quota7d', 'model', 'git'], ['context']])
+    expect(await lines(ui)).toEqual([['cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'actions'], ['context']])
 
     await ui.select({ key: 'add', value: 'cwd' })
-    expect(await lines(ui)).toEqual([['cache', 'quota5h', 'quota7d', 'model', 'git'], ['context', 'cwd']])
+    expect(await lines(ui)).toEqual([['cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'actions'], ['context', 'cwd']])
     await ui.select({ key: 'opt-style', value: 'full' })
     expect((await ui.find({ key: 'opt-style' }))?.props.value).toBe('full')
     await ui.press({ key: 'toggle' })
     expect((await ui.find({ key: 'w-1-1' }))?.text).toContain('off')
 
     await ui.press({ key: 'remove' })
-    expect(await lines(ui)).toEqual([['cache', 'quota5h', 'quota7d', 'model', 'git'], ['context']])
+    expect(await lines(ui)).toEqual([['cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'actions'], ['context']])
 
     await ui.select({ key: 'preset', value: 'full' })
     expect(await lines(ui)).toEqual(ids(PRESETS.full!))

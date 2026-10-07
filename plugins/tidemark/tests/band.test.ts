@@ -162,6 +162,11 @@ for (const surface of ['terminal', 'desktop'] as const) {
   test(`widget labels run /context and /usage and open the pane (${surface})`, async ($, on) => {
     const runs: string[] = []
     const opened: string[] = []
+    let compacted = 0
+    on('session.compact', ($, e) => {
+      compacted++
+      return { skip: 'test' } as any
+    })
     on('command.run', ($, e) => {
       runs.push(`/${e.command}`)
       return { text: '' }
@@ -181,6 +186,11 @@ for (const surface of ['terminal', 'desktop'] as const) {
     await ui.press({ key: 'tidemark-cache-cache' })
     expect(runs).toEqual(['/context', '/usage'])
     expect(opened).toEqual(['tidemark'])
+    // The small buttons at the right edge: config opens the editor, compact compacts.
+    await ui.press({ key: 'tidemark-actions-config' })
+    expect(opened).toEqual(['tidemark', 'tidemark-config'])
+    await ui.press({ key: 'tidemark-actions-compact' })
+    expect(compacted).toBe(1)
   })
 
   test(`buttons: false draws every press as text (${surface})`, async ($, on) => {

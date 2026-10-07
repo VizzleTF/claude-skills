@@ -18,7 +18,7 @@ Run in Claude Code:
 The band appears above the prompt right after the install; if it does not, run `/reload-plugins`:
 
 ```
-ctx ■■■□□□□□□□ 27% 271k/1M ▁▁▃█▁▇▁ ↑3.4k │ cache warm 38m │ 5h 42% ↻ 2h34m │ 7d 63% ↻ 2d7h │ opus 5.5 · high │ main* +12 −3
+ctx ■■■□□□□□□□ 27% 271k/1M ▁▁▃█▁▇▁ ↑3.4k │ cache warm 38m │ 5h 42% ↻ 2h34m │ 7d 63% ↻ 2d7h │ opus 5.5 · high │ main* +12 −3        ⇲ ⚙
 ```
 
 No config file is needed: until one exists, the band above applies. To change the widgets, run `/tidemark-config`. The editor shows a preview; in the `save to` field pick `global` (`~/.config/tidemark/config.json`) or `project` (`.claude/tidemark.json` in the session's directory) and press `Save`. `/tidemark` opens a details pane for context, cache, quota and subagents. Once the context reaches 70% of the window, a `/compact` button appears under the band; `compact.at` sets the threshold.

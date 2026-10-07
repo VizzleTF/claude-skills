@@ -7,8 +7,8 @@ import type { OptionSpec } from '../config'
 export type Role = 'label' | 'dim' | 'money' | 'activity'
 
 // What a press on a span does; the band runs it. `model` and `effort` cycle the setting, `context` and
-// `usage` run that command, `cache` opens the details pane.
-export type Press = 'model' | 'effort' | 'context' | 'usage' | 'cache'
+// `usage` run that command, `cache` opens the details pane, `compact` compacts, `config` opens the editor.
+export type Press = 'model' | 'effort' | 'context' | 'usage' | 'cache' | 'compact' | 'config'
 
 // One run of text. `tier` is its colour on the ten-tier scale (0–9); `bar` and `spark` mark a graphic the
 // terminal draws as glyphs (`text`) and the desktop as an Svg.

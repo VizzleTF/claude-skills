@@ -42,6 +42,7 @@ export const WIDGET_OPTIONS: Record<WidgetId, Record<string, OptionSpec>> = {
   claudeStatus: { ttl: int(30, 3600, 300) },
   gitPr: { githubHosts: { kind: 'strings', default: [] }, ttl: int(10, 3600, 120) },
   flex: {},
+  actions: { compact: bool(true), config: bool(true) },
 }
 
 export const WIDGET_IDS = Object.keys(WIDGET_OPTIONS) as WidgetId[]
@@ -62,7 +63,7 @@ const items = (...ids: WidgetId[]): WidgetItem[] => ids.map(widget => ({ widget 
 
 export const DEFAULT_CONFIG: Config = {
   version: 1,
-  lines: [items('context', 'cache', 'quota5h', 'quota7d', 'model', 'git')],
+  lines: [items('context', 'cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'actions')],
   style: { separator: 'pipe', icons: 'text' },
   pane: { sections: SECTION_IDS.map(id => ({ id, enabled: true })) },
   alerts: { enabled: false, context: 80, quota5h: 90, quota7d: 90, cacheSeconds: 60 },

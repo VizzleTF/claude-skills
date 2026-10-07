@@ -57,8 +57,8 @@ async function startup($: any) {
 
 const ids = (lines: { widget: string }[][]) => lines.map(line => line.map(item => item.widget))
 
-test('default config is one line: context, cache, quota5h, quota7d, model, git', async () => {
-  expect(ids(DEFAULT_CONFIG.lines)).toEqual([['context', 'cache', 'quota5h', 'quota7d', 'model', 'git']])
+test('default config is one line: context, cache, quota5h, quota7d, model, git, then the buttons at the right edge', async () => {
+  expect(ids(DEFAULT_CONFIG.lines)).toEqual([['context', 'cache', 'quota5h', 'quota7d', 'model', 'git', 'flex', 'actions']])
   expect(PRESETS.default).toEqual(DEFAULT_CONFIG)
 })
 

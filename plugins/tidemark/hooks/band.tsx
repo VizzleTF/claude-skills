@@ -15,11 +15,20 @@ import { buildLines } from './layout'
 import { EMPTY_PROBES } from './probes'
 import { EMPTY_SNAPSHOT, STORE_EFFORTS } from './snapshot'
 import { PANE } from './pane'
+import { EDITOR } from './editor'
 
 // The engine lists the values a module reads from atoms declared in that same file.
 const snapshotState = atom({ plugin: 'tidemark', key: 'snapshot' } as const, EMPTY_SNAPSHOT)
 const configState = atom({ plugin: 'tidemark', key: 'config' } as const, null as TidemarkConfigState | null)
 const probesState = atom({ plugin: 'tidemark', key: 'probes' } as const, EMPTY_PROBES)
+
+// Compacts the main conversation as `/compact` does; the engine compacts only between turns.
+function compact($: EngineInterface) {
+  void $.session.compact().then(
+    r => { if (r.skip) void $.ui.toast(`tidemark: compact skipped: ${r.skip}`) },
+    () => { void $.ui.toast('tidemark: compact runs between turns') },
+  )
+}
 
 const trackState = atom({ plugin: 'tidemark', key: 'track' } as const, { turnCostBase: null, turnStartedAt: null, turnOutput: 0 } as TidemarkTrack)
 
@@ -44,6 +53,14 @@ async function press($: EngineInterface, what: Press, config: TidemarkConfig): P
   }
   if (what === 'cache') {
     await $.ui.open({ id: PANE, title: 'tidemark', rows: 24 })
+    return
+  }
+  if (what === 'config') {
+    await $.ui.open({ id: EDITOR, title: 'tidemark config', rows: 30 })
+    return
+  }
+  if (what === 'compact') {
+    compact($)
     return
   }
   const snap = await read($, snapshotState)
@@ -114,12 +131,7 @@ export function registerBand(on: On): void {
           label={`/compact · context ${Math.round(pct)}%`}
           hotkey="c"
           variant="primary"
-          onPress={() => {
-            void $.session.compact().then(
-              r => { if (r.skip) void $.ui.toast(`tidemark: compact skipped: ${r.skip}`) },
-              () => { void $.ui.toast('tidemark: compact runs between turns') },
-            )
-          }}
+          onPress={() => compact($)}
         />
       </els.Box>
     )

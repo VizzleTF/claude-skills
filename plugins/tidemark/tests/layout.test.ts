@@ -30,10 +30,14 @@ const SNAP: TidemarkSnapshot = {
 
 const texts = (lines: Line[]) => lines.map(l => l.map(s => s.spans.map(x => x.text).join('')).join(' │ '))
 
-test('the default config: one line, git hidden while its probe is empty', () => {
+// The default line without the flex and the buttons, which the text joins below cannot place.
+const FIGURES = { ...DEFAULT_CONFIG, lines: [DEFAULT_CONFIG.lines[0]!.filter(i => i.widget !== 'flex' && i.widget !== 'actions')] }
+
+test('the default config: one line, git hidden while its probe is empty, the buttons at the right edge', () => {
   const lines = buildLines(DEFAULT_CONFIG, SNAP, {}, 200, NOW)
-  expect(texts(lines)).toEqual(['ctx ■■■□□□□□□□ 27% 271k/1M ▁▁▃█▁▇▁ ↑3.4k │ cache warm 38m │ 5h 42% ↻ 2h34m │ 7d 63% ↻ 2d7h │ opus 5.5 · high'])
-  expect(lines[0]!.map(s => s.widget)).toEqual(['context', 'cache', 'quota5h', 'quota7d', 'model'])
+  expect(lines[0]!.map(s => s.widget)).toEqual(['context', 'cache', 'quota5h', 'quota7d', 'model', 'flex', 'actions'])
+  expect(lines[0]!.at(-1)!.spans.map(s => [s.text.trim(), s.press])).toEqual([['⇲', 'compact'], ['⚙', 'config']])
+  expect(texts(buildLines(FIGURES, SNAP, {}, 200, NOW))).toEqual(['ctx ■■■□□□□□□□ 27% 271k/1M ▁▁▃█▁▇▁ ↑3.4k │ cache warm 38m │ 5h 42% ↻ 2h34m │ 7d 63% ↻ 2d7h │ opus 5.5 · high'])
 })
 
 test('the full preset: two lines', () => {
@@ -45,7 +49,7 @@ test('the full preset: two lines', () => {
 test('fit: details go first, then widgets by priority, context last, then cut with …', () => {
   const seen: string[] = []
   for (let w = 200; w >= 5; w--) {
-    const [t] = texts(buildLines(DEFAULT_CONFIG, SNAP, {}, w, NOW))
+    const [t] = texts(buildLines(FIGURES, SNAP, {}, w, NOW))
     if ([...t!].length > w) throw new Error(`${t} is wider than ${w}`)
     if (seen.at(-1) !== t) seen.push(t!)
   }

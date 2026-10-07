@@ -2,6 +2,12 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.6] - 2026-10-07
+
+### Added
+
+- `actions` widget: small buttons `⇲` to compact the conversation and `⚙` to open `/tidemark-config`, each switchable by its option. The default line ends with `flex` and `actions`, so the buttons sit at the right edge.
+
 ## [0.1.5] - 2026-10-07
 
 ### Added
@@ -59,6 +65,7 @@ All notable changes to the `tidemark` plugin. The format follows [Keep a Changel
 - A `/compact` button under the band once the context fills `compact.at` percent of the window (70 by default).
 - Threshold toasts for context, quota and the prompt cache, off by default.
 
+[0.1.6]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.6
 [0.1.5]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.5
 [0.1.4]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.4
 [0.1.3]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.3

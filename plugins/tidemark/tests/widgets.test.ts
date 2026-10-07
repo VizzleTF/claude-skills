@@ -180,5 +180,15 @@ test('nerd icons replace the text labels; the probe widgets are hidden until fil
   const own = { kind: 'seven_day_opus', percentUsed: 80, resetsAt: iso(30 * HOUR) }
   expect(full('quota7d', snap({ limits: [WEEK, own], limitsLive: true }), { icons: 'nerd' })).toBe('\uf073 7d opus 80% ↻ 1d6h')
   for (const id of ['git', 'gitPr', 'command', 'claudeStatus']) expect(run(id, snap())).toEqual([])
-  expect(Object.keys(WIDGETS).length).toBe(16)
+  expect(Object.keys(WIDGETS).length).toBe(17)
+})
+
+test('actions: compact and config buttons, each switchable; compact hidden on a subagent; none before data', () => {
+  const s = snap({ model: 'claude-opus-5-5' })
+  const presses = (v: ReturnType<typeof run>) => v[0]?.map(sp => sp.press) ?? []
+  expect(presses(run('actions', s))).toEqual(['compact', 'config'])
+  expect(presses(run('actions', s, { options: { compact: false } }))).toEqual(['config'])
+  expect(run('actions', s, { options: { compact: false, config: false } })).toEqual([])
+  expect(presses(run('actions', s, { env: { agentId: 'a1' } }))).toEqual(['config'])
+  expect(run('actions', snap({ model: null, ctx: null }))).toEqual([])
 })
