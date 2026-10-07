@@ -14,6 +14,11 @@
       "name": "technical-writing-ru",
       "source": "./plugins/technical-writing-ru",
       "description": "Пишет документацию по типу документа и проводит её ревью: tutorial, how-to, runbook, reference, ADR, changelog и другие. Инструкции на русском."
+    },
+    {
+      "name": "tidemark",
+      "source": "./plugins/tidemark",
+      "description": "Configurable band above the Claude Code prompt: context, cache, quota, model, git and more, with a details pane and a config editor."
     }
   ]
 }

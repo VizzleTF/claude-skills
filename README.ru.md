@@ -47,6 +47,16 @@ python3 plugins/technical-writing-ru/skills/write/scripts/check.py --lang ru REA
 0 error(s), 0 warning(s) in 1 file(s)
 ```
 
+## tidemark
+
+В маркетплейсе есть и `tidemark`: мод рисует над промптом Claude Code настраиваемую полосу с контекстом, кешем промпта, квотами, моделью, git и другими виджетами. Нужен Claude Code 2.1.288 или новее.
+
+```
+/plugin install tidemark@vizzletf-skills
+```
+
+Виджеты, конфиг и приватность описаны в [README tidemark](plugins/tidemark/README.ru.md).
+
 ## Ссылки
 
 - [README in English](README.md)

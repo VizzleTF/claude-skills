@@ -47,6 +47,16 @@ python3 plugins/technical-writing/skills/write/scripts/check.py README.md
 0 error(s), 0 warning(s) in 1 file(s)
 ```
 
+## tidemark
+
+The marketplace also has `tidemark`, a mod that draws a configurable band above the Claude Code prompt: context, prompt cache, quota, model, git and more. It needs Claude Code 2.1.288 or later.
+
+```
+/plugin install tidemark@vizzletf-skills
+```
+
+Widgets, config and privacy: [tidemark README](plugins/tidemark/README.md).
+
 ## Links
 
 - [README на русском](README.ru.md)
