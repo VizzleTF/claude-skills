@@ -3,7 +3,7 @@
 import { atom, read, update } from 'claude-code'
 import type { EngineInterface, On } from 'claude-code'
 
-import type { TidemarkConfig, TidemarkConfigState } from '../types'
+import type { TidemarkConfig, TidemarkConfigState, TidemarkTrack } from '../types'
 import { effectiveConfig } from './config'
 import { EFFORTS, autoCycle, nextEffort, nextModel, parseEfforts, usableEfforts } from './model-utils'
 import type { EffortSupport } from './model-utils'
@@ -20,23 +20,22 @@ const snapshotState = atom({ plugin: 'tidemark', key: 'snapshot' } as const, EMP
 const configState = atom({ plugin: 'tidemark', key: 'config' } as const, null as TidemarkConfigState | null)
 const probesState = atom({ plugin: 'tidemark', key: 'probes' } as const, EMPTY_PROBES)
 
-const EFFORT_KEY = 'effortLevels'
+const trackState = atom({ plugin: 'tidemark', key: 'track' } as const, { turnCostBase: null, turnStartedAt: null, turnOutput: 0 } as TidemarkTrack)
 
-// The effort levels this Claude Code takes, from what `/effort` answers a wrong argument (run bare it may
-// open its picker instead); kept in the plugin store per version, so the line shows once per release.
+// The levels `/effort` takes, read from the argument hint Claude Code describes it with
+// (`<low|medium|high|xhigh|max|auto|ultracode [on|off]>`); `$.command.list()` has the engine describe it.
+let effortHint: string | undefined
+
 async function effortLevels($: EngineInterface): Promise<readonly string[]> {
-  const version = (await $.session.version().catch(() => undefined))?.version ?? ''
-  const saved = await $.store.get(EFFORT_KEY).catch(() => undefined) as { version: string; levels: string[] } | undefined
-  if (saved && saved.version === version && saved.levels.length > 0) return saved.levels
-  const { text } = await $.command.run({ command: 'effort', args: 'tidemark-levels' })
-  const levels = parseEfforts(text ?? '')
-  if (levels.length === 0) return EFFORTS
-  await $.store.set(EFFORT_KEY, { version, levels }).catch(() => undefined)
-  return levels
+  if (effortHint === undefined) await $.command.list().catch(() => undefined)
+  const levels = parseEfforts(effortHint ?? '')
+  return levels.length > 0 ? levels : EFFORTS
 }
-// A press on the band: `effort` and `model` step the session's setting through their cycle with the same
-// command the person would type (this session only), and show the new value before the next request does.
-// Effort skips the levels a model's requests were sent lower; a model switch resets effort to `auto`.
+
+// A press on the band: `effort` and `model` step through their cycle with the command the person would
+// type, and show the new value before the next request does. Effort skips the levels a model's requests
+// were sent lower. In an interactive session Claude Code keeps an effort set this way as that model's own,
+// so a model switch brings back the level last set for the new model.
 async function press($: EngineInterface, what: Press, config: TidemarkConfig): Promise<void> {
   const snap = await read($, snapshotState)
   if (what === 'effort') {
@@ -44,6 +43,8 @@ async function press($: EngineInterface, what: Press, config: TidemarkConfig): P
     const support = await $.store.get(STORE_EFFORTS).catch(() => undefined) as EffortSupport | undefined
     const effort = nextEffort(snap.effort, usableEfforts(await effortLevels($), support, version, snap.model))
     await $.command.run({ command: 'effort', args: effort })
+    // The plugin's own command.run hooks skip this run, so the snapshot learns of it here.
+    await update($, trackState, t => ({ ...t, effortAsked: effort }))
     await update($, snapshotState, s => ({ ...s, effort }))
     return
   }
@@ -58,16 +59,17 @@ async function press($: EngineInterface, what: Press, config: TidemarkConfig): P
   if (!target) return
   const { text } = await $.command.run({ command: 'model', args: target })
   const id = await $.session.model()
-  if (id === snap.model) {
-    $.ui.toast(`tidemark: ${text ?? `no switch to ${target}`}`)
-    return
-  }
-  // The effort set for the last model carries over; `auto` hands the new one its own default.
-  await $.command.run({ command: 'effort', args: 'auto' })
-  await update($, snapshotState, s => ({ ...s, model: id, effort: 'auto' }))
+  if (id === snap.model) $.ui.toast(`tidemark: ${text ?? `no switch to ${target}`}`)
+  // The new model's effort shows with its first request.
+  else await update($, snapshotState, s => ({ ...s, model: id, effort: null }))
 }
 
 export function registerBand(on: On): void {
+  on('command.describe', { command: 'effort' }, async ($, e, next) => {
+    effortHint = e.argumentHint ?? effortHint
+    return next(e)
+  })
+
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
     if (e.props.hasSurvey) return next(e)
     const snap = await read($, snapshotState)

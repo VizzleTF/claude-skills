@@ -48,11 +48,11 @@ export function defaultTtl(
 // The levels when `/effort` does not say its own.
 export const EFFORTS: readonly string[] = ['low', 'medium', 'high', 'xhigh', 'max']
 
-// The levels `/effort` lists, in its usage line (`Usage: /effort <low|medium|…|auto|ultracode [on|off]>`)
-// or its answer to a wrong argument (`Valid options are: low, medium, …, auto, ultracode [on|off]`): `auto`
+// The levels `/effort` lists, in its argument hint (`<low|medium|…|auto|ultracode [on|off]>`, or in square
+// brackets), its usage line or its answer to a wrong argument (`Valid options are: low, medium, …, auto, ultracode [on|off]`): `auto`
 // and a switch with arguments are no level. Empty when the text lists none.
 export function parseEfforts(text: string): string[] {
-  const list = /<([^>]*)>/.exec(text)?.[1] ?? /valid options are:\s*(.*)$/im.exec(text)?.[1]
+  const list = /<([^>]*)>/.exec(text)?.[1] ?? /^\s*\[(.*)\]\s*$/.exec(text)?.[1] ?? /valid options are:\s*(.*)$/im.exec(text)?.[1]
   if (!list) return []
   const switches = [...list.matchAll(/([a-z]+)\s*\[[^\]]*\]/g)].map(m => m[1])
   return list.replace(/\s*\[[^\]]*\]/g, '').split(/[|,]/).map(s => s.trim().replace(/\.$/, ''))

@@ -2,6 +2,18 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.4] - 2026-10-07
+
+### Changed
+
+- A model switch from the band no longer runs `/effort auto`: in an interactive session Claude Code keeps the effort last set for each model, and `auto` overwrote it. The widget hides the effort until the new model's first request.
+- The effort levels come from the hint Claude Code describes `/effort` with, so the first press no longer prints an error line in the transcript.
+
+### Fixed
+
+- A level set from the band now counts for the effort cycle; before, only a typed `/effort` did.
+- A press runs `/model` or `/effort` as if typed. In an interactive session both save the choice as the default for new sessions; 0.1.1 said "this session only", which holds only in `claude -p`.
+
 ## [0.1.3] - 2026-10-07
 
 ### Added
@@ -39,6 +51,7 @@ All notable changes to the `tidemark` plugin. The format follows [Keep a Changel
 - A `/compact` button under the band once the context fills `compact.at` percent of the window (70 by default).
 - Threshold toasts for context, quota and the prompt cache, off by default.
 
+[0.1.4]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.4
 [0.1.3]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.3
 [0.1.1]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.1
 [0.1.0]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.0

@@ -13,7 +13,7 @@
 - Limits
 - Troubleshooting
 
-This reference covers tidemark 0.1.3. The config is read from two JSON files, the project file over the global one. A top-level key in the project file replaces the same key of the global file whole: to add one widget in a project, repeat the whole `lines` in the project file. Until a file exists, the default config applies; `Save` in the editor creates the file and its directories. A hand edit is picked up on the next prompt or within 30 seconds. An unknown key, widget or option and an invalid value are dropped, and the editor shows a warning. A file that does not parse is skipped: the band shows a dim `⚠ config`, and the editor shows the path and the error.
+This reference covers tidemark 0.1.4. The config is read from two JSON files, the project file over the global one. A top-level key in the project file replaces the same key of the global file whole: to add one widget in a project, repeat the whole `lines` in the project file. Until a file exists, the default config applies; `Save` in the editor creates the file and its directories. A hand edit is picked up on the next prompt or within 30 seconds. An unknown key, widget or option and an invalid value are dropped, and the editor shows a warning. A file that does not parse is skipped: the band shows a dim `⚠ config`, and the editor shows the path and the error.
 
 ## Commands
 
@@ -90,7 +90,7 @@ While a row is wider than the window, the visible widget with the lowest `priori
 | `quota5h` | `5h 42% ↻ 2h34m` | 80 |
 | `cache` | `warm 38m`, `cold`, `rewrote 45k`; `warm` without minutes while the cache lifetime is unknown | 70 |
 | `quota7d` | `7d 63% ↻ 2d7h`; the model's own week as `7d fable` when the engine reports one | 60 |
-| `model` | `opus 5.5 · high`; a press on the name switches to the next model of `cycle`, on the effort steps to the next level `/effort` lists (`low → medium → high → xhigh → max` today) and skips one the model was sent lower, for this session only. A model switch resets effort to `auto`, the model's own default | 50 |
+| `model` | `opus 5.5 · high`; a press on the name switches to the next model of `cycle`, on the effort steps to the next level `/effort` lists (`low → medium → high → xhigh → max` today) and skips one the model was sent lower. A press runs `/model` or `/effort` as if typed: Claude Code asks before a model switch that re-reads the conversation, and saves the choice as the default for new sessions | 50 |
 | `git` | branch or short SHA, `*` for uncommitted changes, sync with the upstream, `+12 −3` against HEAD | 40 |
 | `cost` | `≈$1.84 (+$0.12)`: the session and the current turn | 20 |
 | `agents` | a spinner per running subagent, up to three, then `+N` | 20 |

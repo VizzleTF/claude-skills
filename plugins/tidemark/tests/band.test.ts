@@ -136,8 +136,7 @@ for (const surface of ['terminal', 'desktop'] as const) {
     on('command.run', ($, e) => {
       runs.push(`/${e.command} ${e.args}`)
       if (e.command === 'model') world.model = 'claude-sonnet-5-5[1m]'
-      const levels = 'Invalid argument: tidemark-levels. Valid options are: low, medium, high, xhigh, max, auto, ultracode [on|off]'
-      return { text: e.args === 'tidemark-levels' ? levels : 'ok' }
+      return { text: 'ok' }
     })
     on('turn.step', async function* () {
       return { turnId: 't', index: 0, answer: '', toolUses: [], stopReason: 'end_turn', usage: { model: world.model, input_tokens: 1, output_tokens: 1, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 } } as any
@@ -149,15 +148,14 @@ for (const surface of ['terminal', 'desktop'] as const) {
     expect((await ui.find({ key: 'tidemark-effort' }))?.props.label).toBe('high')
 
     await ui.press({ key: 'tidemark-effort' })
-    // The first press asks /effort for its levels.
-    expect(runs).toEqual(['/effort tidemark-levels', '/effort xhigh'])
+    expect(runs).toEqual(['/effort xhigh'])
     expect((await ui.find({ key: 'tidemark-effort' }))?.props.label).toBe('xhigh')
 
     await ui.press({ key: 'tidemark-model' })
-    // A model switch hands the new model its own default effort.
-    expect(runs).toEqual(['/effort tidemark-levels', '/effort xhigh', '/model sonnet[1m]', '/effort auto'])
+    // The new model's effort shows with its first request.
+    expect(runs).toEqual(['/effort xhigh', '/model sonnet[1m]'])
     expect((await ui.find({ key: 'tidemark-model' }))?.props.label).toBe('sonnet 5.5')
-    expect((await ui.find({ key: 'tidemark-effort' }))?.props.label).toBe('auto')
+    expect(await ui.find({ key: 'tidemark-effort' })).toBeUndefined()
     world.model = 'claude-opus-5-5'
   })
 

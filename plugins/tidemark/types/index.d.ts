@@ -42,8 +42,7 @@ export type TidemarkConfigState = {
 export type TidemarkCtx = { tokens?: number; window: number; percent?: number; estimate?: number; compactAt?: number; model?: string }
 export type TidemarkCompaction = { before?: number; after?: number }
 export type TidemarkLimit = { kind: string; percentUsed: number; resetsAt?: string }
-// `auto`: the model's own default, set on a model switch from the band until a request shows the level.
-export type TidemarkEffort = 'low' | 'medium' | 'high' | 'xhigh' | 'max' | 'auto' | number
+export type TidemarkEffort = 'low' | 'medium' | 'high' | 'xhigh' | 'max' | number
 export type TidemarkTheme = 'dark' | 'light'
 // The main conversation's last request: when it started and whether it touched the cache.
 export type TidemarkCache = { at: number; warm: boolean }

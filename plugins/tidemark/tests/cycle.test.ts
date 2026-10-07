@@ -31,6 +31,7 @@ test('effort levels from the /effort usage line; auto and switches dropped; a ne
   expect(parseEfforts('Usage: /effort <low|medium|high|xhigh|max|auto|ultracode [on|off]>')).toEqual(['low', 'medium', 'high', 'xhigh', 'max'])
   expect(parseEfforts('Usage: /effort <low|medium|high|xhigh|max|ultra|auto>')).toEqual(['low', 'medium', 'high', 'xhigh', 'max', 'ultra'])
   expect(parseEfforts('Invalid argument: x. Valid options are: low, medium, high, xhigh, max, auto, ultracode [on|off]')).toEqual(['low', 'medium', 'high', 'xhigh', 'max'])
+  expect(parseEfforts('[low|medium|high|xhigh|max|auto|ultracode [on|off]]')).toEqual(['low', 'medium', 'high', 'xhigh', 'max'])
   expect(parseEfforts('Unknown command')).toEqual([])
   expect(nextEffort('max', ['low', 'medium', 'high', 'xhigh', 'max', 'ultra'])).toBe('ultra')
   expect(nextEffort(null, ['low', 'high', 'max'])).toBe('high')
