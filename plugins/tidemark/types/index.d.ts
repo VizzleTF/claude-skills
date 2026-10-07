@@ -42,7 +42,8 @@ export type TidemarkConfigState = {
 export type TidemarkCtx = { tokens?: number; window: number; percent?: number; estimate?: number; compactAt?: number; model?: string }
 export type TidemarkCompaction = { before?: number; after?: number }
 export type TidemarkLimit = { kind: string; percentUsed: number; resetsAt?: string }
-export type TidemarkEffort = 'low' | 'medium' | 'high' | 'xhigh' | 'max' | number
+// `auto`: the model's own default, set on a model switch from the band until a request shows the level.
+export type TidemarkEffort = 'low' | 'medium' | 'high' | 'xhigh' | 'max' | 'auto' | number
 export type TidemarkTheme = 'dark' | 'light'
 // The main conversation's last request: when it started and whether it touched the cache.
 export type TidemarkCache = { at: number; warm: boolean }
@@ -105,6 +106,8 @@ export type TidemarkTrack = {
   turnCostBase: number | null
   turnStartedAt: number | null
   turnOutput: number
+  // The effort level last asked with `/effort`, until the next main request shows what was sent.
+  effortAsked?: string | null
 }
 
 // External probe results by request key: when the last one finished, its output, and the last failure.

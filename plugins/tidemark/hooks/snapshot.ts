@@ -7,7 +7,8 @@ import type { EngineInterface, On, SessionContextBreakdown, SessionContextUsage,
 import type { TidemarkAgent, TidemarkCacheStats, TidemarkConfigState, TidemarkCtx, TidemarkEffort, TidemarkLimit, TidemarkSnapshot, TidemarkTheme, TidemarkTrack } from '../types'
 import { EMPTY_ALERT_MEMORY, evaluateAlerts } from './alerts'
 import { effectiveConfig } from './config'
-import { LONG_TTL_MS as CACHE_TTL_MS, SHORT_TTL_MS, baseModel, defaultTtl, inferTtl, validCost } from './model-utils'
+import { LONG_TTL_MS as CACHE_TTL_MS, SHORT_TTL_MS, baseModel, defaultTtl, inferTtl, learnEffort, validCost } from './model-utils'
+import type { EffortSupport } from './model-utils'
 import { EMPTY_PROBES, applyProbeResult, planProbes } from './probes'
 import type { ProbeOutcome, ProbeRequest } from './probes'
 
@@ -20,6 +21,8 @@ const AGENTS = 8
 const COMPACTION_LOG = 3
 const TICK_MS = 30_000
 const STORE_LIMITS = 'limits'
+// What requests showed of each model's effort levels (EffortSupport); the band reads it under the same key.
+export const STORE_EFFORTS = 'effortSupport'
 
 const NO_STATS: TidemarkCacheStats = { input: 0, output: 0, read: 0, write: 0, last: 0 }
 export const EMPTY_SNAPSHOT: Snapshot = {
@@ -284,6 +287,14 @@ async function resumed($: EngineInterface, e: { context_tokens?: number; seconds
   if (age * 1000 > SHORT_TTL_MS && age * 1000 < CACHE_TTL_MS) await set($, () => ({ cacheTtl: expired ? SHORT_TTL_MS : CACHE_TTL_MS }))
 }
 
+// What a request sent against the level asked for, kept per Claude Code version in the plugin store.
+async function learnEfforts($: EngineInterface, model: string, asked: string, sent: string | number | undefined) {
+  const version = (await $.session.version()).version
+  const saved = await $.store.get(STORE_EFFORTS) as EffortSupport | undefined
+  const next = learnEffort(saved, version, model, asked, sent)
+  if (JSON.stringify(next) !== JSON.stringify(saved)) await $.store.set(STORE_EFFORTS, next)
+}
+
 // Probe keys with a request in flight: a key never runs twice at once.
 const running = new Set<string>()
 
@@ -472,7 +483,8 @@ export function registerSnapshot(on: On, commands: { name: string; description: 
       const now = await $.clock.now()
       const t = await read($, track)
       const output = t.turnOutput + (u.output_tokens ?? 0)
-      await setTrack($, () => ({ turnOutput: output }))
+      await setTrack($, () => ({ turnOutput: output, effortAsked: null }))
+      if (t.effortAsked) await learnEfforts($, u.model, t.effortAsked, effort).catch(logTo($, 'effort support'))
       const seconds = t.turnStartedAt !== null ? (now - t.turnStartedAt) / 1000 : 0
       await set($, s => ({
         effort: effort ?? null,
@@ -492,8 +504,10 @@ export function registerSnapshot(on: On, commands: { name: string; description: 
     return result
   })
 
-  on('command.run', { command: ['clear', 'resume', 'branch', 'model', 'autocompact', 'theme'] }, async ($, e, next) => {
+  on('command.run', { command: ['clear', 'resume', 'branch', 'model', 'autocompact', 'theme', 'effort'] }, async ($, e, next) => {
     const result = await next(e)
+    // The level asked for, held until the next main request shows what the model was sent.
+    if (e.command === 'effort') await setTrack($, () => ({ effortAsked: e.args.trim() || null }))
     if (e.command === 'theme') await readTheme($)
     refreshSoon($)
     return result

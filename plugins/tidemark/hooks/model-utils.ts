@@ -92,3 +92,26 @@ export function autoCycle(offered: readonly string[], current: string | null): s
     return long ? isLong || !named.includes(`${m}[1m]`) : !isLong
   })
 }
+
+// What requests showed of each model's effort levels, for one Claude Code version: the levels asked for
+// that a model sent lower, by its base id.
+export type EffortSupport = { version: string; skip: Record<string, string[]> }
+
+// The record after a main request: `asked` the level `/effort` set, `sent` what the request carried. A level
+// sent as asked is taken off the model's skip list, one sent as another level put on it; a record of
+// another version starts over.
+export function learnEffort(saved: EffortSupport | undefined, version: string, model: string, asked: string, sent: string | number | undefined): EffortSupport {
+  const base = saved?.version === version ? saved : { version, skip: {} }
+  if (typeof sent !== 'string' || !/^[a-z]+$/.test(asked) || asked === 'auto') return base
+  const id = baseModel(model)
+  const skip = (base.skip[id] ?? []).filter(l => l !== asked)
+  if (sent !== asked) skip.push(asked)
+  return { version, skip: { ...base.skip, [id]: skip } }
+}
+
+// The levels a press steps through on `model`: `levels` without the ones its requests sent lower.
+export const usableEfforts = (levels: readonly string[], saved: EffortSupport | undefined, version: string, model: string | null) => {
+  const skip = saved?.version === version ? (saved.skip[baseModel(model)] ?? []) : []
+  const usable = levels.filter(l => !skip.includes(l))
+  return usable.length > 0 ? usable : levels
+}

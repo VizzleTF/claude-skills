@@ -154,8 +154,10 @@ for (const surface of ['terminal', 'desktop'] as const) {
     expect((await ui.find({ key: 'tidemark-effort' }))?.props.label).toBe('xhigh')
 
     await ui.press({ key: 'tidemark-model' })
-    expect(runs).toEqual(['/effort tidemark-levels', '/effort xhigh', '/model sonnet[1m]'])
+    // A model switch hands the new model its own default effort.
+    expect(runs).toEqual(['/effort tidemark-levels', '/effort xhigh', '/model sonnet[1m]', '/effort auto'])
     expect((await ui.find({ key: 'tidemark-model' }))?.props.label).toBe('sonnet 5.5')
+    expect((await ui.find({ key: 'tidemark-effort' }))?.props.label).toBe('auto')
     world.model = 'claude-opus-5-5'
   })
 

@@ -2,6 +2,13 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.3] - 2026-10-07
+
+### Added
+
+- A model switch from the band resets effort to `auto`, the new model's own default; the widget shows `auto` until a request shows the level.
+- The effort cycle skips a level a model's requests were sent lower than asked. What requests showed is kept per Claude Code version.
+
 ## [0.1.1] - 2026-10-07
 
 ### Added
@@ -32,5 +39,6 @@ All notable changes to the `tidemark` plugin. The format follows [Keep a Changel
 - A `/compact` button under the band once the context fills `compact.at` percent of the window (70 by default).
 - Threshold toasts for context, quota and the prompt cache, off by default.
 
+[0.1.3]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.3
 [0.1.1]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.1
 [0.1.0]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.0

@@ -252,3 +252,13 @@ test('a failure the band survives goes to the debug log', async ($, on) => {
   await start($, on, world())
   expect(logs).toContainEqual({ text: 'register /tidemark: no implementation for command.register', to: 'debug' })
 })
+
+test('effort support: a level asked with /effort and sent lower is stored as skipped for that model', async ($, on) => {
+  const w = world()
+  on('session.version', () => ({ value: { version: '2.1.292' } as any }))
+  on('command.run', () => ({ text: 'ok' }))
+  const { writes } = await start($, on, w)
+  await $.command.run({ command: 'effort', args: 'max' })
+  await runStep($, w, step({}), { effort: 'high' })
+  expect(writes).toContainEqual({ version: '2.1.292', skip: { [MODEL]: ['max'] } })
+})

@@ -5,14 +5,15 @@ import type { EngineInterface, On } from 'claude-code'
 
 import type { TidemarkConfig, TidemarkConfigState } from '../types'
 import { effectiveConfig } from './config'
-import { EFFORTS, autoCycle, nextEffort, nextModel, parseEfforts } from './model-utils'
+import { EFFORTS, autoCycle, nextEffort, nextModel, parseEfforts, usableEfforts } from './model-utils'
+import type { EffortSupport } from './model-utils'
 import { WIDGETS } from './widgets'
 import { opt } from './widgets/kit'
 import type { Press } from './widgets'
 import { drawBand } from './draw'
 import { buildLines } from './layout'
 import { EMPTY_PROBES } from './probes'
-import { EMPTY_SNAPSHOT } from './snapshot'
+import { EMPTY_SNAPSHOT, STORE_EFFORTS } from './snapshot'
 
 // The engine lists the values a module reads from atoms declared in that same file.
 const snapshotState = atom({ plugin: 'tidemark', key: 'snapshot' } as const, EMPTY_SNAPSHOT)
@@ -35,10 +36,13 @@ async function effortLevels($: EngineInterface): Promise<readonly string[]> {
 }
 // A press on the band: `effort` and `model` step the session's setting through their cycle with the same
 // command the person would type (this session only), and show the new value before the next request does.
+// Effort skips the levels a model's requests were sent lower; a model switch resets effort to `auto`.
 async function press($: EngineInterface, what: Press, config: TidemarkConfig): Promise<void> {
   const snap = await read($, snapshotState)
   if (what === 'effort') {
-    const effort = nextEffort(snap.effort, await effortLevels($))
+    const version = (await $.session.version().catch(() => undefined))?.version ?? ''
+    const support = await $.store.get(STORE_EFFORTS).catch(() => undefined) as EffortSupport | undefined
+    const effort = nextEffort(snap.effort, usableEfforts(await effortLevels($), support, version, snap.model))
     await $.command.run({ command: 'effort', args: effort })
     await update($, snapshotState, s => ({ ...s, effort }))
     return
@@ -54,8 +58,13 @@ async function press($: EngineInterface, what: Press, config: TidemarkConfig): P
   if (!target) return
   const { text } = await $.command.run({ command: 'model', args: target })
   const id = await $.session.model()
-  if (id === snap.model) $.ui.toast(`tidemark: ${text ?? `no switch to ${target}`}`)
-  else await update($, snapshotState, s => ({ ...s, model: id }))
+  if (id === snap.model) {
+    $.ui.toast(`tidemark: ${text ?? `no switch to ${target}`}`)
+    return
+  }
+  // The effort set for the last model carries over; `auto` hands the new one its own default.
+  await $.command.run({ command: 'effort', args: 'auto' })
+  await update($, snapshotState, s => ({ ...s, model: id, effort: 'auto' }))
 }
 
 export function registerBand(on: On): void {

@@ -1,7 +1,7 @@
 // What a press on the model widget steps to: the next effort, the next model of the cycle.
 import { expect, test } from 'claude-code/testing'
 
-import { autoCycle, nextEffort, nextModel, parseEfforts } from '../hooks/model-utils'
+import { autoCycle, learnEffort, nextEffort, nextModel, parseEfforts, usableEfforts } from '../hooks/model-utils'
 
 test('effort steps low → medium → high → xhigh → max → low; a number or none starts at medium', () => {
   expect(['low', 'medium', 'high', 'xhigh', 'max'].map(e => nextEffort(e))).toEqual(['medium', 'high', 'xhigh', 'max', 'low'])
@@ -34,4 +34,18 @@ test('effort levels from the /effort usage line; auto and switches dropped; a ne
   expect(parseEfforts('Unknown command')).toEqual([])
   expect(nextEffort('max', ['low', 'medium', 'high', 'xhigh', 'max', 'ultra'])).toBe('ultra')
   expect(nextEffort(null, ['low', 'high', 'max'])).toBe('high')
+})
+
+test('effort support: a level sent lower is skipped for that model and version, sent as asked it returns', () => {
+  let s = learnEffort(undefined, '2.1.292', 'claude-sonnet-5-5[1m]', 'max', 'high')
+  expect(s).toEqual({ version: '2.1.292', skip: { 'claude-sonnet-5-5': ['max'] } })
+  expect(usableEfforts(['low', 'medium', 'high', 'xhigh', 'max'], s, '2.1.292', 'claude-sonnet-5-5')).toEqual(['low', 'medium', 'high', 'xhigh'])
+  expect(usableEfforts(['low', 'max'], s, '2.1.292', 'claude-opus-5-5')).toEqual(['low', 'max'])
+  // Another Claude Code version learns again.
+  expect(usableEfforts(['high', 'max'], s, '2.1.300', 'claude-sonnet-5-5')).toEqual(['high', 'max'])
+  s = learnEffort(s, '2.1.292', 'claude-sonnet-5-5', 'max', 'max')
+  expect(s.skip['claude-sonnet-5-5']).toEqual([])
+  // A model without effort, `auto` and a wrong argument teach nothing.
+  expect(learnEffort(s, '2.1.292', 'claude-haiku-4-5', 'high', undefined)).toBe(s)
+  expect(learnEffort(s, '2.1.292', 'claude-opus-5-5', 'auto', 'medium')).toBe(s)
 })
