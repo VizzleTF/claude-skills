@@ -6,6 +6,7 @@ export const quota7d = widget('quota7d', {
   title: '7-day quota',
   defaultPriority: 60,
   labels: { text: '7d', nerd: ' 7d' },
+  press: 'usage',
   render(input) {
     const { limits, model } = input.snap
     const week = weekLimit(limits, model)

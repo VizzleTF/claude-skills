@@ -10,6 +10,7 @@ export const context = widget('context', {
   title: 'Context',
   defaultPriority: 100,
   labels: { text: 'ctx', nerd: '' },
+  press: 'context',
   render(input) {
     const { snap, env } = input
     const width = opt<number>(context, input, 'barWidth')

@@ -19,7 +19,8 @@ export type TidemarkSectionId = 'context' | 'cacheQuota' | 'agents'
 export type TidemarkConfig = {
   version: 1
   lines: TidemarkWidgetItem[][]
-  style: { separator: 'pipe' | 'space' | 'dot' | 'powerline' | 'custom'; custom?: string; icons: 'text' | 'nerd' }
+  // `buttons: false` draws presses and links as plain text; absent, true.
+  style: { separator: 'pipe' | 'space' | 'dot' | 'powerline' | 'custom'; custom?: string; icons: 'text' | 'nerd'; buttons?: boolean }
   pane: { sections: { id: TidemarkSectionId; enabled: boolean }[] }
   alerts: { enabled: boolean; context: number; quota5h: number; quota7d: number; cacheSeconds: number }
   // The `/compact` button under the band: shown from `at` percent of the context window.

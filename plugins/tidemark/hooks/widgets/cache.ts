@@ -9,6 +9,7 @@ export const cache = widget('cache', {
   title: 'Cache',
   defaultPriority: 70,
   labels: { text: 'cache', nerd: '' },
+  press: 'cache',
   render(input) {
     const { cache: c, cacheStats, ctx } = input.snap
     const ttl = effectiveTtl(input.snap.cacheTtl ?? input.snap.ttlDefault, opt<string>(cache, input, 'ttl'))

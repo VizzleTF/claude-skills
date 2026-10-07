@@ -47,6 +47,7 @@ export const gitPr = widget('gitPr', {
     const ci = Array.isArray(pr.statusCheckRollup) ? ghCi(pr.statusCheckRollup) : glabCi((pr.head_pipeline ?? pr.pipeline)?.status)
     const state = String(pr.state ?? '').toLowerCase()
     const closed = state && state !== 'open' && state !== 'opened' ? { text: state, role: 'dim' as const } : undefined
-    return [labelled(gitPr, input, spaced([{ text: `#${number}` }, ci && MARK[ci], closed]))]
+    const url = typeof (pr.url ?? pr.web_url) === 'string' ? (pr.url ?? pr.web_url) as string : undefined
+    return [labelled(gitPr, input, spaced([{ text: `#${number}`, ...(url && { href: url }) }, ci && MARK[ci], closed]))]
   },
 })

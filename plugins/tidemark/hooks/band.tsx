@@ -14,6 +14,7 @@ import { drawBand } from './draw'
 import { buildLines } from './layout'
 import { EMPTY_PROBES } from './probes'
 import { EMPTY_SNAPSHOT, STORE_EFFORTS } from './snapshot'
+import { PANE } from './pane'
 
 // The engine lists the values a module reads from atoms declared in that same file.
 const snapshotState = atom({ plugin: 'tidemark', key: 'snapshot' } as const, EMPTY_SNAPSHOT)
@@ -32,11 +33,19 @@ async function effortLevels($: EngineInterface): Promise<readonly string[]> {
   return levels.length > 0 ? levels : EFFORTS
 }
 
-// A press on the band: `effort` and `model` step through their cycle with the command the person would
+// A press on the band: `context` and `usage` run that command, `cache` opens the details pane, `effort` and `model` step through their cycle with the command the person would
 // type, and show the new value before the next request does. Effort skips the levels a model's requests
 // were sent lower. In an interactive session Claude Code keeps an effort set this way as that model's own,
 // so a model switch brings back the level last set for the new model.
 async function press($: EngineInterface, what: Press, config: TidemarkConfig): Promise<void> {
+  if (what === 'context' || what === 'usage') {
+    await $.command.run({ command: what })
+    return
+  }
+  if (what === 'cache') {
+    await $.ui.open({ id: PANE, title: 'tidemark', rows: 24 })
+    return
+  }
   const snap = await read($, snapshotState)
   if (what === 'effort') {
     const version = (await $.session.version().catch(() => undefined))?.version ?? ''
@@ -88,7 +97,7 @@ export function registerBand(on: On): void {
       // The band's own padding takes a cell at each side.
       const lines = buildLines(config, snap, probes, e.props.bodyColumns - 2, now, env)
       const act = (what: Press) => { void press($, what, config).catch((err: unknown) => $.ui.toast(`tidemark: ${err instanceof Error ? err.message : String(err)}`)) }
-      if (lines.length > 0) drawn = drawBand(els, e.surface, lines, config.style, snap.theme, act)
+      if (lines.length > 0) drawn = drawBand(els, e.surface, lines, config.style, snap.theme, config.style.buttons === false ? undefined : act)
     } catch (err) {
       // A band that cannot be drawn is left out; what is drawn below stays.
       $.ui.log(`band: ${err instanceof Error ? err.message : String(err)}`, { to: 'debug' })

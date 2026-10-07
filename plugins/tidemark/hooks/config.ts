@@ -156,6 +156,7 @@ export function validate(raw: unknown): { config: Config; warnings: string[] } {
       if (key === 'separator' && SEPARATORS.includes(v as never)) style.separator = v as Config['style']['separator']
       else if (key === 'icons' && ICONS.includes(v as never)) style.icons = v as Config['style']['icons']
       else if (key === 'custom' && typeof v === 'string') style.custom = v
+      else if (key === 'buttons' && typeof v === 'boolean') style.buttons = v
       else warn(`style: invalid ${key} ${JSON.stringify(v)}`)
     }
   }

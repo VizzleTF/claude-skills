@@ -127,7 +127,7 @@ for (const surface of ['terminal', 'desktop'] as const) {
     const rows = (await ui.findAll({ type: 'Box' })).filter(b => b.props.justifyContent === 'space-between')
     expect(rows.length).toBe(1)
     for (const t of [/27%/, /42%/]) expect(await ui.find({ type: 'Text', text: t })).toBeDefined()
-    expect((await ui.find({ key: 'tidemark-model' }))?.props.label).toBe('opus 5.5')
+    expect((await ui.find({ key: 'tidemark-model-model' }))?.props.label).toBe('opus 5.5')
   })
 
   test(`model and effort are buttons that step through their cycles (${surface})`, async ($, on) => {
@@ -145,18 +145,49 @@ for (const surface of ['terminal', 'desktop'] as const) {
     const model = world.model
     for await (const _ of $.turn.step({ turnId: 't', index: 0, model, effort: 'high', messageCount: 1 })) { /* drain */ }
     const ui = await $.ui.mount(band(surface))
-    expect((await ui.find({ key: 'tidemark-effort' }))?.props.label).toBe('high')
+    expect((await ui.find({ key: 'tidemark-model-effort' }))?.props.label).toBe('high')
 
-    await ui.press({ key: 'tidemark-effort' })
+    await ui.press({ key: 'tidemark-model-effort' })
     expect(runs).toEqual(['/effort xhigh'])
-    expect((await ui.find({ key: 'tidemark-effort' }))?.props.label).toBe('xhigh')
+    expect((await ui.find({ key: 'tidemark-model-effort' }))?.props.label).toBe('xhigh')
 
-    await ui.press({ key: 'tidemark-model' })
+    await ui.press({ key: 'tidemark-model-model' })
     // The new model's effort shows with its first request.
     expect(runs).toEqual(['/effort xhigh', '/model sonnet[1m]'])
-    expect((await ui.find({ key: 'tidemark-model' }))?.props.label).toBe('sonnet 5.5')
-    expect(await ui.find({ key: 'tidemark-effort' })).toBeUndefined()
+    expect((await ui.find({ key: 'tidemark-model-model' }))?.props.label).toBe('sonnet 5.5')
+    expect(await ui.find({ key: 'tidemark-model-effort' })).toBeUndefined()
     world.model = 'claude-opus-5-5'
+  })
+
+  test(`widget labels run /context and /usage and open the pane (${surface})`, async ($, on) => {
+    const runs: string[] = []
+    const opened: string[] = []
+    on('command.run', ($, e) => {
+      runs.push(`/${e.command}`)
+      return { text: '' }
+    })
+    on('ui.open', ($, e) => {
+      opened.push(e.id)
+      return { value: undefined }
+    })
+    on('turn.step', async function* () {
+      return { turnId: 't', index: 0, answer: '', toolUses: [], stopReason: 'end_turn', usage: { model: world.model, input_tokens: 1, output_tokens: 1, cache_read_input_tokens: 5000, cache_creation_input_tokens: 0 } } as any
+    })
+    await start($, on)
+    for await (const _ of $.turn.step({ turnId: 't', index: 0, model: world.model, messageCount: 1 })) { /* drain */ }
+    const ui = await $.ui.mount(band(surface))
+    await ui.press({ key: 'tidemark-context-context' })
+    await ui.press({ key: 'tidemark-quota5h-usage' })
+    await ui.press({ key: 'tidemark-cache-cache' })
+    expect(runs).toEqual(['/context', '/usage'])
+    expect(opened).toEqual(['tidemark'])
+  })
+
+  test(`buttons: false draws every press as text (${surface})`, async ($, on) => {
+    await start($, on, JSON.stringify({ version: 1, style: { separator: 'pipe', icons: 'text', buttons: false } }))
+    const ui = await $.ui.mount(band(surface))
+    expect(await ui.findAll({ type: 'Button' })).toEqual([])
+    expect(await ui.find({ type: 'Text', text: /ctx/ })).toBeDefined()
   })
 
   test(`an empty snapshot draws nothing of its own (${surface})`, async ($, on) => {
@@ -188,7 +219,7 @@ for (const surface of ['terminal', 'desktop'] as const) {
   test(`a subagent's transcript on screen: context shows agent (${surface})`, async ($, on) => {
     await start($, on)
     const ui = await $.ui.mount(band(surface, { agentId: 'a1' }))
-    expect(await ui.find({ type: 'Text', text: /^ ?agent$/ })).toBeDefined()
+    expect((await ui.find({ key: 'tidemark-context-context' }))?.props.label).toBe('agent')
   })
 
   test(`powerline with nerd icons: segments on their colours (${surface})`, async ($, on) => {

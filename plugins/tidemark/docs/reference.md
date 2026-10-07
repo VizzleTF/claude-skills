@@ -13,7 +13,7 @@
 - Limits
 - Troubleshooting
 
-This reference covers tidemark 0.1.4. The config is read from two JSON files, the project file over the global one. A top-level key in the project file replaces the same key of the global file whole: to add one widget in a project, repeat the whole `lines` in the project file. Until a file exists, the default config applies; `Save` in the editor creates the file and its directories. A hand edit is picked up on the next prompt or within 30 seconds. An unknown key, widget or option and an invalid value are dropped, and the editor shows a warning. A file that does not parse is skipped: the band shows a dim `⚠ config`, and the editor shows the path and the error.
+This reference covers tidemark 0.1.5. The config is read from two JSON files, the project file over the global one. A top-level key in the project file replaces the same key of the global file whole: to add one widget in a project, repeat the whole `lines` in the project file. Until a file exists, the default config applies; `Save` in the editor creates the file and its directories. A hand edit is picked up on the next prompt or within 30 seconds. An unknown key, widget or option and an invalid value are dropped, and the editor shows a warning. A file that does not parse is skipped: the band shows a dim `⚠ config`, and the editor shows the path and the error.
 
 ## Commands
 
@@ -39,6 +39,7 @@ This reference covers tidemark 0.1.4. The config is read from two JSON files, th
 | `style.separator` | string | `pipe` (` │ `) | `pipe`, `space`, `dot` (` · `), `powerline` (`▶` arrows, Nerd Font glyphs with `icons: "nerd"`), `custom` |
 | `style.custom` | string | none | the separator when `separator: "custom"` |
 | `style.icons` | string | `text` | `text`, `nerd` (Nerd Font glyphs instead of labels and powerline arrows) |
+| `style.buttons` | boolean | `true` | `false` draws the presses and links of the Widgets table as plain text |
 | `pane.sections` | array of `{id, enabled}` | all three sections on | `id`: `context`, `cacheQuota`, `agents`; the array order is the section order |
 | `alerts.enabled` | boolean | `false` | turns on a toast when a figure crosses its threshold upwards |
 | `alerts.context` | number, % used | `80` | 0–100 |
@@ -104,6 +105,19 @@ While a row is wider than the window, the visible widget with the lowest `priori
 | `flex` | nothing; splits the row into groups: one `flex` sends the widgets after it to the right edge, two put the widgets between them in the middle | never narrowed away |
 
 Figures are coloured on a 10-colour scale from blue to red by the used share.
+
+Some parts of the band are buttons or links. A click works on the desktop and in the fullscreen terminal; otherwise ctrl+x tab focuses the band, Tab moves between buttons and Enter presses. `style.buttons: false` turns them back into text.
+
+| Press on | Does |
+|---|---|
+| the `context` label (`ctx`) | runs `/context` |
+| the `quota5h` or `quota7d` label | runs `/usage` |
+| the `cache` label | opens the `/tidemark` pane |
+| the model name, the effort | the next model of `cycle`, the next effort level (see `model` above) |
+| the `gitPr` number | opens the PR in the browser |
+| the `claudeStatus` word | opens status.claude.com |
+
+A label removed with `label: null` is no button.
 
 The sync in `git` compares the branch with its upstream after the last `git fetch`:
 

@@ -10,8 +10,8 @@ import type { Press, Span } from './widgets'
 import { SPINNERS, spinnerSvg } from './draw-spinner'
 
 type Ink = { dark: string; light: string }
-type Term = Pick<Elements['terminal'], 'Box' | 'Text'> & Partial<Pick<Elements['terminal'], 'Client' | 'Button'>>
-type Rich = Pick<Elements['desktop'], 'Box' | 'Text' | 'Svg'> & Partial<Pick<Elements['desktop'], 'Button'>>
+type Term = Pick<Elements['terminal'], 'Box' | 'Text'> & Partial<Pick<Elements['terminal'], 'Client' | 'Button' | 'Link'>>
+type Rich = Pick<Elements['desktop'], 'Box' | 'Text' | 'Svg'> & Partial<Pick<Elements['desktop'], 'Button' | 'Link'>>
 // What a press on a span runs; absent, presses draw as plain text (the editor's preview).
 export type OnPress = (press: Press) => void
 export type Surface = 'terminal' | 'desktop' | 'vscode' | 'mobile'
@@ -92,6 +92,17 @@ function graphic(s: Span, widget: string): { source: string; alt: string; width:
   return undefined
 }
 
+// A span that does something as its element: a borderless Button for a press, a Link for a URL; undefined
+// for plain text, or with no `act` (presses off, the editor's preview).
+function control({ Button, Link }: { Button?: Elements['terminal']['Button']; Link?: Elements['terminal']['Link'] }, s: Span, widget: string, act?: OnPress) {
+  if (!act) return undefined
+  const label = s.text.trim()
+  const press = s.press
+  if (press && Button) return <Button key={`tidemark-${widget}-${press}`} label={label} plain dimColor={s.role === 'dim'} onPress={() => act(press)} />
+  if (s.href && Link) return <Link href={s.href} label={label} />
+  return undefined
+}
+
 // Spans as nested Text; a sparkline glyph by glyph in its tiers' colours. `fg` overrides every colour.
 function textRun({ Text }: Term, spans: Span[], theme: TidemarkTheme, fg?: string) {
   return spans.filter(s => s.text).map(s => {
@@ -105,12 +116,11 @@ function textRun({ Text }: Term, spans: Span[], theme: TidemarkTheme, fg?: strin
 }
 
 // Spans as a row's items: text trimmed, bars and sparklines as Svg.
-function itemRun({ Text, Svg, Button }: Rich, spans: Span[], widget: string, theme: TidemarkTheme, fg?: string, act?: OnPress) {
+function itemRun(els: Rich, spans: Span[], widget: string, theme: TidemarkTheme, fg?: string, act?: OnPress) {
+  const { Text, Svg } = els
   return spans.flatMap(s => {
-    if (s.press && act && Button) {
-      const press = s.press
-      return [<Button key={`tidemark-${press}`} label={s.text.trim()} plain dimColor={s.role === 'dim'} onPress={() => act(press)} />]
-    }
+    const c = control(els as never, s, widget, act)
+    if (c) return [c]
     if (s.activity !== undefined) {
       const rest = [...s.text.trim()].slice(Math.min(s.activity, SPINNERS)).join('')
       const ink = TIERS[s.tier ?? 5]!
@@ -140,8 +150,8 @@ function joinParts({ Box, Text }: Term, parts: Part[]) {
 }
 
 // A segment's parts: its text, with an activity span's spinners as a Client and its `+N` as text.
-function segmentParts(els: Term, spans: Span[], theme: TidemarkTheme, plaqueOf?: { bg: string; fg?: string }, act?: OnPress): Part[] {
-  const { Text, Client, Button } = els
+function segmentParts(els: Term, spans: Span[], theme: TidemarkTheme, plaqueOf?: { bg: string; fg?: string }, act?: OnPress, widget = ''): Part[] {
+  const { Text, Client } = els
   const parts: Part[] = []
   const text = (t: string) => { if (t) parts.push({ inline: <Text backgroundColor={plaqueOf!.bg} color={plaqueOf!.fg}>{t}</Text> }) }
   let pending = plaqueOf ? ' ' : ''
@@ -161,11 +171,10 @@ function segmentParts(els: Term, spans: Span[], theme: TidemarkTheme, plaqueOf?:
       else if (rest) parts.push({ inline: <Text color={color}>{rest}</Text> })
     } else if (plaqueOf) pending += s.text
     // ponytail: a Button takes no background, so on a powerline plaque a press stays plain text.
-    else if (s.press && act && Button) {
-      const press = s.press
+    else if (control(els, s, widget, act)) {
       const lead = s.text.match(/^ */)![0]
       if (lead) parts.push({ inline: <Text>{lead}</Text> })
-      parts.push({ block: <Button key={`tidemark-${press}`} label={s.text.trim()} plain dimColor={s.role === 'dim'} onPress={() => act(press)} /> })
+      parts.push({ block: control(els, s, widget, act) })
     } else parts.push(...textRun(els, [s], theme).map(inline => ({ inline })))
   }
   if (plaqueOf) text(`${pending} `)
@@ -186,7 +195,7 @@ function terminalLine(els: Term, line: Line, style: Style, theme: TidemarkTheme,
     const sep = separatorText(style)
     line.forEach((seg, i) => {
       if (i > 0) parts.push({ inline: <Text dimColor>{sep}</Text> })
-      parts.push(...segmentParts(els, seg.spans, theme, undefined, act))
+      parts.push(...segmentParts(els, seg.spans, theme, undefined, act, seg.widget))
     })
   }
   return joinParts(els, parts)

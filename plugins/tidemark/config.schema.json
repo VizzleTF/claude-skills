@@ -759,6 +759,10 @@
             "nerd"
           ],
           "default": "text"
+        },
+        "buttons": {
+          "type": "boolean",
+          "default": true
         }
       },
       "additionalProperties": false

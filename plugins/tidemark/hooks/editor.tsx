@@ -184,6 +184,8 @@ export function registerEditor(on: On): void {
         {draft.style.separator === 'custom' && field('custom', 'custom separator', draft.style.custom ?? '', (c, _s, t) => setStyle(c, { custom: t }))}
         {pick('icons', 'icons', draft.style.icons, ICONS.map(value => ({ value, ...(value === 'nerd' && { label: 'nerd font' }) })), v =>
           edit($, 'icons', c => setStyle(c, { icons: v as TidemarkConfig['style']['icons'] })))}
+        {pick('buttons', 'buttons', draft.style.buttons === false ? 'off' : 'on', [{ value: 'on' }, { value: 'off' }], v =>
+          edit($, 'buttons', c => setStyle(c, { buttons: v === 'on' })))}
 
         {head('Pane sections')}
         {draft.pane.sections.map(s => (

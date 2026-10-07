@@ -65,9 +65,9 @@ test('git: fresh within its TTL on a tick, refreshed on turn.complete', () => {
 test('gitPr: the remote first, then gh for github.com and listed hosts, glab otherwise', () => {
   expect(argv(plan(cfg('gitPr')))).toEqual(['git --no-optional-locks status --porcelain=v2 --branch', 'git remote get-url origin'])
   const pr = (url: string, options = {}) => argv(plan(cfg({ widget: 'gitPr', options }), { gitRemote: done(`${url}\n`) }).filter(r => r.key === 'gitPr'))
-  expect(pr('git@github.com:o/r.git')).toEqual(['gh pr view --json number,state,statusCheckRollup,headRefName'])
+  expect(pr('git@github.com:o/r.git')).toEqual(['gh pr view --json number,state,statusCheckRollup,headRefName,url'])
   expect(pr('https://gitlab.com/o/r.git')).toEqual(['glab mr view -F json'])
-  expect(pr('ssh://git@ghe.corp:22/o/r', { githubHosts: ['ghe.corp'] })).toEqual(['gh pr view --json number,state,statusCheckRollup,headRefName'])
+  expect(pr('ssh://git@ghe.corp:22/o/r', { githubHosts: ['ghe.corp'] })).toEqual(['gh pr view --json number,state,statusCheckRollup,headRefName,url'])
 })
 
 test('gitPr: within its two-minute TTL the PR is not asked again, even on a turn; the branch is', () => {
@@ -228,7 +228,7 @@ const OUTPUT: Record<string, string> = {
   'git --no-optional-locks status --porcelain=v2 --branch': STATUS('main', undefined, '? x\n'),
   'git --no-optional-locks diff --numstat HEAD': '4\t1\ta.ts\n',
   'git remote get-url origin': 'git@github.com:o/r.git\n',
-  'gh pr view --json number,state,statusCheckRollup,headRefName': JSON.stringify({ number: 7, state: 'OPEN', statusCheckRollup: [run_('SUCCESS')] }),
+  'gh pr view --json number,state,statusCheckRollup,headRefName,url': JSON.stringify({ number: 7, state: 'OPEN', statusCheckRollup: [run_('SUCCESS')] }),
 }
 
 function host(on: On, calls: string[]) {
@@ -271,13 +271,15 @@ test('engine: enabled probes run on turn.complete and the band shows git, the PR
   // The PR waits for the remote, so it runs on the second turn; a third gives its unawaited result time to land.
   await $.turn.complete({ turnId: 't3', answer: '', durationMs: 1, isAborted: false, reason: 'answer' })
   expect(calls).toContain('git --no-optional-locks status --porcelain=v2 --branch')
-  expect(calls).toContain('gh pr view --json number,state,statusCheckRollup,headRefName')
+  expect(calls).toContain('gh pr view --json number,state,statusCheckRollup,headRefName,url')
   expect(calls).toContain('https://status.claude.com/api/v2/summary.json')
   const ui = await $.ui.mount({
     plugin: 'tidemark', surface: 'terminal', component: 'AbovePrompt',
     props: { hasSurvey: false, isWorking: false, maxRows: 10, bodyColumns: 160, scroll: { offset: 0, bodyRows: 9 }, view: {} },
   })
   expect(await ui.find({ type: 'Text', text: /main\*/ })).toBeDefined()
-  expect(await ui.find({ type: 'Text', text: /#7/ })).toBeDefined()
-  expect(await ui.find({ type: 'Text', text: /major/ })).toBeDefined()
+  // The PR number and the status word are links when the band takes presses.
+  const links = await ui.findAll({ type: 'Link' })
+  expect(links.map(l => l.props.label)).toContain('major')
+  expect(links.some(l => l.props.label === '#7') || !!(await ui.find({ type: 'Text', text: /#7/ }))).toBe(true)
 })

@@ -139,7 +139,7 @@ plugins/tidemark/
 - Pure seams: `validate`, `buildLines`, `WIDGETS[id].render`, `planProbes`, `evaluateAlerts`, `paneRows` on `Snapshot`/`Probes` fixtures.
 - Engine seams: `$.ui.mount` of `AbovePrompt`, `Pane tidemark`, `Pane tidemark-config` on `terminal` and `desktop`, with `mock.env`, `mock.clock` and stub hooks (`on('fs.read')`, `on('process.run')`, `on('http.fetch')`, `on('session.cwd')`...); assert via `ui.find({type, text})` or `ui.find({key})`.
 - Snapshot state seam: hidden pane `tidemark-raw` (`RAW_PANE`) renders `field: JSON` rows; no command opens it.
-- Editor element keys: `w-<line>-<idx>`, `left/right/up/down/toggle/remove/label-none`, `sec-<id>`, `sec-<id>-up`, `save`, `revert`; selects `add`, `opt-<name>`, `separator`, `icons`, `alerts-enabled`, `preset`, `target`; fields `priority`, `label`, `opt-<name>`, `custom`, `alerts-<k>`; field error `err-<key>`.
+- Editor element keys: `w-<line>-<idx>`, `left/right/up/down/toggle/remove/label-none`, `sec-<id>`, `sec-<id>-up`, `save`, `revert`; selects `add`, `opt-<name>`, `separator`, `icons`, `buttons`, `alerts-enabled`, `preset`, `target`; fields `priority`, `label`, `opt-<name>`, `custom`, `alerts-<k>`; field error `err-<key>`.
 - Fake paths in tests look like `/u/dev/proj`.
 
 ### Gotchas

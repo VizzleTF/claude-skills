@@ -3,19 +3,18 @@
 import { labelled, spaced, widget } from './kit'
 import type { Span } from './kit'
 
-const INDICATOR: Record<string, Span> = {
-  none: { text: '● ok', tier: 2 },
-  minor: { text: '● minor', tier: 5 },
-  major: { text: '● major', tier: 7 },
-  critical: { text: '● critical', tier: 9 },
-}
+const PAGE = 'https://status.claude.com'
+const INDICATOR: Record<string, [string, number]> = { none: ['ok', 2], minor: ['minor', 5], major: ['major', 7], critical: ['critical', 9] }
 
-function indicator(text: string | undefined): Span | undefined {
+// The dot in the severity's colour, the word a link to the status page.
+function indicator(text: string | undefined): Span[] | undefined {
+  let found: [string, number] | undefined
   try {
-    return INDICATOR[JSON.parse(text ?? '')?.status?.indicator]
+    found = INDICATOR[JSON.parse(text ?? '')?.status?.indicator]
   } catch {
     return undefined
   }
+  return found && [{ text: '●', tier: found[1] }, { text: found[0], tier: found[1], href: PAGE }]
 }
 
 export const claudeStatus = widget('claudeStatus', {
@@ -27,6 +26,6 @@ export const claudeStatus = widget('claudeStatus', {
     if (!p) return []
     const known = indicator(p.text)
     const unknown: Span | undefined = p.error || !known ? { text: '?', role: 'dim' } : undefined
-    return [labelled(claudeStatus, input, spaced([unknown, known]))]
+    return [labelled(claudeStatus, input, spaced([unknown, ...(known ?? [])]))]
   },
 })

@@ -2,6 +2,14 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.5] - 2026-10-07
+
+### Added
+
+- The labels of `context`, `quota5h`, `quota7d` and `cache` are buttons: `ctx` runs `/context`, `5h` and `7d` run `/usage`, `cache` opens the `/tidemark` pane. The figures keep their colours.
+- The `gitPr` number opens the PR in the browser, the `claudeStatus` word opens status.claude.com.
+- `style.buttons: false` draws every press and link as plain text; the editor has a `buttons` switch.
+
 ## [0.1.4] - 2026-10-07
 
 ### Changed
@@ -51,6 +59,7 @@ All notable changes to the `tidemark` plugin. The format follows [Keep a Changel
 - A `/compact` button under the band once the context fills `compact.at` percent of the window (70 by default).
 - Threshold toasts for context, quota and the prompt cache, off by default.
 
+[0.1.5]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.5
 [0.1.4]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.4
 [0.1.3]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.3
 [0.1.1]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.1

@@ -69,7 +69,7 @@ export function planProbes(
     if (remote) {
       const host = remoteHost(remote)
       const github = host === 'github.com' || opt<string[]>(pr, 'githubHosts').some(h => h.toLowerCase() === host)
-      run('gitPr', ttl, github ? ['gh', 'pr', 'view', '--json', 'number,state,statusCheckRollup,headRefName'] : ['glab', 'mr', 'view', '-F', 'json'], PR_TIMEOUT_MS)
+      run('gitPr', ttl, github ? ['gh', 'pr', 'view', '--json', 'number,state,statusCheckRollup,headRefName,url'] : ['glab', 'mr', 'view', '-F', 'json'], PR_TIMEOUT_MS)
     }
   }
 

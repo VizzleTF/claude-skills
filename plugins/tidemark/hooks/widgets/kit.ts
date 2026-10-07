@@ -6,8 +6,9 @@ import type { OptionSpec } from '../config'
 
 export type Role = 'label' | 'dim' | 'money' | 'activity'
 
-// What a press on a span does; the band runs it. `model` and `effort` cycle the session's setting.
-export type Press = 'model' | 'effort'
+// What a press on a span does; the band runs it. `model` and `effort` cycle the setting, `context` and
+// `usage` run that command, `cache` opens the details pane.
+export type Press = 'model' | 'effort' | 'context' | 'usage' | 'cache'
 
 // One run of text. `tier` is its colour on the ten-tier scale (0–9); `bar` and `spark` mark a graphic the
 // terminal draws as glyphs (`text`) and the desktop as an Svg.
@@ -21,6 +22,8 @@ export type Span = {
   spark?: { values: number[]; tiers: number[] }
   // Drawn as a borderless button that runs this.
   press?: Press
+  // Drawn as a link that opens this URL.
+  href?: string
 }
 // A widget drawn one way; a widget gives its variants from the fullest to the narrowest.
 export type Variant = Span[]
@@ -46,6 +49,8 @@ export type WidgetDef = {
   options: Record<string, OptionSpec>
   // Labels by icon style; null where the widget has none.
   labels: { text: string | null; nerd: string | null }
+  // What a press on the widget's label does.
+  press?: Press
   render(input: WidgetInput): Variant[]
 }
 
@@ -63,7 +68,7 @@ export function labelled(def: WidgetDef, input: WidgetInput, spans: Span[], glue
   const label = input.label === undefined ? (override ?? def.labels[input.icons]) : input.label
   if (!label || spans.length === 0) return spans
   const [first, ...rest] = spans
-  return [{ text: label, role: 'label' }, { ...first!, text: `${glue ? '' : ' '}${first!.text}` }, ...rest]
+  return [{ text: label, role: 'label', ...(def.press && { press: def.press }) }, { ...first!, text: `${glue ? '' : ' '}${first!.text}` }, ...rest]
 }
 
 // Variants without the repeats a dropped detail that was not there leaves behind.
