@@ -4,7 +4,7 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, On } from 'claude-code'
 
 import type { TidemarkConfig, TidemarkConfigState, TidemarkTrack } from '../types'
-import { effectiveConfig } from './config'
+import { effectiveConfig } from './config-model'
 import { EFFORTS, autoCycle, nextEffort, nextModel, parseEfforts, usableEfforts } from './model-utils'
 import type { EffortSupport } from './model-utils'
 import { WIDGETS } from './widgets'

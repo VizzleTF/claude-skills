@@ -4,7 +4,7 @@ import { expect, mock, test } from 'claude-code/testing'
 import type { On } from 'claude-code'
 
 import type { TidemarkProbes, TidemarkSnapshot } from '../types'
-import { validate } from '../hooks/config'
+import { validate } from '../hooks/config-model'
 import { EMPTY_PROBES, applyProbeResult, planProbes } from '../hooks/probes'
 import type { ProbeRequest } from '../hooks/probes'
 import { EMPTY_SNAPSHOT } from '../hooks/snapshot'

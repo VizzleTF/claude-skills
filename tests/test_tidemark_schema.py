@@ -1,4 +1,4 @@
-"""config.schema.json of tidemark stays in step with the tables in hooks/config.ts."""
+"""config.schema.json of tidemark stays in step with the tables in hooks/config-model.ts."""
 
 import json
 import re
@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 
 MOD = Path(__file__).resolve().parent.parent / "plugins" / "tidemark"
-CONFIG_TS = (MOD / "hooks" / "config.ts").read_text(encoding="utf-8")
+CONFIG_TS = (MOD / "hooks" / "config-model.ts").read_text(encoding="utf-8")
 SCHEMA = json.loads((MOD / "config.schema.json").read_text(encoding="utf-8"))
 
 

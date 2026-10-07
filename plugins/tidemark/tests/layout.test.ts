@@ -2,7 +2,7 @@
 import { expect, test } from 'claude-code/testing'
 
 import type { TidemarkSnapshot } from '../types'
-import { DEFAULT_CONFIG, PRESETS } from '../hooks/config'
+import { DEFAULT_CONFIG, PRESETS } from '../hooks/config-model'
 import { buildLines } from '../hooks/layout'
 import type { Line } from '../hooks/layout'
 import { EMPTY_SNAPSHOT } from '../hooks/snapshot'

@@ -2,8 +2,8 @@
 // set an item's fields and options from typed text, style, pane sections and alerts. An edit that cannot
 // apply returns `{ error }` and leaves the draft as it was.
 import type { TidemarkConfig, TidemarkWidgetId, TidemarkWidgetItem } from '../types'
-import { ALERT_MAX, MAX_LINES, WIDGET_OPTIONS } from './config'
-import type { OptionSpec } from './config'
+import { ALERT_MAX, MAX_LINES, WIDGET_OPTIONS } from './config-model'
+import type { OptionSpec } from './config-model'
 
 export type Config = TidemarkConfig
 export type Selection = { line: number; index: number }

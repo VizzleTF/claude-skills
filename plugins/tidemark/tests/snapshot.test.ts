@@ -262,3 +262,37 @@ test('effort support: a level asked with /effort and sent lower is stored as ski
   await runStep($, w, step({}), { effort: 'high' })
   expect(writes).toContainEqual({ version: '2.1.292', skip: { [MODEL]: ['max'] } })
 })
+
+test('goal and project note: set by command, the note read at start and written to disk, both kept by /clear', async ($, on) => {
+  const NOTE = '/u/dev/proj/.claude/tidemark-project.txt'
+  const disk = new Map([[NOTE, '  ship the band  \n']])
+  on('session.cwd', () => ({ value: '/u/dev/proj' }))
+  on('fs.read', ($, e) => {
+    if (!disk.has(e.path)) throw new Error('ENOENT')
+    return { value: disk.get(e.path)! }
+  })
+  on('fs.write', ($, e) => {
+    disk.set(e.path, e.text)
+    return { value: undefined }
+  })
+  const s = await start($, on, world())
+  expect(await s.field('project')).toBe('ship the band')
+  expect(await s.field('goal')).toBe(null)
+
+  expect(await $.command.run({ command: 'tidemark-goal', args: ' fix the cache ' })).toEqual({})
+  expect(await s.field('goal')).toBe('fix the cache')
+  await $.command.run({ command: 'tidemark-project', args: 'tidemark v2' })
+  expect(await s.field('project')).toBe('tidemark v2')
+  expect(disk.get(NOTE)).toBe('tidemark v2')
+
+  await $.classic.SessionStart({ source: 'clear' })
+  expect(await s.field('goal')).toBe('fix the cache')
+  expect(await s.field('project')).toBe('tidemark v2')
+
+  // No text clears; the note's file is emptied, not left stale.
+  await $.command.run({ command: 'tidemark-goal', args: '' })
+  await $.command.run({ command: 'tidemark-project', args: '  ' })
+  expect(await s.field('goal')).toBe(null)
+  expect(await s.field('project')).toBe(null)
+  expect(disk.get(NOTE)).toBe('')
+})

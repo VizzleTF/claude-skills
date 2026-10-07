@@ -6,7 +6,7 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, On } from 'claude-code'
 
 import type { TidemarkConfig, TidemarkConfigState, TidemarkEditor, TidemarkWidgetId } from '../types'
-import { ICONS, PRESETS, SEPARATORS, WIDGET_IDS, WIDGET_OPTIONS, configPathsFrom, configText, effectiveConfig, loadFromTexts, saveContent } from './config'
+import { ICONS, PRESETS, SEPARATORS, WIDGET_IDS, WIDGET_OPTIONS, configPathsFrom, configText, effectiveConfig, loadFromTexts, saveContent } from './config-model'
 import { drawBand } from './draw'
 import {
   addItem, moveItem, optionText, raiseSection, removeItem, setAlert, setCompactAt, setLabel, setOption, setPriority, setStyle,

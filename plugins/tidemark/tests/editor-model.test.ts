@@ -2,7 +2,7 @@
 import { expect, test } from 'claude-code/testing'
 
 import type { TidemarkConfig } from '../types'
-import { DEFAULT_CONFIG, MAX_LINES } from '../hooks/config'
+import { DEFAULT_CONFIG, MAX_LINES } from '../hooks/config-model'
 import {
   addItem, moveItem, optionText, raiseSection, removeItem, setAlert, setLabel, setOption, setPriority, toInt, toggleItem,
 } from '../hooks/editor-model'

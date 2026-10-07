@@ -1,6 +1,6 @@
 import { expect, mock, test } from 'claude-code/testing'
 import type { On } from 'claude-code'
-import { DEFAULT_CONFIG, PRESETS, SCHEMA_URL, effectiveConfig, validate } from '../hooks/config'
+import { DEFAULT_CONFIG, PRESETS, SCHEMA_URL, effectiveConfig, validate } from '../hooks/config-model'
 
 const HOME = '/u/dev'
 const CWD = '/u/dev/proj'
@@ -72,7 +72,7 @@ test('every preset validates without warnings', async () => {
   expect(ids(PRESETS.minimal!.lines)).toEqual([['context', 'quota5h']])
   expect(ids(PRESETS.classic!.lines)).toEqual([['context', 'cache', 'quota5h', 'quota7d']])
   expect(ids(PRESETS.full!.lines)).toEqual([
-    ['context', 'cache', 'quota5h', 'quota7d', 'cost'],
+    ['project', 'goal', 'context', 'cache', 'quota5h', 'quota7d', 'cost'],
     ['model', 'cwd', 'git', 'sessionTime', 'compactions', 'tokenSpeed', 'agents'],
   ])
   expect(PRESETS.powerline!.style).toEqual({ separator: 'powerline', icons: 'nerd' })

@@ -4,7 +4,7 @@
 import { expect, mock, test } from 'claude-code/testing'
 import type { On } from 'claude-code'
 
-import { DEFAULT_CONFIG, PRESETS, SCHEMA_URL } from '../hooks/config'
+import { DEFAULT_CONFIG, PRESETS, SCHEMA_URL } from '../hooks/config-model'
 
 const HOME = '/u/dev'
 const CWD = '/u/dev/proj'

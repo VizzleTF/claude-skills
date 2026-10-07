@@ -11,12 +11,14 @@ import { registerBand } from './band'
 import { registerConfig } from './config'
 import { EDITOR, registerEditor } from './editor'
 import { PANE, registerPane } from './pane'
-import { registerSnapshot } from './snapshot'
+import { GOAL, PROJECT, registerSnapshot } from './snapshot'
 
 export const register: Register = on => {
   registerSnapshot(on, [
     { name: PANE, description: 'Show tidemark details: context, cache, quota, agents' },
     { name: EDITOR, description: 'Edit the tidemark band: widgets, style, presets' },
+    { name: GOAL, description: 'Set the goal the band shows for this session; no text clears it' },
+    { name: PROJECT, description: 'Set the project note the band shows, kept in .claude/tidemark-project.txt; no text clears it' },
   ])
   registerConfig(on)
   registerBand(on)

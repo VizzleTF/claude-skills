@@ -2,6 +2,16 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.8] - 2026-10-07
+
+### Added
+
+- `goal` and `project` widgets with the commands `/tidemark-goal <text>` and `/tidemark-project <text>`. The goal lasts the session, the project note is kept in `.claude/tidemark-project.txt`. Both are in the `full` preset and hidden until set.
+
+### Changed
+
+- The config's pure part (schema tables, presets, validation, merging) moved to `hooks/config-model.ts`; `hooks/config.ts` keeps the loading hooks. Snapshot updates are pure functions in `hooks/snapshot-reducers.ts`, each applied in one state write.
+
 ## [0.1.7] - 2026-10-07
 
 ### Changed
@@ -76,6 +86,7 @@ All notable changes to the `tidemark` plugin. The format follows [Keep a Changel
 - A `/compact` button under the band once the context fills `compact.at` percent of the window (70 by default).
 - Threshold toasts for context, quota and the prompt cache, off by default.
 
+[0.1.8]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.8
 [0.1.7]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.7
 [0.1.6]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.6
 [0.1.5]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.5

@@ -3,7 +3,7 @@ import { atom, read } from 'claude-code'
 import type { On } from 'claude-code'
 
 import type { TidemarkConfigState } from '../types'
-import { effectiveConfig } from './config'
+import { effectiveConfig } from './config-model'
 import { drawPaneLines } from './draw'
 import { paneRows } from './pane-rows'
 import { EMPTY_SNAPSHOT } from './snapshot'

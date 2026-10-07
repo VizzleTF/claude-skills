@@ -16,6 +16,7 @@ import { flex } from './flex'
 import { git } from './git'
 import { gitPr } from './gitPr'
 import { model } from './model'
+import { goal, project } from './note'
 import { quota5h } from './quota5h'
 import { quota7d } from './quota7d'
 import { sessionTime } from './sessionTime'
@@ -26,5 +27,5 @@ export { gainTier, pctTier } from './kit'
 
 export const WIDGETS: Record<TidemarkWidgetId, WidgetDef> = {
   context, cache, quota5h, quota7d, cost, agents, model, git, cwd, sessionTime, compactions, tokenSpeed, command, claudeStatus, gitPr, flex,
-  compact, actions,
+  compact, actions, goal, project,
 }

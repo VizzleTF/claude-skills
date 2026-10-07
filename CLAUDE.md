@@ -100,8 +100,10 @@ plugins/tidemark/
   hooks/hooks.json             {"modules": ["./register.tsx"]}
   hooks/register.tsx           entry: calls register* of each module, owns command.run for /tidemark, /tidemark-config
   hooks/snapshot.ts            session events -> atoms snapshot, track, probes, alerts; runs probes and alert toasts
+  hooks/snapshot-reducers.ts   pure: snapshot patches per event (reduceContext, reduceStep, reduceCompact...)
   hooks/model-utils.ts         pure helpers shared by snapshot.ts and widgets: baseModel, validCost
-  hooks/config.ts              schema, DEFAULT_CONFIG, PRESETS, validate, file paths and merge (pure) + load hooks
+  hooks/config-model.ts        pure: schema tables, DEFAULT_CONFIG, PRESETS, validate, file paths, merge, saveContent
+  hooks/config.ts              load hooks: atom config, mtime checks on classic.SessionStart, prompt.submit, a tick
   hooks/probes.ts              pure: planProbes, applyProbeResult, commandKey; timeouts as constants
   hooks/alerts.ts              pure: evaluateAlerts (hysteresis T-5, cache once per window)
   hooks/widgets/               one file per widget; index.ts = WIDGETS registry, kit.ts = shared helpers
@@ -130,13 +132,13 @@ plugins/tidemark/
 
 - Every function that touches `$` lives in the hook's own file; other files export only pure functions.
 - Each module declares its own `atom({plugin: 'tidemark', key}, EMPTY_*)` locally and shares values only through atoms.
-- New widget: file in `hooks/widgets/`, built with `kit.ts` helpers (`widget`, `opt`, `labelled`, `bar`, `dur`, `ktok`...), registered in `widgets/index.ts`, options in `WIDGET_OPTIONS` (`config.ts`), id in `TidemarkWidgetId`, the widget and its options in `config.schema.json` (`tests/test_tidemark_schema.py` fails until they match).
+- New widget: file in `hooks/widgets/`, built with `kit.ts` helpers (`widget`, `opt`, `labelled`, `bar`, `dur`, `ktok`...), registered in `widgets/index.ts`, options in `WIDGET_OPTIONS` (`config-model.ts`), id in `TidemarkWidgetId`, the widget and its options in `config.schema.json` (`tests/test_tidemark_schema.py` fails until they match).
 - Code, comments, UI labels in English; deliberate shortcuts marked `ponytail:`.
 
 ### Tests
 
 - `claude plugin test plugins/tidemark`; suites in `plugins/tidemark/tests/`, one per module.
-- Pure seams: `validate`, `buildLines`, `WIDGETS[id].render`, `planProbes`, `evaluateAlerts`, `paneRows` on `Snapshot`/`Probes` fixtures.
+- Pure seams: `validate`, `reduce*` (`snapshot-reducers.ts`), `buildLines`, `WIDGETS[id].render`, `planProbes`, `evaluateAlerts`, `paneRows` on `Snapshot`/`Probes` fixtures.
 - Engine seams: `$.ui.mount` of `AbovePrompt`, `Pane tidemark`, `Pane tidemark-config` on `terminal` and `desktop`, with `mock.env`, `mock.clock` and stub hooks (`on('fs.read')`, `on('process.run')`, `on('http.fetch')`, `on('session.cwd')`...); assert via `ui.find({type, text})` or `ui.find({key})`.
 - Snapshot state seam: hidden pane `tidemark-raw` (`RAW_PANE`) renders `field: JSON` rows; no command opens it.
 - Editor element keys: `w-<line>-<idx>`, `left/right/up/down/toggle/remove/label-none`, `sec-<id>`, `sec-<id>-up`, `save`, `revert`; selects `add`, `opt-<name>`, `separator`, `icons`, `buttons`, `alerts-enabled`, `preset`, `target`; fields `priority`, `label`, `opt-<name>`, `custom`, `alerts-<k>`; field error `err-<key>`.

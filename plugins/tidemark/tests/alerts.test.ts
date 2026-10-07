@@ -5,7 +5,7 @@ import { expect, test } from 'claude-code/testing'
 import type { TidemarkConfig, TidemarkSnapshot } from '../types'
 import { EMPTY_ALERT_MEMORY, evaluateAlerts } from '../hooks/alerts'
 import type { AlertMemory } from '../hooks/alerts'
-import { DEFAULT_CONFIG } from '../hooks/config'
+import { DEFAULT_CONFIG } from '../hooks/config-model'
 import { EMPTY_SNAPSHOT } from '../hooks/snapshot'
 
 const NOW = Date.parse('2026-10-07T12:00:00Z')

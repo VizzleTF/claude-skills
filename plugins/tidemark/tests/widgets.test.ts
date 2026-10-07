@@ -180,7 +180,7 @@ test('nerd icons replace the text labels; the probe widgets are hidden until fil
   const own = { kind: 'seven_day_opus', percentUsed: 80, resetsAt: iso(30 * HOUR) }
   expect(full('quota7d', snap({ limits: [WEEK, own], limitsLive: true }), { icons: 'nerd' })).toBe('\uf073 7d opus 80% ↻ 1d6h')
   for (const id of ['git', 'gitPr', 'command', 'claudeStatus']) expect(run(id, snap())).toEqual([])
-  expect(Object.keys(WIDGETS).length).toBe(18)
+  expect(Object.keys(WIDGETS).length).toBe(20)
 })
 
 test('compact and actions: /compact hidden on a subagent, config switchable; none before data', () => {
@@ -191,4 +191,15 @@ test('compact and actions: /compact hidden on a subagent, config switchable; non
   expect(presses(run('actions', s))).toEqual([['⚙', 'config']])
   expect(run('actions', s, { options: { config: false } })).toEqual([])
   for (const id of ['compact', 'actions']) expect(run(id, snap({ model: null, ctx: null }))).toEqual([])
+})
+
+test('goal and project: hidden when unset, the full text, then cut short', () => {
+  expect(run('goal', snap())).toEqual([])
+  expect(run('project', snap())).toEqual([])
+  expect(full('goal', snap({ goal: 'fix the cache' }))).toBe('goal fix the cache')
+  const long = 'move the whole config model into its own pure file'
+  const v = run('project', snap({ project: long }))
+  expect(text(v[0])).toBe(`project ${long}`)
+  expect(text(v[1])).toBe('project move the whole config m…')
+  expect(full('goal', snap({ goal: 'x' }), { icons: 'nerd' })).toBe(' x')
 })

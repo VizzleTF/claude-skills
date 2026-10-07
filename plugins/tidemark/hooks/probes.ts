@@ -2,7 +2,7 @@
 // runs what `planProbes` asks for and folds each outcome back with `applyProbeResult`. Nothing here calls
 // `$`; the engine only lets the hook's own file do that.
 import type { TidemarkConfig, TidemarkProbes, TidemarkSnapshot, TidemarkWidgetId, TidemarkWidgetItem } from '../types'
-import { WIDGET_OPTIONS } from './config'
+import { WIDGET_OPTIONS } from './config-model'
 import { opt as optionOf } from './widgets/kit'
 
 export type ProbesState = TidemarkProbes

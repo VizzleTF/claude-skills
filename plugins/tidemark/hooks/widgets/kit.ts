@@ -1,8 +1,8 @@
 // What every widget shares: the span and input types, the colour scale's tiers, number and time formats.
 // Scale and formulas after ccOverhead (MIT, shengyy).
 import type { TidemarkLimit, TidemarkProbes, TidemarkSnapshot, TidemarkWidgetId } from '../../types'
-import { WIDGET_OPTIONS } from '../config'
-import type { OptionSpec } from '../config'
+import { WIDGET_OPTIONS } from '../config-model'
+import type { OptionSpec } from '../config-model'
 
 export type Role = 'label' | 'dim' | 'money' | 'activity'
 

@@ -3,7 +3,7 @@
 export type TidemarkWidgetId =
   | 'context' | 'cache' | 'quota5h' | 'quota7d' | 'cost' | 'agents' | 'model' | 'git' | 'cwd'
   | 'sessionTime' | 'compactions' | 'tokenSpeed' | 'command' | 'claudeStatus' | 'gitPr' | 'flex'
-  | 'compact' | 'actions'
+  | 'compact' | 'actions' | 'goal' | 'project'
 
 export type TidemarkWidgetItem = {
   widget: TidemarkWidgetId
@@ -100,6 +100,9 @@ export type TidemarkSnapshot = {
   // Output tokens per second of the last main turn.
   speed: number | null
   theme: TidemarkTheme
+  // What /tidemark-goal set for this session, and the project note /tidemark-project keeps on disk.
+  goal: string | null
+  project: string | null
 }
 
 // Bookkeeping the snapshot module keeps between events; not part of the snapshot.
