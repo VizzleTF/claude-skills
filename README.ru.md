@@ -1,5 +1,7 @@
 # claude-skills
 
+[![ci](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml)
+
 Плагин для Claude Code пишет техническую документацию по типам документа и проводит её ревью. На 28 тестовых сценариях его документы вышли на 20–30% короче, чем с прежним скиллом `writing-docs`. Оценка судьи при этом та же или выше.
 
 ## Установка

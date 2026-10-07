@@ -1,6 +1,6 @@
 import { expect, mock, test } from 'claude-code/testing'
 import type { On } from 'claude-code'
-import { DEFAULT_CONFIG, PRESETS, effectiveConfig, validate } from '../hooks/config'
+import { DEFAULT_CONFIG, PRESETS, SCHEMA_URL, effectiveConfig, validate } from '../hooks/config'
 
 const HOME = '/u/dev'
 const CWD = '/u/dev/proj'
@@ -168,4 +168,8 @@ test('a config stored by an older version, without newer keys, gets their defaul
   const { compact: _, ...old } = DEFAULT_CONFIG
   const loaded = effectiveConfig({ config: old as any, warnings: [], sources: [], stamp: '' })
   expect(loaded.config.compact).toEqual({ enabled: true, at: 70 })
+})
+
+test('a $schema key is accepted', () => {
+  expect(validate({ $schema: SCHEMA_URL, version: 1 }).warnings).toEqual([])
 })

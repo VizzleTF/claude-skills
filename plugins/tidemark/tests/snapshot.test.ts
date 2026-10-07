@@ -241,3 +241,14 @@ test('a config with no external widgets runs no process and fetches nothing', as
   await s.clock.advance(65_000)
   expect(calls).toEqual([])
 })
+
+test('a failure the band survives goes to the debug log', async ($, on) => {
+  const logs: { text: string; to?: string }[] = []
+  // The fake host implements no command.register, so registering /tidemark fails.
+  on('ui.log', ($, e) => {
+    logs.push({ text: e.text, to: e.to })
+    return { value: undefined }
+  })
+  await start($, on, world())
+  expect(logs).toContainEqual({ text: 'register /tidemark: no implementation for command.register', to: 'debug' })
+})

@@ -1,0 +1,31 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install -g @anthropic-ai/claude-code
+      - name: Repo checks
+        run: |
+          python3 -m unittest discover -s tests
+          python3 tools/parity.py
+          python3 plugins/technical-writing/skills/write/scripts/check.py plugins/technical-writing/skills/write/
+          python3 plugins/technical-writing/skills/write/scripts/check.py plugins/technical-writing-ru/skills/write/
+      - name: Manifests
+        run: |
+          claude plugin validate .
+          claude plugin validate plugins/tidemark
+      - name: tidemark tests
+        run: claude plugin test plugins/tidemark

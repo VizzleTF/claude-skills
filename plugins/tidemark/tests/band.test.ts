@@ -8,6 +8,9 @@ const WINDOW = 1_000_000
 const GLOBAL = '/u/dev/.config/tidemark/config.json'
 const LIMITS: SessionRateLimit[] = [{ kind: 'five_hour', percentUsed: 42, resetsAt: new Date(NOW + 3_600_000).toISOString() }]
 
+// The running model; a test that switches it sets it before `start`.
+const world = { model: 'claude-opus-5-5' }
+
 // The fake host: a session at 27% of a 1M window, a config file when given, a downstream band `below`.
 function host(on: On, configText?: string, theme?: string, running = 0, onBelow?: () => void) {
   mock.env(on, { HOME: '/u/dev' })
@@ -15,7 +18,8 @@ function host(on: On, configText?: string, theme?: string, running = 0, onBelow?
   on('session.start', ($, e) => ({ cwd: e.cwd }))
   on('session.id', () => ({ value: 's1' }))
   on('session.cwd', () => ({ value: '/u/dev/proj' }))
-  on('session.model', () => ({ value: 'claude-opus-5-5' }))
+  on('session.model', () => ({ value: world.model }))
+  on('ui.log', () => ({ value: undefined }))
   on('session.usage', () => {
     const value: SessionUsage = { startedAt: NOW, rateLimits: LIMITS, context: { tokens: 271_000, window: WINDOW, percent: 27 } }
     return { value }
@@ -23,8 +27,12 @@ function host(on: On, configText?: string, theme?: string, running = 0, onBelow?
   on('session.measure', ($, e) => ({ changed: e.changed }))
   on('classic.SessionStart', () => ({}))
   on('agent.list', () => ({ value: Array.from({ length: running }, (_, i) => ({ id: `a${i}`, type: 'general', status: 'running' })) as any }))
+  const row = (key: string, value: string, options?: string[]) => ({ key, value, label: key, kind: 'choice', options, provider: { plugin: 'engine', tier: 'core' }, isLocked: false })
   on('config.list', () => ({
-    value: theme === undefined ? [] : [{ key: 'theme', value: theme, label: 'Theme', kind: 'choice', provider: { plugin: 'engine', tier: 'core' }, isLocked: false }] as any,
+    value: [
+      ...(theme === undefined ? [] : [row('theme', theme)]),
+      row('model', 'opus[1m]', ['default', 'opus', 'sonnet', 'haiku', 'opus[1m]', 'sonnet[1m]', 'opusplan']),
+    ] as any,
   }))
   on('store.get', () => ({ value: undefined }))
   on('store.set', () => ({ value: undefined }))
@@ -118,7 +126,37 @@ for (const surface of ['terminal', 'desktop'] as const) {
     const ui = await $.ui.mount(band(surface))
     const rows = (await ui.findAll({ type: 'Box' })).filter(b => b.props.justifyContent === 'space-between')
     expect(rows.length).toBe(1)
-    for (const t of [/27%/, /opus/, /42%/]) expect(await ui.find({ type: 'Text', text: t })).toBeDefined()
+    for (const t of [/27%/, /42%/]) expect(await ui.find({ type: 'Text', text: t })).toBeDefined()
+    expect((await ui.find({ key: 'tidemark-model' }))?.props.label).toBe('opus 5.5')
+  })
+
+  test(`model and effort are buttons that step through their cycles (${surface})`, async ($, on) => {
+    const runs: string[] = []
+    world.model = 'claude-opus-5-5[1m]'
+    on('command.run', ($, e) => {
+      runs.push(`/${e.command} ${e.args}`)
+      if (e.command === 'model') world.model = 'claude-sonnet-5-5[1m]'
+      const levels = 'Invalid argument: tidemark-levels. Valid options are: low, medium, high, xhigh, max, auto, ultracode [on|off]'
+      return { text: e.args === 'tidemark-levels' ? levels : 'ok' }
+    })
+    on('turn.step', async function* () {
+      return { turnId: 't', index: 0, answer: '', toolUses: [], stopReason: 'end_turn', usage: { model: world.model, input_tokens: 1, output_tokens: 1, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 } } as any
+    })
+    await start($, on)
+    const model = world.model
+    for await (const _ of $.turn.step({ turnId: 't', index: 0, model, effort: 'high', messageCount: 1 })) { /* drain */ }
+    const ui = await $.ui.mount(band(surface))
+    expect((await ui.find({ key: 'tidemark-effort' }))?.props.label).toBe('high')
+
+    await ui.press({ key: 'tidemark-effort' })
+    // The first press asks /effort for its levels.
+    expect(runs).toEqual(['/effort tidemark-levels', '/effort xhigh'])
+    expect((await ui.find({ key: 'tidemark-effort' }))?.props.label).toBe('xhigh')
+
+    await ui.press({ key: 'tidemark-model' })
+    expect(runs).toEqual(['/effort tidemark-levels', '/effort xhigh', '/model sonnet[1m]'])
+    expect((await ui.find({ key: 'tidemark-model' }))?.props.label).toBe('sonnet 5.5')
+    world.model = 'claude-opus-5-5'
   })
 
   test(`an empty snapshot draws nothing of its own (${surface})`, async ($, on) => {

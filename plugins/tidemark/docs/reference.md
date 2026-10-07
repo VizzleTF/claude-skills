@@ -11,8 +11,9 @@
 - Presets
 - External runs
 - Limits
+- Troubleshooting
 
-This reference covers tidemark 0.1.0. The config is read from two JSON files, the project file over the global one. A top-level key in the project file replaces the same key of the global file whole: to add one widget in a project, repeat the whole `lines` in the project file. Until a file exists, the default config applies; `Save` in the editor creates the file and its directories. A hand edit is picked up on the next prompt or within 30 seconds. An unknown key, widget or option and an invalid value are dropped, and the editor shows a warning. A file that does not parse is skipped: the band shows a dim `⚠ config`, and the editor shows the path and the error.
+This reference covers tidemark 0.1.1. The config is read from two JSON files, the project file over the global one. A top-level key in the project file replaces the same key of the global file whole: to add one widget in a project, repeat the whole `lines` in the project file. Until a file exists, the default config applies; `Save` in the editor creates the file and its directories. A hand edit is picked up on the next prompt or within 30 seconds. An unknown key, widget or option and an invalid value are dropped, and the editor shows a warning. A file that does not parse is skipped: the band shows a dim `⚠ config`, and the editor shows the path and the error.
 
 ## Commands
 
@@ -32,6 +33,7 @@ This reference covers tidemark 0.1.0. The config is read from two JSON files, th
 
 | Key | Type | Default | Limits |
 |---|---|---|---|
+| `$schema` | string | `https://raw.githubusercontent.com/VizzleTF/claude-skills/main/plugins/tidemark/config.schema.json` | the JSON Schema a code editor uses to suggest keys and values; `Save` writes it |
 | `version` | number | `1` | `1` only; the key may be left out |
 | `lines` | array of band rows; a row is an array of widgets | one row: `context`, `cache`, `quota5h`, `quota7d`, `model`, `git` | 1–3 rows; extra rows are dropped |
 | `style.separator` | string | `pipe` (` │ `) | `pipe`, `space`, `dot` (` · `), `powerline` (`▶` arrows, Nerd Font glyphs with `icons: "nerd"`), `custom` |
@@ -54,6 +56,7 @@ Example:
 
 ```json
 {
+  "$schema": "https://raw.githubusercontent.com/VizzleTF/claude-skills/main/plugins/tidemark/config.schema.json",
   "version": 1,
   "lines": [
     ["context", "cache", "flex", "quota5h", "quota7d"],
@@ -87,7 +90,7 @@ While a row is wider than the window, the visible widget with the lowest `priori
 | `quota5h` | `5h 42% ↻ 2h34m` | 80 |
 | `cache` | `warm 38m`, `cold`, `rewrote 45k`; `warm` without minutes while the cache lifetime is unknown | 70 |
 | `quota7d` | `7d 63% ↻ 2d7h`; the model's own week as `7d fable` when the engine reports one | 60 |
-| `model` | `opus 5.5 · high` | 50 |
+| `model` | `opus 5.5 · high`; a press on the name switches to the next model of `cycle`, on the effort steps to the next level `/effort` lists (`low → medium → high → xhigh → max` today), for this session only | 50 |
 | `git` | branch or short SHA, `*` for uncommitted changes, sync with the upstream, `+12 −3` against HEAD | 40 |
 | `cost` | `≈$1.84 (+$0.12)`: the session and the current turn | 20 |
 | `agents` | a spinner per running subagent, up to three, then `+N` | 20 |
@@ -135,6 +138,7 @@ A row takes its first two `flex`; any other is dropped. The groups spread across
 | `quota5h`, `quota7d` | `bar` | boolean | `false` | |
 | `model` | `showEffort` | boolean | `true` | |
 | `model` | `format` | string | `short` | `short`, `full` |
+| `model` | `cycle` | array of strings | empty | models a press on the name steps through, as `/model` takes them. Empty: the models Claude Code offers in `/config`, without `default`, `best` and `opusplan`; while the running model has the 1M window, `[1m]` aliases in place of the plain ones |
 | `git` | `showDirty` | boolean | `true` | |
 | `git` | `showDiff` | boolean | `true` | |
 | `git` | `showSync` | boolean | `true` | |
@@ -190,3 +194,14 @@ Besides that, tidemark reads its config files and writes a file only on `Save`. 
 | Width | one cell per code point; emoji and other wide glyphs are undercounted |
 | Timeouts | `git` 2 s, `git fetch` 15 s, `gh` and `glab` 10 s, the status page 5 s; not configurable |
 | Surfaces | VS Code and mobile do not draw the band; panes open |
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| No band above the prompt | Run `/reload-plugins`. Check `claude --version` is 2.1.288 or later and `claude plugin list` shows `tidemark` enabled. VS Code and mobile do not draw the band |
+| A dim `⚠ config` at the end of the band | A config file does not parse. `/tidemark-config` shows the path and the error |
+| Boxes or question marks instead of icons | `icons: "nerd"` without a Nerd Font in the terminal. Set `style.icons` to `text` |
+| `git` shows nothing | The session directory is not in a git repository, or `git` is not on `PATH` |
+| A dim `?` after the `git` sync | `git fetch` failed: no network, or the remote asks for credentials. Set `git.fetch` to `0` to stop fetching |
+| Anything else | Start `claude --debug`: tidemark writes the failures it survives to the debug log, each line led by `tidemark` |

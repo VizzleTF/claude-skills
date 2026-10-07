@@ -1,5 +1,7 @@
 # claude-skills
 
+[![ci](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml)
+
 A Claude Code plugin that writes and reviews technical documentation by document type. On 28 test scenarios its documents came out 20–30% shorter than with the earlier `writing-docs` skill, at the same judge score or higher.
 
 ## Install

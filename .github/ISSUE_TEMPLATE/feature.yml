@@ -1,0 +1,17 @@
+name: Feature request
+description: A widget, an option or a skill change you need
+body:
+  - type: input
+    id: plugin
+    attributes:
+      label: Plugin
+      description: "`tidemark`, `technical-writing` or `technical-writing-ru`"
+    validations:
+      required: true
+  - type: textarea
+    id: need
+    attributes:
+      label: What you need and why
+      description: The task you are doing and what gets in the way.
+    validations:
+      required: true

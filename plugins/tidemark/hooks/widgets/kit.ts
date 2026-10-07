@@ -6,6 +6,9 @@ import type { OptionSpec } from '../config'
 
 export type Role = 'label' | 'dim' | 'money' | 'activity'
 
+// What a press on a span does; the band runs it. `model` and `effort` cycle the session's setting.
+export type Press = 'model' | 'effort'
+
 // One run of text. `tier` is its colour on the ten-tier scale (0–9); `bar` and `spark` mark a graphic the
 // terminal draws as glyphs (`text`) and the desktop as an Svg.
 export type Span = {
@@ -16,6 +19,8 @@ export type Span = {
   // Running agents: drawn as that many animated spinners (up to three), the text's `+N` after them.
   activity?: number
   spark?: { values: number[]; tiers: number[] }
+  // Drawn as a borderless button that runs this.
+  press?: Press
 }
 // A widget drawn one way; a widget gives its variants from the fullest to the narrowest.
 export type Variant = Span[]
@@ -94,7 +99,8 @@ export function ktok(t: number): string {
 
 // One decimal for deltas: 3.4k, 40k, 1.2M.
 export function kshort(t: number): string {
-  const [x, u] = t >= 1_000_000 ? [Math.round(t / 100_000), 'M'] : t >= 1_000 ? [Math.round(t / 100), 'k'] : [t, '']
+  // From 999_950 a rounded k would read 1000k, so M starts there.
+  const [x, u] = t >= 999_950 ? [Math.round(t / 100_000), 'M'] : t >= 1_000 ? [Math.round(t / 100), 'k'] : [t, '']
   if (!u) return String(Math.floor(x))
   return x % 10 === 0 ? `${x / 10}${u}` : `${Math.floor(x / 10)}.${x % 10}${u}`
 }

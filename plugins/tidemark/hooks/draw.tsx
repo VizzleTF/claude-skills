@@ -6,12 +6,14 @@ import type { Elements } from 'claude-code'
 import type { TidemarkTheme } from '../types'
 import type { Line, Segment, Style } from './layout'
 import { separatorText } from './layout'
-import type { Span } from './widgets'
+import type { Press, Span } from './widgets'
 import { SPINNERS, spinnerSvg } from './draw-spinner'
 
 type Ink = { dark: string; light: string }
-type Term = Pick<Elements['terminal'], 'Box' | 'Text'> & Partial<Pick<Elements['terminal'], 'Client'>>
-type Rich = Pick<Elements['desktop'], 'Box' | 'Text' | 'Svg'>
+type Term = Pick<Elements['terminal'], 'Box' | 'Text'> & Partial<Pick<Elements['terminal'], 'Client' | 'Button'>>
+type Rich = Pick<Elements['desktop'], 'Box' | 'Text' | 'Svg'> & Partial<Pick<Elements['desktop'], 'Button'>>
+// What a press on a span runs; absent, presses draw as plain text (the editor's preview).
+export type OnPress = (press: Press) => void
 export type Surface = 'terminal' | 'desktop' | 'vscode' | 'mobile'
 
 // The ten-tier scale, cool (safe) to warm (warning).
@@ -103,8 +105,12 @@ function textRun({ Text }: Term, spans: Span[], theme: TidemarkTheme, fg?: strin
 }
 
 // Spans as a row's items: text trimmed, bars and sparklines as Svg.
-function itemRun({ Text, Svg }: Rich, spans: Span[], widget: string, theme: TidemarkTheme, fg?: string) {
+function itemRun({ Text, Svg, Button }: Rich, spans: Span[], widget: string, theme: TidemarkTheme, fg?: string, act?: OnPress) {
   return spans.flatMap(s => {
+    if (s.press && act && Button) {
+      const press = s.press
+      return [<Button key={`tidemark-${press}`} label={s.text.trim()} plain dimColor={s.role === 'dim'} onPress={() => act(press)} />]
+    }
     if (s.activity !== undefined) {
       const rest = [...s.text.trim()].slice(Math.min(s.activity, SPINNERS)).join('')
       const ink = TIERS[s.tier ?? 5]!
@@ -134,8 +140,8 @@ function joinParts({ Box, Text }: Term, parts: Part[]) {
 }
 
 // A segment's parts: its text, with an activity span's spinners as a Client and its `+N` as text.
-function segmentParts(els: Term, spans: Span[], theme: TidemarkTheme, plaqueOf?: { bg: string; fg?: string }): Part[] {
-  const { Text, Client } = els
+function segmentParts(els: Term, spans: Span[], theme: TidemarkTheme, plaqueOf?: { bg: string; fg?: string }, act?: OnPress): Part[] {
+  const { Text, Client, Button } = els
   const parts: Part[] = []
   const text = (t: string) => { if (t) parts.push({ inline: <Text backgroundColor={plaqueOf!.bg} color={plaqueOf!.fg}>{t}</Text> }) }
   let pending = plaqueOf ? ' ' : ''
@@ -154,13 +160,19 @@ function segmentParts(els: Term, spans: Span[], theme: TidemarkTheme, plaqueOf?:
       if (plaqueOf) pending = rest
       else if (rest) parts.push({ inline: <Text color={color}>{rest}</Text> })
     } else if (plaqueOf) pending += s.text
-    else parts.push(...textRun(els, [s], theme).map(inline => ({ inline })))
+    // ponytail: a Button takes no background, so on a powerline plaque a press stays plain text.
+    else if (s.press && act && Button) {
+      const press = s.press
+      const lead = s.text.match(/^ */)![0]
+      if (lead) parts.push({ inline: <Text>{lead}</Text> })
+      parts.push({ block: <Button key={`tidemark-${press}`} label={s.text.trim()} plain dimColor={s.role === 'dim'} onPress={() => act(press)} /> })
+    } else parts.push(...textRun(els, [s], theme).map(inline => ({ inline })))
   }
   if (plaqueOf) text(`${pending} `)
   return parts
 }
 
-function terminalLine(els: Term, line: Line, style: Style, theme: TidemarkTheme) {
+function terminalLine(els: Term, line: Line, style: Style, theme: TidemarkTheme, act?: OnPress) {
   const { Text } = els
   const parts: Part[] = []
   if (style.separator === 'powerline') {
@@ -174,13 +186,13 @@ function terminalLine(els: Term, line: Line, style: Style, theme: TidemarkTheme)
     const sep = separatorText(style)
     line.forEach((seg, i) => {
       if (i > 0) parts.push({ inline: <Text dimColor>{sep}</Text> })
-      parts.push(...segmentParts(els, seg.spans, theme))
+      parts.push(...segmentParts(els, seg.spans, theme, undefined, act))
     })
   }
   return joinParts(els, parts)
 }
 
-function richLine(els: Rich, line: Line, style: Style, theme: TidemarkTheme) {
+function richLine(els: Rich, line: Line, style: Style, theme: TidemarkTheme, act?: OnPress) {
   const { Box, Text } = els
   const power = style.separator === 'powerline'
   const sep = separatorText(style).trim()
@@ -191,7 +203,7 @@ function richLine(els: Rich, line: Line, style: Style, theme: TidemarkTheme) {
         return [
           ...(i > 0 && sep ? [<Text dimColor>{sep}</Text>] : []),
           <Box flexDirection="row" alignItems="center" gap={1} {...(p && { backgroundColor: p.bg, paddingX: 1 })}>
-            {itemRun(els, seg.spans, seg.widget, theme, p?.fg)}
+            {itemRun(els, seg.spans, seg.widget, theme, p?.fg, p ? undefined : act)}
           </Box>,
         ]
       })}
@@ -201,12 +213,12 @@ function richLine(els: Rich, line: Line, style: Style, theme: TidemarkTheme) {
 
 // The band: one row per line. `els` is the surface's element table (`$.ui.resolve(e)`); branch on the
 // surface, since the terminal's table answers for `Svg` with a placeholder.
-export function drawBand(els: Term | Rich, surface: Surface, lines: Line[], style: Style, theme: TidemarkTheme) {
+export function drawBand(els: Term | Rich, surface: Surface, lines: Line[], style: Style, theme: TidemarkTheme, act?: OnPress) {
   const { Box } = els
   return (
     <Box flexDirection="column" paddingX={1} marginTop={surface === 'terminal' ? 1 : 0}>
       {lines.map(line => {
-        const draw = (part: Line) => (surface === 'terminal' ? terminalLine(els as Term, part, style, theme) : richLine(els as Rich, part, style, theme))
+        const draw = (part: Line) => (surface === 'terminal' ? terminalLine(els as Term, part, style, theme, act) : richLine(els as Rich, part, style, theme, act))
         // `flex` segments split the line into groups spread across it: one flex puts what follows at the
         // right edge, two put the part between them in the middle, with equal gaps on both sides.
         const groups: Line[] = [[]]

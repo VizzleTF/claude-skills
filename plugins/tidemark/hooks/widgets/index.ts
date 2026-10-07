@@ -19,7 +19,7 @@ import { quota7d } from './quota7d'
 import { sessionTime } from './sessionTime'
 import { tokenSpeed } from './tokenSpeed'
 
-export type { BandEnv, Role, Span, Variant, WidgetDef, WidgetInput } from './kit'
+export type { BandEnv, Press, Role, Span, Variant, WidgetDef, WidgetInput } from './kit'
 export { gainTier, pctTier } from './kit'
 
 export const WIDGETS: Record<TidemarkWidgetId, WidgetDef> = {

@@ -271,7 +271,7 @@ function refreshSoon($: EngineInterface) {
   settling?.cancel()
   settling = $.clock.after(100, async () => {
     await readActiveAgents($)
-    await load($).catch(() => undefined)
+    await load($).catch(logTo($, 'load'))
   })
 }
 
@@ -286,6 +286,10 @@ async function resumed($: EngineInterface, e: { context_tokens?: number; seconds
 
 // Probe keys with a request in flight: a key never runs twice at once.
 const running = new Set<string>()
+
+// A failure the band survives goes to the debug log (`claude --debug`), led by the plugin's name.
+const logTo = ($: EngineInterface, where: string) => (err: unknown) =>
+  $.ui.log(`${where}: ${err instanceof Error ? err.message : String(err)}`, { to: 'debug' })
 
 async function runProbe($: EngineInterface, req: ProbeRequest, cwd: string): Promise<ProbeOutcome> {
   try {
@@ -318,7 +322,7 @@ async function probe($: EngineInterface, trigger: 'tick' | 'turn') {
     void runProbe($, req, cwd).then(async outcome => {
       const at = await $.clock.now()
       await update($, probesState, p => applyProbeResult(p, req.key, outcome, at))
-    }).catch(() => undefined).finally(() => running.delete(req.key))
+    }).catch(logTo($, `probe ${req.key}`)).finally(() => running.delete(req.key))
   }
 }
 
@@ -334,10 +338,10 @@ async function alert($: EngineInterface) {
 async function snapshotStart($: EngineInterface): Promise<void> {
     tick?.cancel()
     tick = $.clock.every(TICK_MS, async () => {
-      await load($).catch(() => undefined)
-      await readActiveAgents($).catch(() => undefined)
-      await probe($, 'tick').catch(() => undefined)
-      await alert($).catch(() => undefined)
+      await load($).catch(logTo($, 'tick load'))
+      await readActiveAgents($).catch(logTo($, 'tick agents'))
+      await probe($, 'tick').catch(logTo($, 'tick probe'))
+      await alert($).catch(logTo($, 'tick alert'))
       $.ui.invalidate('ui.render')
     })
     if ((await read($, snapshotState)).startedAt === null) {
@@ -365,7 +369,7 @@ async function snapshotTurnComplete($: EngineInterface): Promise<void> {
     refreshSoon($)
     const ledger = await $.session.usage().catch(() => undefined)
     if (r === revision) await takeCost($, ledger?.cost?.usd)
-    await probe($, 'turn').catch(() => undefined)
+    await probe($, 'turn').catch(logTo($, 'turn probe'))
 }
 
 // The snapshot owns session.start, turn.start and turn.complete: the engine takes one hook per event per
@@ -374,21 +378,21 @@ export function registerSnapshot(on: On, commands: { name: string; description: 
   on('session.start', async ($, e, next) => {
     const result = await next(e)
     // Session state outlives a reload of the mod: a snapshot an older version stored gets the newer fields.
-    await set($, s => ({ ...EMPTY_SNAPSHOT, ...s })).catch(() => undefined)
-    await snapshotStart($).catch(() => undefined)
+    await set($, s => ({ ...EMPTY_SNAPSHOT, ...s })).catch(logTo($, 'session.start state'))
+    await snapshotStart($).catch(logTo($, 'session.start'))
     // A host that registers no commands still draws the band.
-    for (const command of commands) await $.command.register(command).catch(() => undefined)
+    for (const command of commands) await $.command.register(command).catch(logTo($, `register /${command.name}`))
     return result
   })
 
   on('turn.start', async ($, e, next) => {
-    await snapshotTurnStart($).catch(() => undefined)
+    await snapshotTurnStart($).catch(logTo($, 'turn.start'))
     return next(e)
   })
 
   on('turn.complete', async ($, e, next) => {
     const result = await next(e)
-    await snapshotTurnComplete($).catch(() => undefined)
+    await snapshotTurnComplete($).catch(logTo($, 'turn.complete'))
     return result
   })
 
@@ -414,7 +418,7 @@ export function registerSnapshot(on: On, commands: { name: string; description: 
     await takeCost($, e.cost?.usd)
     await takeContext($, e.context, true, r)
     if (r === revision) await takeLimits($, e.rateLimits, e.changed.includes('rateLimits'))
-    await alert($).catch(() => undefined)
+    await alert($).catch(logTo($, 'alert'))
     return result
   })
 

@@ -2,6 +2,20 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.1] - 2026-10-07
+
+### Added
+
+- The model name and the effort in the `model` widget are buttons; both change this session only, as `/model` and `/effort` do.
+- A press on the effort steps to the next level `/effort` lists: `low → medium → high → xhigh → max` today.
+- A press on the name switches to the next model of the `cycle` option. By default it takes the models Claude Code offers in `/config`, so a new model joins without a config change.
+- `config.schema.json`: a JSON Schema for code editors, written as `$schema` on `Save`.
+- Failures the band survives go to the debug log (`claude --debug`).
+
+### Fixed
+
+- A change of 999,950 tokens or more read `1000k` instead of `1M`.
+
 ## [0.1.0] - 2026-10-07
 
 ### Added
@@ -18,4 +32,5 @@ All notable changes to the `tidemark` plugin. The format follows [Keep a Changel
 - A `/compact` button under the band once the context fills `compact.at` percent of the window (70 by default).
 - Threshold toasts for context, quota and the prompt cache, off by default.
 
+[0.1.1]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.1
 [0.1.0]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.0

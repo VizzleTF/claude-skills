@@ -4,7 +4,7 @@
 import { expect, mock, test } from 'claude-code/testing'
 import type { On } from 'claude-code'
 
-import { DEFAULT_CONFIG, PRESETS } from '../hooks/config'
+import { DEFAULT_CONFIG, PRESETS, SCHEMA_URL } from '../hooks/config'
 
 const HOME = '/u/dev'
 const CWD = '/u/dev/proj'
@@ -138,7 +138,7 @@ for (const surface of ['terminal', 'desktop'] as const) {
     await ui.press({ key: 'save' })
     expect(writes).toEqual([GLOBAL, PROJECT])
     // Only what differs from the global file goes to the project file.
-    expect(JSON.parse(disk.get(PROJECT)!)).toEqual({ version: 1, style: { separator: 'dot', icons: 'text' } })
+    expect(JSON.parse(disk.get(PROJECT)!)).toEqual({ $schema: SCHEMA_URL, version: 1, style: { separator: 'dot', icons: 'text' } })
     expect((await ui.find({ type: 'Text', text: /^sources: / }))?.text).toBe(`sources: ${GLOBAL} + ${PROJECT}`)
   })
 
@@ -164,7 +164,7 @@ for (const surface of ['terminal', 'desktop'] as const) {
     await ui.input({ key: 'alerts-context', text: '70' })
     await ui.press({ key: 'save' })
     const project = JSON.parse(disk.get(PROJECT)!)
-    expect(Object.keys(project).sort()).toEqual(['alerts', 'lines', 'version'])
+    expect(Object.keys(project).sort()).toEqual(['$schema', 'alerts', 'lines', 'version'])
     expect(ids(project)).toEqual([['model']])
     expect(project.alerts.context).toBe(70)
     expect(JSON.parse(disk.get(GLOBAL)!)).toEqual(global)

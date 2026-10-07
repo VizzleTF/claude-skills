@@ -44,3 +44,51 @@ export function defaultTtl(
   if (subscription && !limits.some(l => l.percentUsed >= 100)) return LONG_TTL_MS
   return SHORT_TTL_MS
 }
+
+// The levels when `/effort` does not say its own.
+export const EFFORTS: readonly string[] = ['low', 'medium', 'high', 'xhigh', 'max']
+
+// The levels `/effort` lists, in its usage line (`Usage: /effort <low|medium|…|auto|ultracode [on|off]>`)
+// or its answer to a wrong argument (`Valid options are: low, medium, …, auto, ultracode [on|off]`): `auto`
+// and a switch with arguments are no level. Empty when the text lists none.
+export function parseEfforts(text: string): string[] {
+  const list = /<([^>]*)>/.exec(text)?.[1] ?? /valid options are:\s*(.*)$/im.exec(text)?.[1]
+  if (!list) return []
+  const switches = [...list.matchAll(/([a-z]+)\s*\[[^\]]*\]/g)].map(m => m[1])
+  return list.replace(/\s*\[[^\]]*\]/g, '').split(/[|,]/).map(s => s.trim().replace(/\.$/, ''))
+    .filter(s => /^[a-z]+$/.test(s) && s !== 'auto' && !switches.includes(s))
+}
+
+// The effort after `current` in a press's cycle through `levels`, back to the first after the last; from
+// a number or none, `medium`, else the middle level.
+export function nextEffort(current: string | number | null, levels: readonly string[] = EFFORTS): string {
+  const i = levels.indexOf(current as never)
+  if (i >= 0) return levels[(i + 1) % levels.length]!
+  return levels.includes('medium') ? 'medium' : levels[Math.floor((levels.length - 1) / 2)]!
+}
+
+// The model after `current` in `cycle` (aliases as `/model` takes them: `opus[1m]`, `sonnet`): the entry
+// whose family and window suffix match the running model is the current one; none matching, the first.
+export function nextModel(current: string | null, cycle: readonly string[]): string | undefined {
+  if (cycle.length === 0) return undefined
+  const id = (current ?? '').toLowerCase()
+  const suffix = /\[[^\]]*\]$/.exec(id)?.[0] ?? ''
+  const at = (strict: boolean) => cycle.findIndex(m => {
+    const family = baseModel(m.toLowerCase()).replace(/^claude-/, '').split('-')[0]!
+    return id.includes(family) && (!strict || (/\[[^\]]*\]$/.exec(m.toLowerCase())?.[0] ?? '') === suffix)
+  })
+  const i = at(true) >= 0 ? at(true) : at(false)
+  return cycle[(i + 1) % cycle.length]
+}
+
+// The models Claude Code offers (the `/config` model row's options) as a cycle: without the settings that
+// name no one model (`default`, `best`, `opusplan`), and on the running model's side of the 1M window:
+// a family's `[1m]` alias in place of its plain one while the running model has it, the plain ones otherwise.
+export function autoCycle(offered: readonly string[], current: string | null): string[] {
+  const named = offered.filter(m => !['default', 'best', 'opusplan'].includes(m))
+  const long = /\[1m\]$/i.test(current ?? '')
+  return named.filter(m => {
+    const isLong = /\[1m\]$/i.test(m)
+    return long ? isLong || !named.includes(`${m}[1m]`) : !isLong
+  })
+}

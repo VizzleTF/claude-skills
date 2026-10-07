@@ -32,7 +32,7 @@ export const WIDGET_OPTIONS: Record<WidgetId, Record<string, OptionSpec>> = {
   quota7d: QUOTA,
   cost: {},
   agents: {},
-  model: { showEffort: bool(true), format: choice(['short', 'full'], 'short') },
+  model: { showEffort: bool(true), format: choice(['short', 'full'], 'short'), cycle: { kind: 'strings', default: [] } },
   git: { showDirty: bool(true), showDiff: bool(true), showSync: bool(true), maxLength: int(4, 200, 24), ttl: int(1, 3600, 5), fetch: int(0, 86_400, 300) },
   cwd: { style: choice(['project', 'basename', 'short', 'full'], 'project') },
   sessionTime: {},
@@ -54,6 +54,9 @@ export const ALERT_MAX = { context: 100, quota5h: 100, quota7d: 100, cacheSecond
 // The context share from which the band offers `/compact`: a heuristic, not a documented figure:
 // answers degrade as the window fills and auto-compaction waits until it is nearly full (967k of 1M).
 export const COMPACT_AT = 70
+
+// Where editors fetch `config.schema.json`, the JSON Schema of a config file; Save writes it as `$schema`.
+export const SCHEMA_URL = 'https://raw.githubusercontent.com/VizzleTF/claude-skills/main/plugins/tidemark/config.schema.json'
 
 const items = (...ids: WidgetId[]): WidgetItem[] => ids.map(widget => ({ widget }))
 
@@ -198,7 +201,7 @@ export function validate(raw: unknown): { config: Config; warnings: string[] } {
   }
 
   for (const key of Object.keys(src)) {
-    if (!['version', 'lines', 'style', 'pane', 'alerts', 'compact'].includes(key)) warn(`unknown key ${key}`)
+    if (!['$schema', 'version', 'lines', 'style', 'pane', 'alerts', 'compact'].includes(key)) warn(`unknown key ${key}`)
   }
   return { config: { version: 1, lines, style, pane, alerts, compact }, warnings }
 }
@@ -271,7 +274,7 @@ export function loadFromTexts(files: ({ path: string; text: string } | { path: s
 export function saveContent(draft: Config, loaded: Config, globalOnly: Config, projectKeys: string[], target: 'global' | 'project'): Record<string, unknown> {
   const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b)
   const keys = ['lines', 'style', 'pane', 'alerts', 'compact'] as const
-  const out: Record<string, unknown> = { version: 1 }
+  const out: Record<string, unknown> = { $schema: SCHEMA_URL, version: 1 }
   for (const k of keys) {
     if (target === 'global') out[k] = projectKeys.includes(k) && same(draft[k], loaded[k]) ? globalOnly[k] : draft[k]
     else if (projectKeys.includes(k) || !same(draft[k], globalOnly[k])) out[k] = draft[k]
@@ -296,6 +299,10 @@ async function loadConfig($: EngineInterface): Promise<LoadedConfig> {
 // The config in effect. Another module reads it through its own `atom({ plugin: 'tidemark', key: 'config' })`
 // (the engine wants atoms declared in the reading file), then `effectiveConfig`.
 const configState = atom({ plugin: 'tidemark', key: 'config' } as const, null as TidemarkConfigState | null)
+
+// A failure the band survives goes to the debug log (`claude --debug`), led by the plugin's name.
+const logTo = ($: EngineInterface, where: string) => (err: unknown) =>
+  $.ui.log(`${where}: ${err instanceof Error ? err.message : String(err)}`, { to: 'debug' })
 
 async function refresh($: EngineInterface): Promise<void> {
   const stamp = await stampOf($)
@@ -330,18 +337,18 @@ export function registerConfig(on: On): void {
       return await next(e)
     } finally {
       await ensureTick($)
-      await refresh($).catch(() => undefined)
+      await refresh($).catch(logTo($, 'config load'))
     }
   })
 
   on('prompt.submit', async ($, e, next) => {
     await ensureTick($)
-    await check($).catch(() => undefined)
+    await check($).catch(logTo($, 'config check'))
     return next(e)
   })
 }
 
 async function ensureTick($: EngineInterface) {
   if (tick) return
-  tick = $.clock.every(CHECK_MS, () => check($).catch(() => undefined))
+  tick = $.clock.every(CHECK_MS, () => check($).catch(logTo($, 'config check')))
 }

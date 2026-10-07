@@ -4,7 +4,7 @@ Claude Code plugin marketplace `vizzletf-skills`: one documentation-writing skil
 
 ## Commands
 
-Run from the repo root. Python 3, stdlib only.
+Run from the repo root. Python 3, stdlib only. CI (`.github/workflows/ci.yml`) runs all of these plus the tidemark commands below on every push to `main` and every pull request.
 
 ```sh
 python3 -m unittest discover -s tests          # all tests, offline
@@ -28,6 +28,7 @@ plugins/technical-writing-ru/       RU plugin, same layout
   skills/write/sources.md           where each rule comes from
 tools/parity.py                     repo-wide structure/parity/secret checks
 tests/                              test_check.py, test_parity.py
+.github/                            ci.yml (all checks), ISSUE_TEMPLATE/ (bug, feature)
 ```
 
 ## Key files
@@ -112,6 +113,7 @@ plugins/tidemark/
   hooks/editor.tsx             /tidemark-config pane, draft in atom editor, writes config via $.fs.write
   hooks/editor-model.ts        pure draft edits -> {config, selected?} | {error}
   types/index.d.ts             state contract: augments PluginState['tidemark'] and all Tidemark* types
+  config.schema.json           JSON Schema of a config file, `$schema` in files Save writes
   tests/*.test.ts              claude-code/testing suites, one per module
 ```
 
@@ -128,7 +130,7 @@ plugins/tidemark/
 
 - Every function that touches `$` lives in the hook's own file; other files export only pure functions.
 - Each module declares its own `atom({plugin: 'tidemark', key}, EMPTY_*)` locally and shares values only through atoms.
-- New widget: file in `hooks/widgets/`, built with `kit.ts` helpers (`widget`, `opt`, `labelled`, `bar`, `dur`, `ktok`...), registered in `widgets/index.ts`, options in `WIDGET_OPTIONS` (`config.ts`), id in `TidemarkWidgetId`.
+- New widget: file in `hooks/widgets/`, built with `kit.ts` helpers (`widget`, `opt`, `labelled`, `bar`, `dur`, `ktok`...), registered in `widgets/index.ts`, options in `WIDGET_OPTIONS` (`config.ts`), id in `TidemarkWidgetId`, the widget and its options in `config.schema.json` (`tests/test_tidemark_schema.py` fails until they match).
 - Code, comments, UI labels in English; deliberate shortcuts marked `ponytail:`.
 
 ### Tests

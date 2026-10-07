@@ -20,8 +20,9 @@ export const model = widget('model', {
   render(input) {
     const { model: id, effort } = input.snap
     if (!id) return []
-    const name: Span = { text: opt<string>(model, input, 'format') === 'full' ? baseModel(id) : shortName(id) }
-    const eff: Span | false = effort !== null && opt<boolean>(model, input, 'showEffort') && { text: `· ${effort}`, role: 'dim' }
-    return distinct([spaced([name, eff]), [name]].map(v => labelled(model, input, v)))
+    const name: Span = { text: opt<string>(model, input, 'format') === 'full' ? baseModel(id) : shortName(id), press: 'model' }
+    const shown = effort !== null && opt<boolean>(model, input, 'showEffort')
+    const eff: Span[] = shown ? [{ text: '·', role: 'dim' }, { text: String(effort), role: 'dim', press: 'effort' }] : []
+    return distinct([spaced([name, ...eff]), [name]].map(v => labelled(model, input, v)))
   },
 })
