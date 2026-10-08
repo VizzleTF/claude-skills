@@ -2,23 +2,44 @@
   "name": "vizzletf-skills",
   "description": "Claude Code skills by VizzleTF",
   "owner": {
-    "name": "VizzleTF"
+    "name": "VizzleTF",
+    "url": "https://github.com/VizzleTF"
   },
   "plugins": [
     {
       "name": "technical-writing",
       "source": "./plugins/technical-writing",
-      "description": "Writes and reviews documentation by document type: tutorial, how-to, runbook, reference, ADR, changelog and more. Instructions in English."
+      "description": "Writes and reviews documentation by document type: tutorial, how-to, runbook, reference, ADR, changelog and more. Instructions in English.",
+      "category": "documentation",
+      "tags": [
+        "docs",
+        "writing",
+        "review"
+      ]
     },
     {
       "name": "technical-writing-ru",
       "source": "./plugins/technical-writing-ru",
-      "description": "Пишет документацию по типу документа и проводит её ревью: tutorial, how-to, runbook, reference, ADR, changelog и другие. Инструкции на русском."
+      "description": "Пишет документацию по типу документа и проводит её ревью: tutorial, how-to, runbook, reference, ADR, changelog и другие. Инструкции на русском.",
+      "category": "documentation",
+      "tags": [
+        "docs",
+        "writing",
+        "review",
+        "russian"
+      ]
     },
     {
       "name": "tidemark",
       "source": "./plugins/tidemark",
-      "description": "Configurable band above the Claude Code prompt: context, cache, quota, model, git and more, with a details pane and a config editor."
+      "description": "Configurable band above the Claude Code prompt: context, cache, quota, model, git and more, with a details pane and a config editor.",
+      "category": "productivity",
+      "tags": [
+        "mod",
+        "status",
+        "context",
+        "quota"
+      ]
     }
   ]
 }
