@@ -13,7 +13,7 @@
 - Limits
 - Troubleshooting
 
-This reference covers tidemark 0.1.9. The config is read from two JSON files, the project file over the global one. A top-level key in the project file replaces the same key of the global file whole: to add one widget in a project, repeat the whole `lines` in the project file. Until a file exists, the default config applies; `Save` in the editor creates the file and its directories. A hand edit is picked up on the next prompt or within 30 seconds. An unknown key, widget or option and an invalid value are dropped, and the editor shows a warning. A file that does not parse is skipped: the band shows a dim `⚠ config`, and the editor shows the path and the error.
+This reference covers tidemark 0.1.10. The config is read from two JSON files, the project file over the global one. A top-level key in the project file replaces the same key of the global file whole: to add one widget in a project, repeat the whole `lines` in the project file. Until a file exists, the default config applies; `Save` in the editor creates the file and its directories. A hand edit is picked up on the next prompt or within 30 seconds. An unknown key, widget or option and an invalid value are dropped, and the editor shows a warning. A file that does not parse is skipped: the band shows a dim `⚠ config`, and the editor shows the path and the error.
 
 ## Commands
 

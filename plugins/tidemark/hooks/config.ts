@@ -72,11 +72,11 @@ export function registerConfig(on: On): void {
   })
 
   // After `/reload-plugins` neither of the above runs until the next prompt; the band's first draw starts
-  // the timer and checks the files.
+  // the timer and schedules a check: a render may not write state, a timer may.
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
     if (!tick) {
       await ensureTick($)
-      await check($).catch(logTo($, 'config check'))
+      $.clock.after(0, () => check($).catch(logTo($, 'config check')))
     }
     return next(e)
   })
