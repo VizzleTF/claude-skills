@@ -2,6 +2,18 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.11] - 2026-10-08
+
+### Fixed
+
+- On the mobile app, which draws no input fields, `/tidemark-config`, `/tidemark-goal` and `/tidemark-project` without text show a note instead of a pane that failed to draw.
+
+### Changed
+
+- The mod type-checks clean under `tsc`, and CI runs the check. `claude plugin validate` reports the `command.run` hooks for `/tidemark`, `/tidemark-config`, `/tidemark-goal` and `/tidemark-project` as answering the mod's own commands.
+- `PRIVACY.md` and the fields Anthropic's plugin directory reads (`icon`, `documentationUrl`, `supportUrl`, `privacyPolicyUrl`).
+- The README lists what the mod runs and how to remove its files; the reference says which files it writes and what it keeps in the plugin store.
+
 ## [0.1.10] - 2026-10-08
 
 ### Fixed

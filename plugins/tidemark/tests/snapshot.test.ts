@@ -2,7 +2,7 @@
 // `name: <json>` (a test cannot read `$.state`; the /tidemark pane shows only part of it, formatted, and its
 // own tests drive it through the same events).
 import { expect, mock, test } from 'claude-code/testing'
-import type { On, SessionContextBreakdown, SessionRateLimit, SessionUsage, TurnStepResult } from 'claude-code'
+import type { CommandRunInput, On, SessionContextBreakdown, SessionMessage, SessionRateLimit, SessionUsage, TurnStepResult } from 'claude-code'
 
 const NOW = Date.parse('2026-10-03T15:00:00Z')
 const MIN = 60_000
@@ -56,7 +56,7 @@ function host(on: On, world: World, store: Record<string, unknown> = {}) {
   return { writes }
 }
 
-const MSG = [{ role: 'user', text: 'summary', toolUses: [] }]
+const MSG: SessionMessage[] = [{ role: 'user', text: 'summary', toolUses: [] }]
 const world = (over: Partial<World> = {}): World => ({ id: 's1', estimate: 13_689, limits: [], startedAt: 0, model: MODEL, ...over })
 
 async function start($: any, on: On, w: World, store?: Record<string, unknown>) {
@@ -167,7 +167,7 @@ test('cache: warm on a read, rewrite when less than half came back, cold on a mo
   await runStep($, w, step({ cache_read_input_tokens: 90_000 }, 'v'))
   expect((await s.field('cache')).warm).toBe(true)
   await s.clock.advance(MIN)
-  await $.classic.PostModelSwitch({ from_model: MODEL, to_model: 'claude-sonnet-5', cache_ttl: '5m' })
+  await $.classic.PostModelSwitch({ from_model: MODEL, to_model: 'claude-sonnet-5', cache_ttl: '5m' } as Parameters<typeof $.classic.PostModelSwitch>[0])
   expect(await s.field('cache')).toEqual({ at: NOW + 2 * MIN, warm: false })
   expect(await s.field('cacheTtl')).toBe(5 * MIN)
   expect(await s.field('model')).toBe('claude-sonnet-5')
@@ -258,7 +258,7 @@ test('effort support: a level asked with /effort and sent lower is stored as ski
   on('session.version', () => ({ value: { version: '2.1.292' } as any }))
   on('command.run', () => ({ text: 'ok' }))
   const { writes } = await start($, on, w)
-  await $.command.run({ command: 'effort', args: 'max' })
+  await $.command.run({ command: 'effort', args: 'max' } as CommandRunInput)
   await runStep($, w, step({}), { effort: 'high' })
   expect(writes).toContainEqual({ version: '2.1.292', skip: { [MODEL]: ['max'] } })
 })
@@ -286,13 +286,13 @@ test('goal and project note: by command or the field it opens; the note from dis
   expect(await s.field('goal')).toBe('fix the cache')
 
   // With text: set at once, nothing opens.
-  expect(await $.command.run({ command: 'tidemark-project', args: 'tidemark v2' })).toEqual({})
+  expect(await $.command.run({ command: 'tidemark-project', args: 'tidemark v2' } as CommandRunInput)).toEqual({})
   expect(await s.field('project')).toBe('tidemark v2')
   expect(disk.get(NOTE)).toBe('tidemark v2')
   expect(opened).toEqual([])
 
   // Without text: a field holding the current goal; Enter sets it, kept under the session id, and closes.
-  await $.command.run({ command: 'tidemark-goal', args: '' })
+  await $.command.run({ command: 'tidemark-goal', args: '' } as CommandRunInput)
   expect(opened).toEqual(['tidemark-goal'])
   const pane = await $.ui.mount({
     plugin: 'tidemark', surface: 'terminal', component: 'Pane', requestId: 'tidemark-goal',
@@ -314,7 +314,7 @@ test('goal and project note: by command or the field it opens; the note from dis
   expect(await s.field('project')).toBe('tidemark v2')
 
   // An empty field clears; the note's file is emptied, not left stale.
-  await $.command.run({ command: 'tidemark-project', args: '' })
+  await $.command.run({ command: 'tidemark-project', args: '' } as CommandRunInput)
   const note = await $.ui.mount({
     plugin: 'tidemark', surface: 'terminal', component: 'Pane', requestId: 'tidemark-project',
     props: { title: 'tidemark project', isFocused: true, bodyColumns: 80, placement: 'inline', scroll: { offset: 0, bodyRows: 3 }, view: {} },

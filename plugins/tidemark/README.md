@@ -29,10 +29,15 @@ No config file is needed: until one exists, the band above applies. To change th
 /plugin uninstall tidemark@vizzletf-skills
 ```
 
-The config files stay; delete `~/.config/tidemark/` and `.claude/tidemark.json` by hand if you want them gone.
+The config files and project notes stay; delete `~/.config/tidemark/`, `.claude/tidemark.json` and `.claude/tidemark-project.txt` by hand if you want them gone.
+
+## What it runs
+
+tidemark runs `git` in the session's directory and, for widgets you turn on, `gh`, `glab`, your own `command` and a request to `status.claude.com`. It sends nothing else anywhere and never changes your settings. The full list is in [External runs](docs/reference.md#external-runs).
 
 ## Links
 
+- [Privacy](PRIVACY.md): what it reads, writes and sends
 - [Reference](docs/reference.md): widgets and their options, config, presets, alerts, the compact button, what the mod runs, troubleshooting
 - [Decisions](docs/adr/), [Changelog](CHANGELOG.md), [README на русском](README.ru.md)
 - Inspired by [ccOverhead](https://github.com/shengyy/ccoverhead) and [ccstatusline](https://github.com/sirmalloc/ccstatusline); [NOTICE.md](NOTICE.md) lists what was borrowed

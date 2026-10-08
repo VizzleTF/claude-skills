@@ -29,10 +29,15 @@ ctx ■■■□□□□□□□ 27% 271k/1M ▁▁▃█▁▇▁ ↑3.4k │
 /plugin uninstall tidemark@vizzletf-skills
 ```
 
-Файлы конфига остаются; если они не нужны, удалите `~/.config/tidemark/` и `.claude/tidemark.json` вручную.
+Файлы конфига и заметки проекта остаются; если они не нужны, удалите `~/.config/tidemark/`, `.claude/tidemark.json` и `.claude/tidemark-project.txt` вручную.
+
+## Что он запускает
+
+tidemark запускает `git` в каталоге сессии, а для включённых вами виджетов ещё `gh`, `glab`, вашу `command` и запрос к `status.claude.com`. Больше он никуда ничего не отправляет и настройки не меняет. Полный список: раздел [Внешние запуски](docs/reference.ru.md#внешние-запуски).
 
 ## Ссылки
 
+- [Приватность](PRIVACY.md): что мод читает, пишет и отправляет (на английском)
 - [Справочник](docs/reference.ru.md): виджеты и их опции, конфиг, пресеты, алерты, кнопка компакта, что мод запускает, неполадки
 - [Решения](docs/adr/), [Changelog](CHANGELOG.md), [README in English](README.md)
 - Inspired by [ccOverhead](https://github.com/shengyy/ccoverhead) and [ccstatusline](https://github.com/sirmalloc/ccstatusline); что заимствовано, сказано в [NOTICE.md](NOTICE.md)

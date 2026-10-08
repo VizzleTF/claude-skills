@@ -6,6 +6,7 @@ import type { EngineInterface, On } from 'claude-code'
 
 import { EMPTY_SNAPSHOT, STORE_GOALS } from './snapshot'
 import { notePath, withGoal } from './snapshot-reducers'
+import { noFields } from './draw'
 
 export const GOAL = 'tidemark-goal'
 export const PROJECT = 'tidemark-project'
@@ -33,7 +34,7 @@ async function save($: EngineInterface, which: typeof GOAL | typeof PROJECT, raw
 
 export function registerNotes(on: On): void {
   // No text: a command's text is a transcript row the model reads too.
-  on('command.run', { command: [GOAL, PROJECT] }, async ($, e) => {
+  on('command.run', { command: ['tidemark-goal', 'tidemark-project'] }, async ($, e) => {
     const which = e.command === GOAL ? GOAL : PROJECT
     if (e.args.trim()) await save($, which, e.args)
     else await $.ui.open({ id: which, title: which === GOAL ? 'tidemark goal' : 'tidemark project', rows: 3, focus: true, closeOnEscape: true })
@@ -42,6 +43,7 @@ export function registerNotes(on: On): void {
 
   for (const which of [GOAL, PROJECT] as const) {
     on('ui.render', { component: 'Pane', requestId: which }, async ($, e) => {
+      if (e.surface === 'mobile') return noFields($.ui.resolve(e))
       const { Box, Input, Text } = $.ui.resolve(e)
       const snap = await read($, snapshotState)
       const goal = which === GOAL

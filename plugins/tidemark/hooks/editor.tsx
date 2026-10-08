@@ -7,7 +7,7 @@ import type { EngineInterface, On } from 'claude-code'
 
 import type { TidemarkConfig, TidemarkConfigState, TidemarkEditor, TidemarkWidgetId } from '../types'
 import { ICONS, PRESETS, SEPARATORS, WIDGET_IDS, WIDGET_OPTIONS, configPathsFrom, configText, effectiveConfig, loadFromTexts, saveContent } from './config-model'
-import { drawBand } from './draw'
+import { drawBand, noFields } from './draw'
 import {
   addItem, moveItem, optionText, raiseSection, removeItem, setAlert, setCompactAt, setLabel, setOption, setPriority, setStyle,
   toggleItem, toggleSection,
@@ -101,6 +101,7 @@ async function save($: EngineInterface) {
 
 export function registerEditor(on: On): void {
   on('ui.render', { component: 'Pane', requestId: EDITOR }, async ($, e) => {
+    if (e.surface === 'mobile') return noFields($.ui.resolve(e))
     const els = $.ui.resolve(e)
     const { Box, Text, Button, Input, Select } = els
     const loaded = effectiveConfig(await read($, configState))
@@ -217,7 +218,7 @@ export function registerEditor(on: On): void {
 
         {head('Save')}
         {pick('target', 'save to', ed.target, [{ value: 'global' }, { value: 'project' }], v =>
-          update($, editorState, s => ({ ...s, target: v === 'project' ? 'project' : 'global', confirm: false })))}
+          update($, editorState, (s): TidemarkEditor => ({ ...s, target: v === 'project' ? 'project' : 'global', confirm: false })))}
         <Box flexDirection="row" gap={1}>
           <Button key="save" label={ed.confirm ? 'Save (overwrite)' : 'Save'} variant="primary" onPress={() => save($)} />
           <Button key="revert" label="Revert" onPress={() => update($, editorState, s => ({ ...EMPTY_EDITOR, target: s.target }))} />

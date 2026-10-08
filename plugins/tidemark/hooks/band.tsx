@@ -3,7 +3,7 @@
 import { atom, read, update } from 'claude-code'
 import type { EngineInterface, On } from 'claude-code'
 
-import type { TidemarkConfig, TidemarkConfigState, TidemarkTrack } from '../types'
+import type { TidemarkConfig, TidemarkConfigState, TidemarkEffort, TidemarkTrack } from '../types'
 import { effectiveConfig } from './config-model'
 import { EFFORTS, autoCycle, nextEffort, nextModel, parseEfforts, usableEfforts } from './model-utils'
 import type { EffortSupport } from './model-utils'
@@ -71,7 +71,7 @@ async function press($: EngineInterface, what: Press, config: TidemarkConfig): P
     await $.command.run({ command: 'effort', args: effort })
     // The plugin's own command.run hooks skip this run, so the snapshot learns of it here.
     await update($, trackState, t => ({ ...t, effortAsked: effort }))
-    await update($, snapshotState, s => ({ ...s, effort }))
+    await update($, snapshotState, s => ({ ...s, effort: effort as TidemarkEffort }))
     return
   }
   const item = config.lines.flat().find(i => i.widget === 'model')

@@ -1,7 +1,7 @@
 // Lines of spans as element trees. The terminal draws monospace text: glyph bars, each sparkline glyph in
 // its own colour, powerline arrows. The desktop draws a proportional font: rows spaced by `gap`, bars and
 // sparklines as Svg, powerline segments as coloured Boxes. Palette after ccOverhead (MIT, shengyy).
-import type { Elements } from 'claude-code'
+import type { Elements, RenderChildren } from 'claude-code'
 
 import type { TidemarkTheme } from '../types'
 import type { Line, Segment, Style } from './layout'
@@ -133,13 +133,13 @@ function itemRun(els: Rich, spans: Span[], widget: string, theme: TidemarkTheme,
   })
 }
 
-type Part = { inline: unknown } | { block: unknown }
+type Part = { inline: RenderChildren } | { block: RenderChildren }
 
 // Inline parts joined into one truncating Text; a line with a spinner Client (which a Text may not hold)
 // becomes a row of them.
 function joinParts({ Box, Text }: Term, parts: Part[]) {
-  const groups: unknown[] = []
-  let run: unknown[] = []
+  const groups: RenderChildren[] = []
+  let run: RenderChildren[] = []
   const flush = () => { if (run.length) groups.push(<Text wrap="truncate-end">{run}</Text>); run = [] }
   for (const p of parts) {
     if ('inline' in p) run.push(p.inline)
@@ -264,4 +264,9 @@ export function drawPaneLines(els: Term | Rich, surface: Surface, rows: PaneRow[
         ))}
     </Box>
   )
+}
+
+// The mobile app draws no Input or Select, so the editor and the note fields send it elsewhere.
+export function noFields({ Box, Text }: Pick<Term, 'Box' | 'Text'>) {
+  return <Box><Text dimColor>Open this in the terminal or the desktop app: the mobile app has no input fields.</Text></Box>
 }

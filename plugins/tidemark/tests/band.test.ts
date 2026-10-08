@@ -1,7 +1,7 @@
 // The band above the prompt through the engine: drawn on the terminal and the desktop from the snapshot
 // and the config, with the engine's own band kept below it.
 import { expect, mock, test } from 'claude-code/testing'
-import type { On, SessionRateLimit, SessionUsage } from 'claude-code'
+import type { On, SessionMeasureInput, SessionRateLimit, SessionUsage } from 'claude-code'
 
 const NOW = Date.parse('2026-10-03T15:00:00Z')
 const WINDOW = 1_000_000
@@ -173,7 +173,7 @@ for (const surface of ['terminal', 'desktop'] as const) {
     })
     on('ui.open', ($, e) => {
       opened.push(e.id)
-      return { value: undefined }
+      return { value: { isPlaced: true } }
     })
     on('turn.step', async function* () {
       return { turnId: 't', index: 0, answer: '', toolUses: [], stopReason: 'end_turn', usage: { model: world.model, input_tokens: 1, output_tokens: 1, cache_read_input_tokens: 5000, cache_creation_input_tokens: 0 } } as any
@@ -218,7 +218,7 @@ for (const surface of ['terminal', 'desktop'] as const) {
     let calls = 0
     await start($, on, undefined, undefined, 0, () => calls++)
     // A quota figure that is not a number gets no tier on the colour scale, and drawing its colour throws.
-    await $.session.measure({ rateLimits: [{ kind: 'five_hour', percentUsed: 'many' as any, resetsAt: new Date(NOW + 3_600_000).toISOString() }], changed: ['rateLimits'] })
+    await $.session.measure({ rateLimits: [{ kind: 'five_hour', percentUsed: 'many' as any, resetsAt: new Date(NOW + 3_600_000).toISOString() }], changed: ['rateLimits'] } as SessionMeasureInput)
     calls = 0
     const ui = await $.ui.mount(band(surface))
     expect(await ui.find({ type: 'Text', text: /27%/ })).toBeUndefined()

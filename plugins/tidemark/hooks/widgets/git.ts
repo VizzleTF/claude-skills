@@ -38,7 +38,7 @@ export const git = widget('git', {
         add += Number(a) || 0
         del += Number(d) || 0
       }
-      diff = [add > 0 && { text: `+${add}`, tier: 2 }, del > 0 && { text: `−${del}`, tier: 8 }].filter((s): s is Span => !!s)
+      diff = ([add > 0 && { text: `+${add}`, tier: 2 }, del > 0 && { text: `−${del}`, tier: 8 }] as (Span | false)[]).filter((s): s is Span => !!s)
     }
     return distinct([spaced([branch, ...sync, ...diff]), spaced([branch, ...sync]), [branch], [{ text: branch.text.replace(/\*$/, '') }]].map(v => labelled(git, input, v)))
   },

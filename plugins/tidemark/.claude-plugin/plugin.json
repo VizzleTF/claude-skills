@@ -1,11 +1,15 @@
 {
   "name": "tidemark",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Configurable band above the Claude Code prompt: context, cache, quota, model, git and more, with a details pane and an in-app config editor.",
-  "author": { "name": "VizzleTF" },
+  "author": { "name": "VizzleTF", "url": "https://github.com/VizzleTF" },
   "homepage": "https://github.com/VizzleTF/claude-skills/tree/main/plugins/tidemark",
   "repository": "https://github.com/VizzleTF/claude-skills",
   "license": "MIT",
+  "icon": "./icon.png",
+  "documentationUrl": "https://github.com/VizzleTF/claude-skills/blob/main/plugins/tidemark/docs/reference.md",
+  "supportUrl": "https://github.com/VizzleTF/claude-skills/issues",
+  "privacyPolicyUrl": "https://github.com/VizzleTF/claude-skills/blob/main/plugins/tidemark/PRIVACY.md",
   "keywords": ["mod", "status", "context", "quota", "prompt-cache", "tokens"],
   "types": "./types/index.d.ts"
 }

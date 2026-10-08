@@ -207,7 +207,7 @@ A disabled widget runs nothing. The default band runs `git` locally and `git fet
 | `command` | `sh -c <command>` | once `ttl` has passed |
 | `claudeStatus` | HTTPS GET to `status.claude.com` | once `ttl` has passed |
 
-Besides that, tidemark reads its config files and writes a file only on `Save`. It keeps the last quota in the plugin store: a new session shows it dim until its own figure arrives.
+Besides that, tidemark reads its config files and writes two kinds of file: a config on `Save` in `/tidemark-config`, and `.claude/tidemark-project.txt` on `/tidemark-project`. The plugin store keeps the last quota, which a new session shows dim until its own figure arrives, and the goals of the last sessions by session id. Nothing else leaves the machine: the only network calls are the `git`, `gh` and `glab` runs and the status page above.
 
 ## Limits
 
@@ -216,7 +216,7 @@ Besides that, tidemark reads its config files and writes a file only on `Save`. 
 | Colours | a fixed scale; no themes or colour overrides |
 | Width | one cell per code point; emoji and other wide glyphs are undercounted |
 | Timeouts | `git` 2 s, `git fetch` 15 s, `gh` and `glab` 10 s, the status page 5 s; not configurable |
-| Surfaces | VS Code and mobile do not draw the band; panes open |
+| Surfaces | VS Code and mobile do not draw the band. Panes open on both; on mobile `/tidemark-config`, `/tidemark-goal` and `/tidemark-project` without text show a note instead of fields |
 
 ## Troubleshooting
 

@@ -11,7 +11,8 @@ Second plugin kind: a Claude Code mod (TypeScript hooks module, engine 2.1.x) dr
 
 ```sh
 claude plugin test plugins/tidemark        # all mod tests (pure + engine)
-claude plugin validate plugins/tidemark    # mod manifest + hooks
+claude plugin validate --strict plugins/tidemark   # mod manifest + hooks
+(cd plugins/tidemark && npx -y -p typescript@5.6.3 tsc -p .)   # type check; needs .claude-plugin/types, laid by the engine on load
 claude plugin validate .                   # marketplace
 python3 tools/parity.py                    # private paths / tokens in every tracked file, mod included
 python3 tools/live_smoke.py --reload       # real Claude Code in tmux: band drawn, no hook errors, survives /reload-plugins
@@ -27,7 +28,7 @@ plugins/tidemark/
   .claude-plugin/plugin.json   name, version, "types": "./types/index.d.ts"
   hooks/hooks.json             {"modules": ["./register.tsx"]}
   hooks/register.tsx           entry: calls register* of each module, owns command.run for /tidemark, /tidemark-config
-  hooks/snapshot.ts            session events -> atoms snapshot, track, probes, alerts; runs probes and alert toasts
+  hooks/snapshot.ts            session events -> atoms snapshot, track, probes, alerts; runs probes and alert toasts; registers the 4 commands
   hooks/snapshot-reducers.ts   pure: snapshot patches per event (reduceContext, reduceStep, reduceCompact...)
   hooks/model-utils.ts         pure helpers shared by snapshot.ts and widgets: baseModel, validCost
   hooks/config-model.ts        pure: schema tables, DEFAULT_CONFIG, PRESETS, validate, file paths, merge, saveContent
@@ -76,7 +77,9 @@ plugins/tidemark/
 ## Gotchas
 
 - D01, the engine's four static rules: (1) one matcher-less hook per event per plugin, so session events belong to `snapshot.ts` and `classic.SessionStart {startup}` + `prompt.submit` to `config.ts`; matcher hooks (`command.run {command}`, `ui.render {component, requestId}`) are free; (2) `$` cannot be passed into an imported function; (3) an atom is readable/writable only in the file that declares it; (4) hence external work (probes, alerts, config writes) runs inside the hook file and imports only pure planners.
-- No `tsc`, no `package.json`, no type-check step: `claude plugin test`, `claude plugin validate` and `tools/live_smoke.py` are the only gates.
+- No `package.json`, no build: `tsc` only type-checks, against the API types the engine lays in `.claude-plugin/types/` (git-ignored). CI lays them with a headless `claude -p --plugin-dir` run under a dummy key, then runs `tsc`.
+- Command names stay literal in both `$.command.register` (in `snapshot.ts`, `session.start`) and the `command.run` matchers; with a constant, `claude plugin validate` lists the hook as a gate instead of "answers its own command".
+- The mobile surface has no `Input` or `Select`: a pane that needs them returns `noFields` (`draw.tsx`) on `e.surface === 'mobile'`.
 - The literal `/ho`+`me/` (and Windows user-dir prefixes) in any tracked file fails parity; keep it split or use `/u/dev`.
 - `claude plugin test` gives tests no `$.state`: drive engine events and read state through `tidemark-raw` or mounted panes; JSX `key` is matchable by `ui.find({key})` but absent from `props`.
 - Terminal width counts one cell per code point; wide glyphs undercount (`layout.ts`).

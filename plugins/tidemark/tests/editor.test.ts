@@ -38,7 +38,7 @@ function host(on: On, initial: Record<string, string> = {}) {
   return { disk, writes }
 }
 
-type Surface = 'terminal' | 'desktop'
+type Surface = 'terminal' | 'desktop' | 'mobile'
 
 async function open($: any, surface: Surface) {
   await $.classic.SessionStart({ source: 'startup' })
@@ -204,3 +204,10 @@ for (const surface of ['terminal', 'desktop'] as const) {
     expect(await ui.find({ type: 'Text', text: /^error: / })).toBeUndefined()
   })
 }
+
+test('mobile: the editor sends the person elsewhere, since the app draws no fields', async ($, on) => {
+  host(on)
+  const ui = await open($, 'mobile')
+  expect(await ui.find({ type: 'Text', text: /no input fields/ })).toBeDefined()
+  expect(await ui.find({ key: 'save' })).toBeUndefined()
+})

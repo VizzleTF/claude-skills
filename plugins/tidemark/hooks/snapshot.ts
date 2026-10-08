@@ -4,7 +4,7 @@
 import { atom, read, update } from 'claude-code'
 import type { EngineInterface, On, SessionContextBreakdown, SessionContextUsage, SessionRateLimit, Timer } from 'claude-code'
 
-import type { TidemarkCacheStats, TidemarkConfigState, TidemarkSnapshot, TidemarkTrack } from '../types'
+import type { TidemarkCacheStats, TidemarkConfigState, TidemarkLimit, TidemarkSnapshot, TidemarkTrack } from '../types'
 import { EMPTY_ALERT_MEMORY, evaluateAlerts } from './alerts'
 import { effectiveConfig } from './config-model'
 import { LONG_TTL_MS as CACHE_TTL_MS, SHORT_TTL_MS, baseModel, defaultTtl, learnEffort, validCost } from './model-utils'
@@ -295,15 +295,19 @@ async function snapshotTurnComplete($: EngineInterface): Promise<void> {
 }
 
 // The snapshot owns session.start, turn.start and turn.complete: the engine takes one hook per event per
-// plugin. `commands` are registered at session start for the modules that answer them.
-export function registerSnapshot(on: On, commands: { name: string; description: string }[]): void {
+// plugin. The commands are registered here, at session start, for the modules that answer them; their names
+// stay literal so `claude plugin validate` sees each `command.run` hook answers a command of this mod.
+export function registerSnapshot(on: On): void {
   on('session.start', async ($, e, next) => {
     const result = await next(e)
     // Session state outlives a reload of the mod: a snapshot an older version stored gets the newer fields.
     await set($, s => ({ ...EMPTY_SNAPSHOT, ...s })).catch(logTo($, 'session.start state'))
     await snapshotStart($).catch(logTo($, 'session.start'))
     // A host that registers no commands still draws the band.
-    for (const command of commands) await $.command.register(command).catch(logTo($, `register /${command.name}`))
+    await $.command.register({ name: 'tidemark', description: 'Show tidemark details: context, cache, quota, agents' }).catch(logTo($, 'register /tidemark'))
+    await $.command.register({ name: 'tidemark-config', description: 'Edit the tidemark band: widgets, style, presets' }).catch(logTo($, 'register /tidemark-config'))
+    await $.command.register({ name: 'tidemark-goal', description: 'Set the goal the band shows for this session; without text opens a field' }).catch(logTo($, 'register /tidemark-goal'))
+    await $.command.register({ name: 'tidemark-project', description: 'Set the project name the band shows in this directory; without text opens a field' }).catch(logTo($, 'register /tidemark-project'))
     return result
   })
 

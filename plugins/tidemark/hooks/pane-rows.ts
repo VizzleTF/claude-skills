@@ -106,7 +106,7 @@ function agents(s: Snapshot): PaneRow[] {
   if (uncached + read + write + output > 0) out.push(row('tokens', { text: `${kshort(uncached + read + write)} in · ${kshort(output)} out` }))
   for (const a of [...s.agents].reverse()) {
     out.push(
-      row(a.label ?? 'agent', a.description?.trim() && { text: a.description.replace(/\s+/g, ' ').trim() }),
+      row(a.label ?? 'agent', !!a.description?.trim() && { text: a.description.replace(/\s+/g, ' ').trim() }),
       row('agent ID', dim(a.id)),
       row('model', { text: a.model }, effortOf(a.effort)),
       row('tokens', { text: `${kshort(a.usage.input)} in · ${kshort(a.usage.output)} out` }, dim(`· ${kshort(a.usage.read)} cache read`)),

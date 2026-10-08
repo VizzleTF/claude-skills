@@ -1,7 +1,7 @@
 // The /tidemark pane: the quota forecast as a pure function, the sections from Snapshot fixtures, and the
 // pane through the engine on every surface.
 import { expect, mock, test } from 'claude-code/testing'
-import type { On, SessionUsage } from 'claude-code'
+import type { CommandRunInput, On, SessionUsage } from 'claude-code'
 
 import type { TidemarkSnapshot } from '../types'
 import type { PaneRow } from '../hooks/draw'
@@ -177,7 +177,7 @@ test('/tidemark opens the pane and writes nothing to the conversation', async ($
   const opened: string[] = []
   on('ui.open', ($, e) => { opened.push(e.id); return { value: { isPlaced: true } } })
   await start($, on)
-  expect(await $.command.run({ command: 'tidemark' })).toEqual({})
+  expect(await $.command.run({ command: 'tidemark' } as CommandRunInput)).toEqual({})
   expect(opened).toEqual(['tidemark'])
 })
 
