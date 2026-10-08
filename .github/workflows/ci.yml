@@ -32,7 +32,14 @@ jobs:
         run: python3 tools/version_check.py "$BASE" || [ $? -eq 2 ]
       - name: Manifests
         run: |
-          claude plugin validate .
-          claude plugin validate plugins/tidemark
+          claude plugin validate --strict .
+          for p in plugins/*/; do claude plugin validate --strict "$p"; done
       - name: tidemark tests
         run: claude plugin test plugins/tidemark
+      - name: tidemark type check
+        # The engine lays the API types into .claude-plugin/types/ when it loads the mod; a headless run with
+        # a dummy key loads it and stops at the 401, so no model call is made.
+        run: |
+          ANTHROPIC_API_KEY=dummy claude -p --plugin-dir plugins/tidemark hi >/dev/null 2>&1 || true
+          test -f plugins/tidemark/.claude-plugin/types/claude-code/index.d.ts
+          npx -y -p typescript@5.6.3 tsc -p plugins/tidemark

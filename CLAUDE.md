@@ -4,7 +4,7 @@ Claude Code plugin marketplace `vizzletf-skills`: one documentation-writing skil
 
 ## Commands
 
-Run from the repo root. Python 3, stdlib only. CI (`.github/workflows/ci.yml`) runs all of these plus `claude plugin validate plugins/tidemark` and `claude plugin test plugins/tidemark` on every push to `main` and every pull request.
+Run from the repo root. Python 3, stdlib only. CI (`.github/workflows/ci.yml`) runs all of these plus `claude plugin validate --strict` on the marketplace and each plugin, `claude plugin test plugins/tidemark` and a `tsc` type check of the mod on every push to `main` and every pull request.
 
 ```sh
 python3 -m unittest discover -s tests          # all tests, offline
