@@ -2,20 +2,41 @@
 
 [![ci](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml)
 
-A Claude Code plugin that writes and reviews technical documentation by document type. On 28 test scenarios its documents came out 20–30% shorter than with the earlier `writing-docs` skill, at the same judge score or higher.
+The Claude Code plugin marketplace `vizzletf-skills`. It has two plugins:
+
+| Plugin | What it does | Needs |
+|---|---|---|
+| [technical-writing](#technical-writing) | Writes and reviews documentation by type: README, runbook, ADR, changelog and 9 more. Two editions: `technical-writing` with English instructions, `technical-writing-ru` with Russian | Python 3 for the text checker |
+| [tidemark](#tidemark) | Draws a band above the prompt: context fill, prompt cache, quota, model, git | Claude Code 2.1.288 or later |
 
 ## Install
 
-Requires Claude Code with `/plugin` support and Python 3 for the text checker.
+Add the marketplace once, then install the plugins you want:
 
 ```
 /plugin marketplace add VizzleTF/claude-skills
 /plugin install technical-writing@vizzletf-skills
+/plugin install tidemark@vizzletf-skills
 ```
 
-For instructions and style rules in Russian, install `technical-writing-ru@vizzletf-skills` instead. Install only one: both trigger on the same requests.
+## technical-writing
 
-## Commands
+The skill finds the reader first, picks one of 13 document types and writes to that type's skeleton and length budget. On 28 test scenarios its documents came out 20–30% shorter than with the earlier `writing-docs` skill, at the same judge score or higher.
+
+Install one edition only, `technical-writing` or `technical-writing-ru`: both trigger on the same requests.
+
+Ask Claude `Write a runbook for the alert QueueWorkerDown`, or run `/technical-writing:runbook alert QueueWorkerDown`. You get a runbook: impact, diagnosis, actions with a verification command each, escalation.
+
+The bundled checker flags long sentences, stop words, LLM markers and broken links in any Markdown file:
+
+```sh
+python3 plugins/technical-writing/skills/write/scripts/check.py deploy.md
+```
+
+![check.py reports one broken link and seven warnings in deploy.md](docs/images/technical-writing-check.png)
+
+<details>
+<summary>All 13 commands</summary>
 
 `/technical-writing:write` picks the type from the request. Each type also has its own command:
 
@@ -35,31 +56,24 @@ For instructions and style rules in Russian, install `technical-writing-ru@vizzl
 | `/technical-writing:troubleshooting` | Symptom or error, its cause and fix |
 | `/technical-writing:tutorial` | Lesson for a newcomer, one guided path |
 
-## Example
+</details>
 
-Ask Claude `Write a runbook for the alert QueueWorkerDown`, or run `/technical-writing:runbook alert QueueWorkerDown`. You get a runbook: impact, diagnosis, actions with a verification command each, escalation.
-
-Check a Markdown file with the bundled checker, from the repository root:
-
-```sh
-python3 plugins/technical-writing/skills/write/scripts/check.py README.md
-```
-
-```
-0 error(s), 0 warning(s) in 1 file(s)
-```
+Changelog: [technical-writing](plugins/technical-writing/CHANGELOG.md), [technical-writing-ru](plugins/technical-writing-ru/CHANGELOG.md).
 
 ## tidemark
 
-The marketplace also has `tidemark`, a mod that draws a configurable band above the Claude Code prompt: context, prompt cache, quota, model, git and more. It needs Claude Code 2.1.288 or later.
+A mod that draws a band of widgets above the Claude Code prompt, in the terminal and in the desktop app's Code tab. It leaves your `statusLine` and settings alone. The band appears right after the install; if it does not, run `/reload-plugins`.
 
-```
-/plugin install tidemark@vizzletf-skills
-```
+![The tidemark band: context 4% of 1M, 5-hour quota 28%, weekly quota 86%, git branch and model](docs/images/tidemark-band.png)
 
-Widgets, config and privacy: [tidemark README](plugins/tidemark/README.md).
+`/tidemark` opens a details pane with the context breakdown, quota forecast and subagents. `/tidemark-config` edits the widgets with a live preview.
+
+<img src="docs/images/tidemark-pane.png" width="420" alt="The /tidemark pane: context split by source, 5-hour and weekly quota with a forecast to reset">
+
+Widgets, config, privacy and uninstall: [tidemark README](plugins/tidemark/README.md).
 
 ## Links
 
 - [README на русском](README.ru.md)
-- [Changelog](plugins/technical-writing/CHANGELOG.md), license [MIT](LICENSE)
+- [Contributing](CONTRIBUTING.md)
+- License: [MIT](LICENSE)

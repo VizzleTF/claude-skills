@@ -2,20 +2,41 @@
 
 [![ci](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml)
 
-Плагин для Claude Code пишет техническую документацию по типам документа и проводит её ревью. На 28 тестовых сценариях его документы вышли на 20–30% короче, чем с прежним скиллом `writing-docs`. Оценка судьи при этом та же или выше.
+Маркетплейс плагинов Claude Code `vizzletf-skills`. В нём два плагина:
+
+| Плагин | Что делает | Что нужно |
+|---|---|---|
+| [technical-writing](#technical-writing) | Пишет документацию по типу документа и проводит её ревью: README, runbook, ADR, changelog и ещё 9 типов. Две версии: `technical-writing-ru` с инструкциями на русском, `technical-writing` на английском | Python 3 для скрипта проверки текста |
+| [tidemark](#tidemark) | Рисует над промптом полосу: заполнение контекста, кеш промпта, квоты, модель, git | Claude Code 2.1.288 или новее |
 
 ## Установка
 
-Нужны Claude Code с поддержкой `/plugin` и Python 3 для скрипта проверки текста.
+Добавьте маркетплейс один раз, затем поставьте нужные плагины:
 
 ```
 /plugin marketplace add VizzleTF/claude-skills
 /plugin install technical-writing-ru@vizzletf-skills
+/plugin install tidemark@vizzletf-skills
 ```
 
-Версия с инструкциями и правилами стиля на английском — `technical-writing@vizzletf-skills`. Ставьте только одну: обе срабатывают на одни и те же запросы.
+## technical-writing
 
-## Команды
+Скилл сначала определяет читателя, выбирает один из 13 типов документа и пишет по каркасу и бюджету объёма этого типа. На 28 тестовых сценариях его документы вышли на 20–30% короче, чем с прежним скиллом `writing-docs`. Оценка судьи при этом та же или выше.
+
+Ставьте только одну версию, `technical-writing-ru` или `technical-writing`: обе срабатывают на одни и те же запросы.
+
+Попросите Claude: `Напиши ранбук для алерта QueueWorkerDown` или запустите `/technical-writing-ru:runbook алерт QueueWorkerDown`. Получится runbook: влияние, диагностика, действия с командой проверки у каждого, эскалация.
+
+Встроенный скрипт находит в любом Markdown-файле длинные предложения, стоп-слова, маркеры LLM и битые ссылки:
+
+```sh
+python3 plugins/technical-writing-ru/skills/write/scripts/check.py deploy.md
+```
+
+![check.py находит в deploy.md одну битую ссылку и семь предупреждений](docs/images/technical-writing-check.png)
+
+<details>
+<summary>Все 13 команд</summary>
 
 `/technical-writing-ru:write` выбирает тип по запросу. У каждого типа есть и своя команда:
 
@@ -35,31 +56,24 @@
 | `/technical-writing-ru:troubleshooting` | Симптом или ошибка, причина и исправление |
 | `/technical-writing-ru:tutorial` | Урок для новичка по одному пути |
 
-## Пример
+</details>
 
-Попросите Claude: `Напиши ранбук для алерта QueueWorkerDown` или запустите `/technical-writing-ru:runbook алерт QueueWorkerDown`. Получится runbook: влияние, диагностика, действия с командой проверки у каждого, эскалация.
-
-Проверьте Markdown-файл встроенным скриптом из корня репозитория:
-
-```sh
-python3 plugins/technical-writing-ru/skills/write/scripts/check.py --lang ru README.ru.md
-```
-
-```
-0 error(s), 0 warning(s) in 1 file(s)
-```
+Changelog: [technical-writing-ru](plugins/technical-writing-ru/CHANGELOG.md), [technical-writing](plugins/technical-writing/CHANGELOG.md).
 
 ## tidemark
 
-В маркетплейсе есть и `tidemark`: мод рисует над промптом Claude Code настраиваемую полосу с контекстом, кешем промпта, квотами, моделью, git и другими виджетами. Нужен Claude Code 2.1.288 или новее.
+Мод рисует над промптом Claude Code полосу виджетов, в терминале и во вкладке Code десктопного приложения. Ваш `statusLine` и настройки он не трогает. Полоса появляется сразу после установки; если её нет, запустите `/reload-plugins`.
 
-```
-/plugin install tidemark@vizzletf-skills
-```
+![Полоса tidemark: контекст 4% из 1M, 5-часовая квота 28%, недельная 86%, ветка git и модель](docs/images/tidemark-band.png)
 
-Виджеты, конфиг и приватность описаны в [README tidemark](plugins/tidemark/README.ru.md).
+`/tidemark` открывает панель с разбивкой контекста, прогнозом квот и субагентами. `/tidemark-config` настраивает виджеты с живым превью.
+
+<img src="docs/images/tidemark-pane.png" width="420" alt="Панель /tidemark: контекст по источникам, 5-часовая и недельная квоты с прогнозом до сброса">
+
+Виджеты, конфиг, приватность и удаление описаны в [README tidemark](plugins/tidemark/README.ru.md).
 
 ## Ссылки
 
 - [README in English](README.md)
-- [Changelog](plugins/technical-writing-ru/CHANGELOG.md), лицензия [MIT](LICENSE)
+- [Как внести вклад](CONTRIBUTING.md)
+- Лицензия: [MIT](LICENSE)
