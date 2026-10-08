@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -23,6 +25,11 @@ jobs:
           python3 tools/parity.py
           python3 plugins/technical-writing/skills/write/scripts/check.py plugins/technical-writing/skills/write/
           python3 plugins/technical-writing/skills/write/scripts/check.py plugins/technical-writing-ru/skills/write/
+      - name: Version bumps
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        # Exit 2 means the base is not in history (new branch, force push): nothing to compare.
+        run: python3 tools/version_check.py "$BASE" || [ $? -eq 2 ]
       - name: Manifests
         run: |
           claude plugin validate .
