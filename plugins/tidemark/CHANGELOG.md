@@ -2,6 +2,13 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-10-08
+
+### Fixed
+
+- The `⚙` config button stays on a narrow band: it goes after every other widget and `flex`, whatever its `priority`.
+- The reference gives the default `lines` of 0.2.0.
+
 ## [0.2.0] - 2026-10-08
 
 ### Changed

@@ -37,7 +37,7 @@ This reference covers tidemark 0.1.10. The config is read from two JSON files, t
 |---|---|---|---|
 | `$schema` | string | `https://raw.githubusercontent.com/VizzleTF/claude-skills/main/plugins/tidemark/config.schema.json` | the JSON Schema a code editor uses to suggest keys and values; `Save` writes it |
 | `version` | number | `1` | `1` only; the key may be left out |
-| `lines` | array of band rows; a row is an array of widgets | one row: `context`, `cache`, `quota5h`, `quota7d`, `model`, `git`, `flex`, `compact`, `actions` | 1–3 rows; extra rows are dropped |
+| `lines` | array of band rows; a row is an array of widgets | one row: `project`, `context`, `compact`, `cache`, `flex`, `quota5h`, `quota7d`, `flex`, `sessionTime`, `git`, `model`, `cwd`, `actions` | 1–3 rows; extra rows are dropped |
 | `style.separator` | string | `space` | `pipe` (` │ `), `space`, `dot` (` · `), `powerline` (`▶` arrows, Nerd Font glyphs with `icons: "nerd"`), `custom` |
 | `style.custom` | string | none | the separator when `separator: "custom"` |
 | `style.icons` | string | `nerd` | `text`, `nerd` (Nerd Font glyphs instead of labels and powerline arrows) |
@@ -107,7 +107,7 @@ While a row is wider than the window, the visible widget with the lowest `priori
 | `claudeStatus` | `● ok`, `● minor`, `● major`, `● critical` from status.claude.com | 20 |
 | `gitPr` | `#123 ✓`, `✗` or `…` for the current branch's PR or MR; needs `gh` or `glab` signed in, hidden without them or without a PR | 20 |
 | `compact` | a `/compact` button: compacts the conversation as `/compact` does; hidden on a subagent's transcript and until the session reports | 10 |
-| `actions` | a small `⚙` button that opens `/tidemark-config`; hidden until the session reports | 10 |
+| `actions` | a small `⚙` button that opens `/tidemark-config`; hidden until the session reports | never narrowed away; goes after every other widget |
 | `flex` | nothing; splits the row into groups: one `flex` sends the widgets after it to the right edge, two put the widgets between them in the middle | never narrowed away |
 
 Figures are coloured on a 10-colour scale from blue to red by the used share.

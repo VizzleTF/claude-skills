@@ -50,13 +50,20 @@ function truncate(spans: Span[], width: number): Span[] {
 
 type Entry = { widget: Segment['widget']; priority: number; variants: Variant[]; at: number }
 
+// What goes last whatever the priorities: the config button, then `flex` and the `⚠ config` mark.
+const keep = (e: Entry) => (e.widget === 'actions' ? 2 : e.priority === Infinity ? 1 : 0)
+
 // Narrows one line to `width`: while it is too wide, the visible widget with the lowest priority (the
 // rightmost on a tie) moves to its next variant, or goes when it has none; the last one left is cut.
+// The config button outlasts every other widget, so the editor stays one press away.
 function fit(entries: Entry[], width: number, style: Style): Line {
   const shown = () => entries.map(e => e.variants[e.at]!)
   while (entries.length > 0 && lineWidth(shown(), style) > width) {
     let k = 0
-    entries.forEach((e, i) => { if (e.priority <= entries[k]!.priority) k = i })
+    entries.forEach((e, i) => {
+      const a = keep(e), b = keep(entries[k]!)
+      if (a < b || (a === b && e.priority <= entries[k]!.priority)) k = i
+    })
     const e = entries[k]!
     if (e.at + 1 < e.variants.length) e.at++
     else if (entries.length > 1) entries.splice(k, 1)

@@ -37,7 +37,7 @@
 |---|---|---|---|
 | `$schema` | строка | `https://raw.githubusercontent.com/VizzleTF/claude-skills/main/plugins/tidemark/config.schema.json` | по этой JSON Schema редактор кода подсказывает ключи и значения; `Save` пишет её сам |
 | `version` | число | `1` | только `1`; ключ можно не писать |
-| `lines` | массив строк полосы; строка полосы — массив виджетов | одна строка: `context`, `cache`, `quota5h`, `quota7d`, `model`, `git`, `flex`, `compact`, `actions` | 1–3 строки; лишние отбрасываются |
+| `lines` | массив строк полосы; строка полосы — массив виджетов | одна строка: `project`, `context`, `compact`, `cache`, `flex`, `quota5h`, `quota7d`, `flex`, `sessionTime`, `git`, `model`, `cwd`, `actions` | 1–3 строки; лишние отбрасываются |
 | `style.separator` | строка | `space` | `pipe` (` │ `), `space`, `dot` (` · `), `powerline` (стрелки `▶`, при `icons: "nerd"` глифы Nerd Font), `custom` |
 | `style.custom` | строка | нет | разделитель при `separator: "custom"` |
 | `style.icons` | строка | `nerd` | `text`, `nerd` (глифы Nerd Font вместо меток и стрелки powerline) |
@@ -107,7 +107,7 @@
 | `claudeStatus` | `● ok`, `● minor`, `● major`, `● critical` со status.claude.com | 20 |
 | `gitPr` | `#123 ✓`, `✗` или `…` для PR или MR текущей ветки; нужен `gh` или `glab` с выполненным входом, без них и без PR виджет скрыт | 20 |
 | `compact` | кнопка `/compact`: сжимает разговор, как `/compact`; скрыта на транскрипте сабагента и пока сессия ничего не сообщила | 10 |
-| `actions` | маленькая кнопка `⚙`, открывает `/tidemark-config`; скрыта, пока сессия ничего не сообщила | 10 |
+| `actions` | маленькая кнопка `⚙`, открывает `/tidemark-config`; скрыта, пока сессия ничего не сообщила | не сужается; уходит после всех остальных виджетов |
 | `flex` | ничего; делит строку на группы: один `flex` прижимает виджеты после него к правому краю, два ставят виджеты между ними посередине | не сужается |
 
 Цифры окрашены по шкале из 10 цветов от синего к красному по израсходованной доле.

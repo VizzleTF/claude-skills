@@ -73,6 +73,15 @@ test('fit: details go first, then widgets by priority, context last, then cut wi
   expect(seen.at(-1)).toBe('ctx …')
 })
 
+test('the config button stays at any width and whatever its priority', () => {
+  const config = { ...PLAIN, lines: [[{ widget: 'context' as const, priority: 500 }, { widget: 'flex' as const }, { widget: 'actions' as const, priority: 0 }]] }
+  for (let w = 120; w >= 1; w--) {
+    const [line] = buildLines(config, SNAP, {}, w, NOW)
+    expect(line!.at(-1)!.widget).toBe('actions')
+  }
+  expect(buildLines(config, SNAP, {}, 1, NOW)[0]!.map(s => s.widget)).toEqual(['actions'])
+})
+
 test('a priority keeps a widget longer', () => {
   const config = { ...PLAIN, lines: [[{ widget: 'context' as const }, { widget: 'model' as const, priority: 200 }]] }
   expect(texts(buildLines(config, SNAP, {}, 20, NOW))).toEqual(['opus 5.5 · high'])
