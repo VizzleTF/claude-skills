@@ -52,22 +52,22 @@ The **Default** column marks the widgets of the band you get without a config fi
 | `quota7d` | `7d 63% ↻ 2d7h` | ✓ |
 | `model` | `opus 5.5 · high`; a press switches the model or the effort | ✓ |
 | `git` | branch, `*` for uncommitted changes, sync with the upstream, `+12 −3` | ✓ |
-| `goal` | text from `/tidemark-goal`; hidden until set | ✓ |
+| `goal` | text from `/tidemark-goal`; hidden until set | |
 | `project` | text from `/tidemark-project`; hidden until set | ✓ |
 | `compact` | a `/compact` button | ✓ |
 | `actions` | a `⚙` button that opens `/tidemark-config` | ✓ |
-| `flex` | nothing; pushes the widgets after it to the right edge | ✓ |
+| `flex` | nothing; splits the row into groups: left, middle, right | ✓ |
 | `cost` | `≈$1.84 (+$0.12)`: the session and the current turn | |
 | `agents` | a spinner per running subagent | |
-| `cwd` | project name, directory name or path | |
-| `sessionTime` | `⏱ 1h12m` since the conversation started | |
+| `cwd` | project name, directory name or path | ✓ |
+| `sessionTime` | `⏱ 1h12m` since the conversation started | ✓ |
 | `compactions` | `⇣2` | |
 | `tokenSpeed` | `42 t/s` for the last turn | |
 | `command` | the first line of your command's output | |
 | `claudeStatus` | `● ok` … `● critical` from status.claude.com | |
 | `gitPr` | `#123 ✓` for the branch's PR or MR; needs `gh` or `glab` | |
 
-Figures are coloured from blue to red by the used share. Options of each widget: [Reference](docs/reference.md#widgets).
+The default band uses Nerd Font icons; without such a font in the terminal, set `style.icons` to `text`. Figures are coloured from blue to red by the used share. Options of each widget: [Reference](docs/reference.md#widgets).
 
 ## Configure
 

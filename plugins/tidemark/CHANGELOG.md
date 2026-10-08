@@ -2,6 +2,13 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] - 2026-10-08
+
+### Changed
+
+- The band without a config file is one line in three groups. Left: project, context, the `/compact` button, cache. Middle: the 5-hour and weekly quota. Right: session time, git, model, directory, `⚙`. Compared with 0.1.13, it drops `goal` and adds `sessionTime` and `cwd`.
+- The default style is `separator: "space"` and `icons: "nerd"`; without a Nerd Font in the terminal, set `style.icons` to `text`. The presets `minimal`, `classic` and `full` take this style too.
+
 ## [0.1.13] - 2026-10-08
 
 ### Changed

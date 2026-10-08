@@ -38,9 +38,9 @@
 | `$schema` | строка | `https://raw.githubusercontent.com/VizzleTF/claude-skills/main/plugins/tidemark/config.schema.json` | по этой JSON Schema редактор кода подсказывает ключи и значения; `Save` пишет её сам |
 | `version` | число | `1` | только `1`; ключ можно не писать |
 | `lines` | массив строк полосы; строка полосы — массив виджетов | одна строка: `context`, `cache`, `quota5h`, `quota7d`, `model`, `git`, `flex`, `compact`, `actions` | 1–3 строки; лишние отбрасываются |
-| `style.separator` | строка | `pipe` (` │ `) | `pipe`, `space`, `dot` (` · `), `powerline` (стрелки `▶`, при `icons: "nerd"` глифы Nerd Font), `custom` |
+| `style.separator` | строка | `space` | `pipe` (` │ `), `space`, `dot` (` · `), `powerline` (стрелки `▶`, при `icons: "nerd"` глифы Nerd Font), `custom` |
 | `style.custom` | строка | нет | разделитель при `separator: "custom"` |
-| `style.icons` | строка | `text` | `text`, `nerd` (глифы Nerd Font вместо меток и стрелки powerline) |
+| `style.icons` | строка | `nerd` | `text`, `nerd` (глифы Nerd Font вместо меток и стрелки powerline) |
 | `style.buttons` | булево | `true` | `false` рисует нажатия и ссылки из таблицы виджетов обычным текстом |
 | `pane.sections` | массив `{id, enabled}` | все три секции включены | `id`: `context`, `cacheQuota`, `agents`; порядок массива задаёт порядок секций |
 | `alerts.enabled` | булево | `false` | включает toast при пересечении порога снизу вверх |
@@ -190,7 +190,7 @@
 |---|---|
 | `minimal` | context, quota5h |
 | `classic` | context, cache, quota5h, quota7d |
-| `default` | project, goal, context, cache, quota5h, quota7d, model, git, flex, compact, actions |
+| `default` | project, context, compact, cache, flex, quota5h, quota7d, flex, sessionTime, git, model, cwd, actions |
 | `full` | 1: project, goal, context, cache, quota5h, quota7d, cost; 2: model, cwd, git, sessionTime, compactions, tokenSpeed, agents |
 | `powerline` | `default` с `separator: "powerline"` и `icons: "nerd"` |
 

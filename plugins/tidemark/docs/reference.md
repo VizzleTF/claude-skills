@@ -38,9 +38,9 @@ This reference covers tidemark 0.1.10. The config is read from two JSON files, t
 | `$schema` | string | `https://raw.githubusercontent.com/VizzleTF/claude-skills/main/plugins/tidemark/config.schema.json` | the JSON Schema a code editor uses to suggest keys and values; `Save` writes it |
 | `version` | number | `1` | `1` only; the key may be left out |
 | `lines` | array of band rows; a row is an array of widgets | one row: `context`, `cache`, `quota5h`, `quota7d`, `model`, `git`, `flex`, `compact`, `actions` | 1–3 rows; extra rows are dropped |
-| `style.separator` | string | `pipe` (` │ `) | `pipe`, `space`, `dot` (` · `), `powerline` (`▶` arrows, Nerd Font glyphs with `icons: "nerd"`), `custom` |
+| `style.separator` | string | `space` | `pipe` (` │ `), `space`, `dot` (` · `), `powerline` (`▶` arrows, Nerd Font glyphs with `icons: "nerd"`), `custom` |
 | `style.custom` | string | none | the separator when `separator: "custom"` |
-| `style.icons` | string | `text` | `text`, `nerd` (Nerd Font glyphs instead of labels and powerline arrows) |
+| `style.icons` | string | `nerd` | `text`, `nerd` (Nerd Font glyphs instead of labels and powerline arrows) |
 | `style.buttons` | boolean | `true` | `false` draws the presses and links of the Widgets table as plain text |
 | `pane.sections` | array of `{id, enabled}` | all three sections on | `id`: `context`, `cacheQuota`, `agents`; the array order is the section order |
 | `alerts.enabled` | boolean | `false` | turns on a toast when a figure crosses its threshold upwards |
@@ -190,7 +190,7 @@ A preset is picked in the editor, changes the draft and is written on `Save`.
 |---|---|
 | `minimal` | context, quota5h |
 | `classic` | context, cache, quota5h, quota7d |
-| `default` | project, goal, context, cache, quota5h, quota7d, model, git, flex, compact, actions |
+| `default` | project, context, compact, cache, flex, quota5h, quota7d, flex, sessionTime, git, model, cwd, actions |
 | `full` | 1: project, goal, context, cache, quota5h, quota7d, cost; 2: model, cwd, git, sessionTime, compactions, tokenSpeed, agents |
 | `powerline` | `default` with `separator: "powerline"` and `icons: "nerd"` |
 

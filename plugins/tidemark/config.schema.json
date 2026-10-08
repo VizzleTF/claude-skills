@@ -885,7 +885,7 @@
             "powerline",
             "custom"
           ],
-          "default": "pipe"
+          "default": "space"
         },
         "custom": {
           "type": "string"
@@ -895,7 +895,7 @@
             "text",
             "nerd"
           ],
-          "default": "text"
+          "default": "nerd"
         },
         "buttons": {
           "type": "boolean",
