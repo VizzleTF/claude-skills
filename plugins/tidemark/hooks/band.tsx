@@ -47,8 +47,12 @@ async function effortLevels($: EngineInterface): Promise<readonly string[]> {
 // were sent lower. In an interactive session Claude Code keeps an effort set this way as that model's own,
 // so a model switch brings back the level last set for the new model.
 async function press($: EngineInterface, what: Press, config: TidemarkConfig): Promise<void> {
-  if (what === 'context' || what === 'usage') {
-    await $.command.run({ command: what })
+  if (what === 'context') {
+    await $.command.run({ command: 'context' })
+    return
+  }
+  if (what === 'usage') {
+    await $.command.run({ command: 'usage' })
     return
   }
   if (what === 'cache') {

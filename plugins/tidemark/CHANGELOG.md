@@ -2,6 +2,14 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.12] - 2026-10-08
+
+### Changed
+
+- The README says in full what the mod runs, reads and writes: what each hook does, which programs run and why, the one HTTPS request, the files and environment variables it reads and the files it writes.
+- The status page address is written at the one `$.http.fetch` call, and the band's `context` and `usage` presses name their command directly.
+- The `/tidemark-goal` and `/tidemark-project` panes are registered one per line, so `claude plugin validate` names each pane.
+
 ## [0.1.11] - 2026-10-08
 
 ### Fixed

@@ -18,7 +18,7 @@ const SNAP: TidemarkSnapshot = { ...EMPTY_SNAPSHOT, sessionId: 's1', model: 'cla
 const cfg = (...items: unknown[]) => validate({ version: 1, lines: [items] }).config
 const plan = (config: ReturnType<typeof cfg>, probes: TidemarkProbes = EMPTY_PROBES, trigger: 'tick' | 'turn' = 'tick', now = NOW) =>
   planProbes(config, probes, SNAP, CWD, now, trigger)
-const argv = (reqs: ProbeRequest[]) => reqs.map(r => (r.kind === 'process' ? r.argv.join(' ') : r.url))
+const argv = (reqs: ProbeRequest[]) => reqs.map(r => (r.kind === 'process' ? r.argv.join(' ') : r.kind))
 const done = (stdout: string, at = NOW): TidemarkProbes[string] => ({ at, stdout })
 
 test('no external widget enabled: nothing to run', () => {
@@ -90,7 +90,7 @@ test('command: sh -c with the session as JSON on stdin, its timeout, its TTL', (
 })
 
 test('claudeStatus: the status page summary every five minutes', () => {
-  expect(plan(cfg('claudeStatus'))).toEqual([{ key: 'claudeStatus', kind: 'http', url: 'https://status.claude.com/api/v2/summary.json', timeoutMs: 5000 }])
+  expect(plan(cfg('claudeStatus'))).toEqual([{ key: 'claudeStatus', kind: 'status', timeoutMs: 5000 }])
   expect(plan(cfg('claudeStatus'), { claudeStatus: { at: NOW - 299_000, text: '{}' } })).toEqual([])
 })
 

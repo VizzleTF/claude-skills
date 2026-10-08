@@ -9,7 +9,7 @@ export type ProbesState = TidemarkProbes
 
 export type ProbeRequest =
   | { key: string; kind: 'process'; argv: string[]; stdin?: string; timeoutMs: number; env?: Record<string, string> }
-  | { key: string; kind: 'http'; url: string; timeoutMs: number }
+  | { key: string; kind: 'status'; timeoutMs: number }
 
 export type ProbeOutcome = { ok: true; stdout?: string; text?: string; status?: number } | { ok: false; error: string }
 
@@ -21,7 +21,6 @@ const FETCH_TIMEOUT_MS = 15_000
 const GIT_ROOT_TTL_S = 60
 const PR_TIMEOUT_MS = 10_000
 const STATUS_TIMEOUT_MS = 5_000
-const STATUS_URL = 'https://status.claude.com/api/v2/summary.json'
 
 const GIT = ['git', '--no-optional-locks']
 
@@ -81,7 +80,7 @@ export function planProbes(
   }
 
   const status = first('claudeStatus')
-  if (status && due('claudeStatus', opt(status, 'ttl'))) out.push({ key: 'claudeStatus', kind: 'http', url: STATUS_URL, timeoutMs: STATUS_TIMEOUT_MS })
+  if (status && due('claudeStatus', opt(status, 'ttl'))) out.push({ key: 'claudeStatus', kind: 'status', timeoutMs: STATUS_TIMEOUT_MS })
   return out
 }
 

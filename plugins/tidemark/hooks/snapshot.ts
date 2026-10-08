@@ -219,7 +219,8 @@ async function runProbe($: EngineInterface, req: ProbeRequest, cwd: string): Pro
     let timer: Timer | undefined
     const timeout = new Promise<never>((_, reject) => { timer = $.clock.after(req.timeoutMs, () => reject(new Error('timeout'))) })
     try {
-      const r = await Promise.race([$.http.fetch(req.url), timeout])
+      // The one request tidemark makes itself; the address stays literal so a reader of the call sees the host.
+      const r = await Promise.race([$.http.fetch('https://status.claude.com/api/v2/summary.json'), timeout])
       return { ok: true, text: r.text, status: r.status }
     } finally {
       timer?.cancel()
