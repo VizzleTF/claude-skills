@@ -23,7 +23,7 @@ ROOT = Path(__file__).resolve().parent.parent
 PLUGIN = "plugins/tidemark"
 CACHE = Path.home() / ".claude/plugins/cache/vizzletf-skills/tidemark"
 STARTED = "classic.SessionStart settled"
-RELOADED = "plugin-dir watch: watching"  # logged again after /reload-plugins
+RELOADED = "Reloaded:"  # on screen once /reload-plugins finishes
 START_TIMEOUT_S = 90
 DRAW_WAIT_S = 5
 
@@ -55,10 +55,10 @@ def stale_cache():
     return []
 
 
-def wait_for(path, text, after=0):
+def wait_for(read, text):
     deadline = time.time() + START_TIMEOUT_S
     while time.time() < deadline:
-        if path.exists() and path.read_text(errors="replace").count(text) > after:
+        if text in read():
             return True
         time.sleep(1)
     return False
@@ -87,16 +87,15 @@ def main():
     session = f"tidemark-smoke-{int(time.time())}"
     tmux("new-session", "-d", "-s", session, "-x", "200", "-y", "50", "-c", str(ROOT), " ".join(command))
     try:
-        if not wait_for(debug, STARTED):
+        if not wait_for(lambda: debug.read_text(errors="replace") if debug.exists() else "", STARTED):
             print(tmux("capture-pane", "-p", "-t", session))
             print(f"live-smoke: no '{STARTED}' in {debug} after {START_TIMEOUT_S} s", file=sys.stderr)
             return 2
         time.sleep(DRAW_WAIT_S)
         screens = [tmux("capture-pane", "-p", "-t", session)]
         if args.reload:
-            before = debug.read_text(errors="replace").count(RELOADED)
             tmux("send-keys", "-t", session, "/reload-plugins", "Enter")
-            if not wait_for(debug, RELOADED, after=before):
+            if not wait_for(lambda: tmux("capture-pane", "-p", "-t", session), RELOADED):
                 found.append("reload: /reload-plugins did not finish")
             time.sleep(DRAW_WAIT_S)
             screens.append(tmux("capture-pane", "-p", "-t", session))
