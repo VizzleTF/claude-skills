@@ -64,11 +64,11 @@ Changelog: [technical-writing-ru](plugins/technical-writing-ru/CHANGELOG.md), [t
 
 Мод рисует над промптом Claude Code полосу виджетов, в терминале и во вкладке Code десктопного приложения. Ваш `statusLine` и настройки он не трогает. Полоса появляется сразу после установки; если её нет, запустите `/reload-plugins`.
 
-![Полоса tidemark: контекст 4% из 1M, 5-часовая квота 28%, недельная 86%, ветка git и модель](docs/images/tidemark-band.png)
+![Полоса tidemark: контекст 4% из 1M, 5-часовая квота 28%, недельная 86%, ветка git и модель](plugins/tidemark/docs/images/tidemark-band.png)
 
 `/tidemark` открывает панель с разбивкой контекста, прогнозом квот и субагентами. `/tidemark-config` настраивает виджеты с живым превью.
 
-<img src="docs/images/tidemark-pane.png" width="420" alt="Панель /tidemark: контекст по источникам, 5-часовая и недельная квоты с прогнозом до сброса">
+<img src="plugins/tidemark/docs/images/tidemark-pane.png" width="420" alt="Панель /tidemark: контекст по источникам, 5-часовая и недельная квоты с прогнозом до сброса">
 
 Виджеты, конфиг, приватность и удаление описаны в [README tidemark](plugins/tidemark/README.ru.md).
 

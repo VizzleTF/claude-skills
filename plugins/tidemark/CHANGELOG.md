@@ -2,6 +2,12 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.13] - 2026-10-08
+
+### Changed
+
+- The README lists the commands, the widgets and what the mod runs, reads and writes in tables, with screenshots of the band and the `/tidemark` pane.
+
 ## [0.1.12] - 2026-10-08
 
 ### Changed

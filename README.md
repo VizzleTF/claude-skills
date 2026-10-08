@@ -64,11 +64,11 @@ Changelog: [technical-writing](plugins/technical-writing/CHANGELOG.md), [technic
 
 A mod that draws a band of widgets above the Claude Code prompt, in the terminal and in the desktop app's Code tab. It leaves your `statusLine` and settings alone. The band appears right after the install; if it does not, run `/reload-plugins`.
 
-![The tidemark band: context 4% of 1M, 5-hour quota 28%, weekly quota 86%, git branch and model](docs/images/tidemark-band.png)
+![The tidemark band: context 4% of 1M, 5-hour quota 28%, weekly quota 86%, git branch and model](plugins/tidemark/docs/images/tidemark-band.png)
 
 `/tidemark` opens a details pane with the context breakdown, quota forecast and subagents. `/tidemark-config` edits the widgets with a live preview.
 
-<img src="docs/images/tidemark-pane.png" width="420" alt="The /tidemark pane: context split by source, 5-hour and weekly quota with a forecast to reset">
+<img src="plugins/tidemark/docs/images/tidemark-pane.png" width="420" alt="The /tidemark pane: context split by source, 5-hour and weekly quota with a forecast to reset">
 
 Widgets, config, privacy and uninstall: [tidemark README](plugins/tidemark/README.md).
 
