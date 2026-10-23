@@ -77,7 +77,7 @@ plugins/tidemark/
 ## Gotchas
 
 - D01, the engine's four static rules: (1) one matcher-less hook per event per plugin, so session events belong to `snapshot.ts` and `classic.SessionStart {startup}` + `prompt.submit` to `config.ts`; matcher hooks (`command.run {command}`, `ui.render {component, requestId}`) are free; (2) `$` cannot be passed into an imported function; (3) an atom is readable/writable only in the file that declares it; (4) hence external work (probes, alerts, config writes) runs inside the hook file and imports only pure planners.
-- No `package.json`, no build: `tsc` only type-checks, against the API types the engine lays in `.claude-plugin/types/` (git-ignored). CI lays them with a headless `claude -p --plugin-dir` run under a dummy key, then runs `tsc`.
+- No `package.json`, no build: `tsc` only type-checks, against the API types the engine lays in `.claude-plugin/types/` (git-ignored). CI does not run `tsc`: since Claude Code 2.1.29x a headless `claude -p` no longer lays these types.
 - Command names stay literal in both `$.command.register` (in `snapshot.ts`, `session.start`) and the `command.run` matchers; with a constant, `claude plugin validate` lists the hook as a gate instead of "answers its own command".
 - The mobile surface has no `Input` or `Select`: a pane that needs them returns `noFields` (`draw.tsx`) on `e.surface === 'mobile'`.
 - The literal `/ho`+`me/` (and Windows user-dir prefixes) in any tracked file fails parity; keep it split or use `/u/dev`.
