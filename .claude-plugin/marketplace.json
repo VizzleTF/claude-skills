@@ -40,6 +40,17 @@
         "context",
         "quota"
       ]
+    },
+    {
+      "name": "voice-ru",
+      "source": "./plugins/voice-ru",
+      "description": "Короткий русский стиль ответов в чате: вывод первым, без церемоний, код дословно. Около 300 токенов на сессию.",
+      "category": "productivity",
+      "tags": [
+        "style",
+        "russian",
+        "tokens"
+      ]
     }
   ]
 }
