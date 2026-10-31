@@ -2,13 +2,14 @@
 
 [![ci](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml)
 
-The Claude Code plugin marketplace `vizzletf-skills`. It has two plugins:
+The Claude Code plugin marketplace `vizzletf-skills`. It has these plugins:
 
 | Plugin | What it does | Needs |
 |---|---|---|
 | [technical-writing](#technical-writing) | Writes and reviews documentation by type: README, runbook, ADR, changelog and 9 more. Two editions: `technical-writing` with English instructions, `technical-writing-ru` with Russian | Python 3 for the text checker |
 | [tidemark](#tidemark) | Draws a band above the prompt: context fill, prompt cache, quota, model, git | Claude Code 2.1.288 or later |
-| [voice-ru](plugins/voice-ru/README.md) | Short Russian chat style at session start: answer first, no ceremony, payload verbatim | — |
+| [vi-voice](plugins/vi-voice/README.md) | Short Russian chat style at session start: answer first, no ceremony, payload verbatim | — |
+| [vi-code](plugins/vi-code/README.md) | Coding rules at session start: reuse first, validate at trust boundaries, fix every caller, cause before fix | — |
 
 ## Install
 

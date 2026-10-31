@@ -42,14 +42,25 @@
       ]
     },
     {
-      "name": "voice-ru",
-      "source": "./plugins/voice-ru",
-      "description": "Короткий русский стиль ответов в чате: вывод первым, без церемоний, код дословно. Около 300 токенов на сессию.",
+      "name": "vi-voice",
+      "source": "./plugins/vi-voice",
+      "description": "Короткий русский стиль ответов в чате: вывод первым, без церемоний, код дословно. Около 500 токенов на сессию.",
       "category": "productivity",
       "tags": [
         "style",
         "russian",
         "tokens"
+      ]
+    },
+    {
+      "name": "vi-code",
+      "source": "./plugins/vi-code",
+      "description": "Coding rules at session start: reuse first, validate at trust boundaries, fix every caller, test new logic, find the cause before the fix.",
+      "category": "productivity",
+      "tags": [
+        "coding",
+        "rules",
+        "debugging"
       ]
     }
   ]

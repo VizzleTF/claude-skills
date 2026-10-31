@@ -2,13 +2,14 @@
 
 [![ci](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml)
 
-Маркетплейс плагинов Claude Code `vizzletf-skills`. В нём два плагина:
+Маркетплейс плагинов Claude Code `vizzletf-skills`. В нём такие плагины:
 
 | Плагин | Что делает | Что нужно |
 |---|---|---|
 | [technical-writing](#technical-writing) | Пишет документацию по типу документа и проводит её ревью: README, runbook, ADR, changelog и ещё 9 типов. Две версии: `technical-writing-ru` с инструкциями на русском, `technical-writing` на английском | Python 3 для скрипта проверки текста |
 | [tidemark](#tidemark) | Рисует над промптом полосу: заполнение контекста, кеш промпта, квоты, модель, git | Claude Code 2.1.288 или новее |
-| [voice-ru](plugins/voice-ru/README.md) | Короткий русский стиль ответов в чате: вывод первым, без церемоний, код дословно | — |
+| [vi-voice](plugins/vi-voice/README.md) | Короткий русский стиль ответов в чате: вывод первым, без церемоний, код дословно | — |
+| [vi-code](plugins/vi-code/README.md) | Правила работы с кодом в начале сессии: сначала переиспользовать, валидация на границах доверия, править всех вызывающих, причина до правки | — |
 
 ## Установка
 

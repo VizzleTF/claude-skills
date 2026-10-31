@@ -1,6 +1,6 @@
 # claude-skills
 
-Claude Code plugin marketplace `vizzletf-skills`: one documentation-writing skill shipped twice, `technical-writing` (English instructions) and `technical-writing-ru` (Russian), plus the `tidemark` mod.
+Claude Code plugin marketplace `vizzletf-skills`: one documentation-writing skill shipped twice, `technical-writing` (English instructions) and `technical-writing-ru` (Russian), plus the `tidemark` mod and two always-on rule plugins injected by a `SessionStart` hook: `vi-voice` (Russian chat style) and `vi-code` (coding rules).
 
 ## Commands
 
