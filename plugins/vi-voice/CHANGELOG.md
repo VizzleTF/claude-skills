@@ -2,6 +2,17 @@
 
 All notable changes to the `vi-voice` plugin, named `voice-ru` before 0.2.0. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.4.0] - 2026-11-02
+
+### Changed
+
+- `style.md`: a reply answers only what was asked and keeps every caveat, warning, failure mode, recovery step and follow-up change the reader needs. Completeness beats the line limit. Background nobody asked for, repetition and closers go. A better alternative gets one line.
+- `style.md`: code in a reply comes with its assumptions and how to run it, one line each.
+- `style.md`: the line on what was not verified appears only when something was not verified. The status blocks take titles in the reply language, and the last line names the next concrete action.
+- `style.md`: an explanation or a report may run past 5 lines only as far as it needs. Other rules got shorter wording with the same meaning.
+
+Measured on 20 questions from the caveman and i-have-adhd evals (Opus 5.5, one run each, two blind Sonnet judgings). A draft without the completeness, code and next-action rules gave the shortest replies: 20 988 output tokens against 27 551 for caveman. It scored 3.9 for completeness against 4.5 for caveman. With those rules, on the 9 questions it lost, completeness rose from 3.6 to 4.3 and actionability from 3.6 to 4.3 at the same output.
+
 ## [0.3.0] - 2026-11-02
 
 ### Added
