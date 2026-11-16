@@ -111,6 +111,7 @@ export function registerEditor(on: On): void {
     const preview = buildLines(draft, snap, await read($, probesState), e.props.bodyColumns - 2, await $.clock.now(), {
       cwd: await $.session.cwd().catch(() => undefined),
       home: await $.env.get('HOME').catch(() => undefined),
+      surface: e.surface,
     })
     const sel = ed.selected
     const item = sel ? draft.lines[sel.line]?.[sel.index] : undefined

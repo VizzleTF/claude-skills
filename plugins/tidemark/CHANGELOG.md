@@ -2,6 +2,12 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.2.2] - 2026-11-16
+
+### Fixed
+
+- The desktop app draws text labels instead of Nerd Font icons, which its font lacks and showed as placeholder glyphs; `icons: "nerd"` now applies to the terminal only.
+
 ## [0.2.1] - 2026-10-08
 
 ### Fixed

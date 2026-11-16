@@ -110,6 +110,7 @@ export function registerBand(on: On): void {
       home: await $.env.get('HOME').catch(() => undefined),
       agentId: e.props.view.agentId,
       configError: error !== undefined,
+      surface: e.surface,
     }
     const now = await $.clock.now()
     const els = $.ui.resolve(e)

@@ -40,7 +40,7 @@ This reference covers tidemark 0.1.10. The config is read from two JSON files, t
 | `lines` | array of band rows; a row is an array of widgets | one row: `project`, `context`, `compact`, `cache`, `flex`, `quota5h`, `quota7d`, `flex`, `sessionTime`, `git`, `model`, `cwd`, `actions` | 1–3 rows; extra rows are dropped |
 | `style.separator` | string | `space` | `pipe` (` │ `), `space`, `dot` (` · `), `powerline` (`▶` arrows, Nerd Font glyphs with `icons: "nerd"`), `custom` |
 | `style.custom` | string | none | the separator when `separator: "custom"` |
-| `style.icons` | string | `nerd` | `text`, `nerd` (Nerd Font glyphs instead of labels and powerline arrows) |
+| `style.icons` | string | `nerd` | `text`, `nerd` (Nerd Font glyphs instead of labels and powerline arrows; the terminal only, the desktop app always shows text labels) |
 | `style.buttons` | boolean | `true` | `false` draws the presses and links of the Widgets table as plain text |
 | `pane.sections` | array of `{id, enabled}` | all three sections on | `id`: `context`, `cacheQuota`, `agents`; the array order is the section order |
 | `alerts.enabled` | boolean | `false` | turns on a toast when a figure crosses its threshold upwards |

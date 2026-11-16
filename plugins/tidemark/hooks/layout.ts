@@ -79,17 +79,19 @@ const CONFIG_MARK: Variant = [{ text: '⚠ config', role: 'dim' }]
 
 // The lines to draw at `width` cells; lines with nothing to show are left out. `configError` marks the
 // end of the first line with a dim `⚠ config`. A line's first two `flex` stay as empty segments that
-// split it into left, (middle,) right; each is reserved as one cell and never narrowed away.
+// split it into left, (middle,) right; each is reserved as one cell and never narrowed away. Off the
+// terminal (`surface` given and not 'terminal') labels are text: those fonts have no Nerd Font glyphs.
 export function buildLines(
   config: TidemarkConfig, snap: TidemarkSnapshot, probes: TidemarkProbes, width: number, now: number,
-  env: BandEnv & { configError?: boolean } = {},
+  env: BandEnv & { configError?: boolean; surface?: string } = {},
 ): Line[] {
+  const icons = env.surface === undefined || env.surface === 'terminal' ? config.style.icons : 'text'
   const lines = config.lines.map(items => items.flatMap((item): Entry[] => {
     if (item.enabled === false) return []
     if (item.widget === 'flex') return [{ widget: 'flex', priority: Infinity, variants: [[{ text: ' ' }]], at: 0 }]
     const def = WIDGETS[item.widget]
     const variants = def.render({
-      snap, probes, now, env, icons: config.style.icons, options: item.options ?? {}, label: item.label,
+      snap, probes, now, env, icons, options: item.options ?? {}, label: item.label,
     }).filter(v => v.length > 0)
     return variants.length > 0 ? [{ widget: item.widget, priority: item.priority ?? def.defaultPriority, variants, at: 0 }] : []
   })).map(entries => entries.filter((e, i) => e.widget !== 'flex' || entries.slice(0, i).filter(x => x.widget === 'flex').length < 2))

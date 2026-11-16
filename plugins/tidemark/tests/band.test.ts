@@ -235,7 +235,12 @@ for (const surface of ['terminal', 'desktop'] as const) {
   test(`powerline with nerd icons: segments on their colours (${surface})`, async ($, on) => {
     await start($, on, JSON.stringify({ style: { separator: 'powerline', icons: 'nerd' } }))
     const ui = await $.ui.mount(band(surface))
-    expect(await ui.find({ type: 'Text', text: // })).toBeDefined()
+    // Desktop fonts have no Nerd Font glyphs: labels fall back to text there.
+    if (surface === 'terminal') expect(await ui.find({ type: 'Text', text: // })).toBeDefined()
+    else {
+      expect(await ui.find({ type: 'Text', text: /[\ue000-\uf8ff]/ })).toBeUndefined()
+      expect(await ui.find({ type: 'Text', text: 'ctx' })).toBeDefined()
+    }
     if (surface === 'terminal') expect(await ui.find({ type: 'Text', text: '' })).toBeDefined()
     else expect((await ui.findAll({ type: 'Box' })).some(b => b.props.backgroundColor !== undefined)).toBe(true)
   })
