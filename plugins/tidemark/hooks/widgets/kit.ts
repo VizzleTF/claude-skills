@@ -167,8 +167,20 @@ export function weekLimit(limits: TidemarkLimit[], model: string | null): Tidema
   return owns.find(l => l.kind.toLowerCase().includes(family!)) ?? owns[0] ?? limits.find(l => l.kind === 'seven_day')
 }
 
-// A quota window as a widget: percent (used or left, tier always by the share used), reset, a short bar.
-// A window whose reset passed is hidden, one without a reset shows none; a figure not yet this session's own is dim.
+// How far use may run ahead of the window's elapsed time, in points, before the band marks it over pace.
+export const PACE_SLACK = 5
+
+// Whether a window's use runs ahead of its elapsed time by more than PACE_SLACK points; false without a
+// reset or a known length.
+export function overPace(used: number, resets: number | undefined, ms: number | undefined, now: number): boolean {
+  if (resets === undefined || ms === undefined) return false
+  const elapsed = Math.round(100 * (1 - (resets - now) / ms))
+  return used > elapsed + PACE_SLACK
+}
+
+// A quota window as a widget: percent (used or left, tier always by the share used), `◆` when use runs
+// ahead of the window's time, reset, a short bar. A window whose reset passed is hidden, one without a
+// reset shows none; a figure not yet this session's own is dim.
 export function quota(def: WidgetDef, input: WidgetInput, l: TidemarkLimit | undefined, label?: string): Variant[] {
   const w = openWindow(l, input.now)
   if (!w) return []
@@ -177,7 +189,8 @@ export function quota(def: WidgetDef, input: WidgetInput, l: TidemarkLimit | und
   const shown = left ? 100 - p : p
   const live = input.snap.limitsLive
   const ink: Partial<Span> = live ? { tier: pctTier(p) } : { role: 'dim' }
-  const pct: Span = { text: `${shown}%${left ? ' left' : ''}`, ...ink }
+  const pace = live && opt<boolean>(def, input, 'showPace') && overPace(p, w.resets, quotaWindow(w.limit.kind, input.snap.model).ms, input.now)
+  const pct: Span = { text: `${shown}%${pace ? '◆' : ''}${left ? ' left' : ''}`, ...ink }
   const barSpan: Span | false = opt<boolean>(def, input, 'bar') && { text: bar(shown, 5), ...ink, bar: { percent: shown, ...(!live && { dim: true }) } }
   const reset: Span | false = w.resets !== undefined && opt<boolean>(def, input, 'showReset') && { text: `↻ ${dur(w.resets - input.now)}`, role: 'dim' }
   return distinct([spaced([barSpan, pct, reset]), spaced([barSpan, pct]), [pct]].map(v => labelled(def, input, v, false, label)))

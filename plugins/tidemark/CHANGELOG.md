@@ -2,6 +2,17 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.4.0] - 2026-11-16
+
+### Added
+
+- `◆` after a quota percentage when use runs more than 5 points ahead of the window's elapsed time; the `showPace` option of `quota5h` and `quota7d` turns it off.
+
+### Changed
+
+- The desktop app draws widget labels dim, so only the figures carry colour.
+- A collapsed band skips its reads and layout, since Claude Code does not show it.
+
 ## [0.3.1] - 2026-11-16
 
 ### Fixed

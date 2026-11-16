@@ -101,7 +101,8 @@ export function registerBand(on: On): void {
   })
 
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
-    if (e.props.hasSurvey) return next(e)
+    // A collapsed band is not shown, so it costs no reads or layout.
+    if (e.props.hasSurvey || e.props.isCollapsed) return next(e)
     const snap = await read($, snapshotState)
     const loaded = effectiveConfig(await read($, configState))
     const config = forSurface(loaded.config, e.surface)

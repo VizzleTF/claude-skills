@@ -158,6 +158,7 @@ A row takes its first two `flex`; any other is dropped. The groups spread across
 | `cache` | `ttl` | string | `auto` | `auto`, `5m`, `1h` |
 | `quota5h`, `quota7d` | `mode` | string | `used` | `used`, `left` |
 | `quota5h`, `quota7d` | `showReset` | boolean | `true` | |
+| `quota5h`, `quota7d` | `showPace` | boolean | `true` | `◆` after the percentage when use runs more than 5 points ahead of the window's elapsed time |
 | `quota5h`, `quota7d` | `bar` | boolean | `false` | |
 | `model` | `showEffort` | boolean | `true` | |
 | `model` | `format` | string | `short` | `short`, `full` |

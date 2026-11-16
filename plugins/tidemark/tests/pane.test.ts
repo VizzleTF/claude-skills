@@ -74,7 +74,7 @@ test('sections: context, cache and quota, agents, with their figures', () => {
   // 150k of 200k input came from the cache.
   expect(r).toContain('hit rate|75% · read 150k · written 40k · uncached 10k')
   expect(r).toContain('tokens|200k in · 4k out')
-  expect(r).toContain('5h|■■■□□ 50% ↻ 3h0m')
+  expect(r).toContain('5h|■■■□□ 50%◆ ↻ 3h0m')
   expect(r).toContain('|≈125% by reset · limit in ≈2h0m')
   expect(r).toContain('session ID|sess-1')
   expect(r).toContain('model|claude-opus-5-5 · effort high')

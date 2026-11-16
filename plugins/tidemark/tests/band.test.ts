@@ -246,6 +246,20 @@ for (const surface of ['terminal', 'desktop'] as const) {
   })
 }
 
+test('a collapsed band draws nothing of its own and keeps the engine\'s band', async ($, on) => {
+  await start($, on)
+  const b = band('terminal')
+  const ui = await $.ui.mount({ ...b, props: { ...b.props, isCollapsed: true } })
+  expect(await ui.find({ type: 'Text', text: /27%/ })).toBeUndefined()
+  expect(await ui.find({ type: 'Text', text: 'below' })).toBeDefined()
+})
+
+test('labels: dim on the desktop app, where they are words; as drawn on the terminal', async ($, on) => {
+  await start($, on)
+  expect((await (await $.ui.mount(band('desktop'))).find({ key: 'tidemark-context-context' }))?.props.dimColor).toBe(true)
+  expect((await (await $.ui.mount(band('terminal'))).find({ key: 'tidemark-context-context' }))?.props.dimColor).toBe(false)
+})
+
 test('a narrow band: the terminal drops widgets, the desktop keeps them all and wraps', async ($, on) => {
   await start($, on)
   const narrow = (surface: 'terminal' | 'desktop') => { const b = band(surface); return { ...b, props: { ...b.props, bodyColumns: 30 } } }

@@ -118,7 +118,8 @@ function textRun({ Text }: Term, spans: Span[], theme: TidemarkTheme, fg?: strin
 // Spans as a row's items: text trimmed, bars and sparklines as Svg.
 function itemRun(els: Rich, spans: Span[], widget: string, theme: TidemarkTheme, fg?: string, act?: OnPress) {
   const { Text, Svg } = els
-  return spans.flatMap(s => {
+  // Off the terminal labels are words, so they stay dim and the figures carry the colour.
+  return spans.map(s => (s.role === 'label' && fg === undefined ? { ...s, role: 'dim' as const } : s)).flatMap(s => {
     const c = control(els as never, s, widget, act)
     if (c) return [c]
     if (s.activity !== undefined) {

@@ -183,6 +183,10 @@
                       "type": "boolean",
                       "default": true
                     },
+                    "showPace": {
+                      "type": "boolean",
+                      "default": true
+                    },
                     "bar": {
                       "type": "boolean",
                       "default": false
@@ -228,6 +232,10 @@
                       "default": "used"
                     },
                     "showReset": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "showPace": {
                       "type": "boolean",
                       "default": true
                     },

@@ -203,3 +203,13 @@ test('goal and project: hidden when unset, the full text, then cut short', () =>
   expect(text(v[1])).toBe('project move the whole config m…')
   expect(full('goal', snap({ goal: 'x' }), { icons: 'nerd' })).toBe(' x')
 })
+
+test('quota pace: ◆ once use runs over 5 points ahead of the window\'s time; off by option, absent when dim', () => {
+  // 4h left of 5h: 20% of the window gone.
+  const ahead = { kind: 'five_hour', percentUsed: 30, resetsAt: iso(4 * HOUR) }
+  expect(full('quota5h', snap({ limits: [ahead], limitsLive: true }))).toBe('5h 30%◆ ↻ 4h0m')
+  expect(full('quota5h', snap({ limits: [{ ...ahead, percentUsed: 25 }], limitsLive: true }))).toBe('5h 25% ↻ 4h0m')
+  expect(full('quota5h', snap({ limits: [ahead], limitsLive: true }), { options: { showPace: false } })).toBe('5h 30% ↻ 4h0m')
+  expect(full('quota5h', snap({ limits: [ahead] }))).toBe('5h 30% ↻ 4h0m')
+  expect(full('quota5h', snap({ limits: [{ kind: 'five_hour', percentUsed: 90 }], limitsLive: true }))).toBe('5h 90%')
+})

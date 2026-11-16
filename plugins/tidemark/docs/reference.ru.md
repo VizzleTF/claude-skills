@@ -158,6 +158,7 @@
 | `cache` | `ttl` | строка | `auto` | `auto`, `5m`, `1h` |
 | `quota5h`, `quota7d` | `mode` | строка | `used` | `used`, `left` |
 | `quota5h`, `quota7d` | `showReset` | булево | `true` | |
+| `quota5h`, `quota7d` | `showPace` | булево | `true` | `◆` после процента, когда расход опережает прошедшее время окна больше чем на 5 пунктов |
 | `quota5h`, `quota7d` | `bar` | булево | `false` | |
 | `model` | `showEffort` | булево | `true` | |
 | `model` | `format` | строка | `short` | `short`, `full` |

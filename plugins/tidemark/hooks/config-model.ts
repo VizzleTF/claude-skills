@@ -19,7 +19,7 @@ const bool = (d: boolean): OptionSpec => ({ kind: 'bool', default: d })
 const int = (min: number, max: number, d: number): OptionSpec => ({ kind: 'int', min, max, default: d })
 const choice = (values: readonly string[], d: string): OptionSpec => ({ kind: 'enum', values, default: d })
 const MODE = choice(['used', 'left'], 'used')
-const QUOTA = { mode: MODE, showReset: bool(true), bar: bool(false) }
+const QUOTA = { mode: MODE, showReset: bool(true), showPace: bool(true), bar: bool(false) }
 
 // Each widget's own options. TTLs are in seconds, timeouts in milliseconds.
 export const WIDGET_OPTIONS: Record<WidgetId, Record<string, OptionSpec>> = {
