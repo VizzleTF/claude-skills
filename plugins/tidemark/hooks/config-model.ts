@@ -50,6 +50,8 @@ const SECTION_IDS: TidemarkSectionId[] = ['context', 'cacheQuota', 'agents']
 export const SEPARATORS = ['pipe', 'space', 'dot', 'powerline', 'custom'] as const
 export const ICONS = ['text', 'nerd'] as const
 export const MAX_LINES = 3
+// The keys a `desktop` section may hold: what the desktop app's band and pane draw.
+export const SURFACE_KEYS = ['lines', 'style', 'pane', 'compact'] as const
 // The highest value of each alert threshold: percentages, and the cache warning in seconds.
 export const ALERT_MAX = { context: 100, quota5h: 100, quota7d: 100, cacheSeconds: 3600 } as const
 // The context share from which the band offers `/compact`: a heuristic, not a documented figure:
@@ -202,10 +204,36 @@ export function validate(raw: unknown): { config: Config; warnings: string[] } {
     }
   }
 
-  for (const key of Object.keys(src)) {
-    if (!['$schema', 'version', 'lines', 'style', 'pane', 'alerts', 'compact'].includes(key)) warn(`unknown key ${key}`)
+  let desktop: Config['desktop']
+  if (src.desktop !== undefined) {
+    if (!isObject(src.desktop)) warn('desktop: not an object')
+    else {
+      const own = Object.fromEntries(Object.entries(src.desktop).filter(([k]) => SURFACE_KEYS.includes(k as never)))
+      for (const k of Object.keys(src.desktop)) if (!Object.hasOwn(own, k)) warn(`desktop: unknown key ${k}`)
+      const r = validate(own)
+      warnings.push(...r.warnings.map(w => `desktop: ${w}`))
+      desktop = Object.fromEntries(Object.keys(own).map(k => [k, r.config[k as keyof Config]]))
+    }
   }
-  return { config: { version: 1, lines, style, pane, alerts, compact }, warnings }
+
+  for (const key of Object.keys(src)) {
+    if (!['$schema', 'version', 'lines', 'style', 'pane', 'alerts', 'compact', 'desktop'].includes(key)) warn(`unknown key ${key}`)
+  }
+  return { config: { version: 1, lines, style, pane, alerts, compact, ...(desktop && { desktop }) }, warnings }
+}
+
+// The config a surface draws: on the desktop app, its `desktop` section over the shared keys.
+export function forSurface(c: Config, surface: string): Config {
+  const { desktop, ...shared } = c
+  return surface === 'desktop' && desktop ? { ...shared, ...desktop } : c
+}
+
+// An edit of `forSurface(c, surface)` back into `c`. On the desktop app it goes to the `desktop` section,
+// which then holds every key it may, so later terminal edits leave the desktop app's band as it is.
+export function fromSurface(c: Config, surface: string, view: Config): Config {
+  const { desktop: _, ...rest } = view
+  if (surface !== 'desktop') return c.desktop ? { ...rest, desktop: c.desktop } : rest
+  return { ...c, alerts: rest.alerts, desktop: { lines: rest.lines, style: rest.style, pane: rest.pane, compact: rest.compact } }
 }
 
 // Where the files are: `$XDG_CONFIG_HOME/tidemark/config.json` (else `$HOME/.config/...`) and the session
@@ -258,7 +286,7 @@ export function loadFromTexts(files: ({ path: string; text: string } | { path: s
 // from the global file. `globalOnly` is the global file alone, validated.
 export function saveContent(draft: Config, loaded: Config, globalOnly: Config, projectKeys: string[], target: 'global' | 'project'): Record<string, unknown> {
   const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b)
-  const keys = ['lines', 'style', 'pane', 'alerts', 'compact'] as const
+  const keys = ['lines', 'style', 'pane', 'alerts', 'compact', 'desktop'] as const
   const out: Record<string, unknown> = { $schema: SCHEMA_URL, version: 1 }
   for (const k of keys) {
     if (target === 'global') out[k] = projectKeys.includes(k) && same(draft[k], loaded[k]) ? globalOnly[k] : draft[k]

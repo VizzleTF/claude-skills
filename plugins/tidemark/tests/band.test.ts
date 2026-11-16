@@ -255,6 +255,16 @@ test('a narrow band: the terminal drops widgets, the desktop keeps them all and 
   expect((await ui.findAll({ type: 'Box' })).some(b => b.props.flexWrap === 'wrap')).toBe(true)
 })
 
+test('a desktop section: the desktop app draws its lines, the terminal the shared ones', async ($, on) => {
+  await start($, on, JSON.stringify({ lines: [['context']], desktop: { lines: [['quota5h']] } }))
+  const term = await $.ui.mount(band('terminal'))
+  expect(await term.find({ type: 'Text', text: /27%/ })).toBeDefined()
+  expect(await term.find({ type: 'Text', text: /42%/ })).toBeUndefined()
+  const desk = await $.ui.mount(band('desktop'))
+  expect(await desk.find({ type: 'Text', text: /42%/ })).toBeDefined()
+  expect(await desk.find({ type: 'Text', text: /27%/ })).toBeUndefined()
+})
+
 test('powerline with text icons uses ▶; dot and custom separators', async ($, on) => {
   await start($, on, JSON.stringify({ style: { separator: 'powerline', icons: 'text' } }))
   expect(await (await $.ui.mount(band('terminal'))).find({ type: 'Text', text: '▶' })).toBeDefined()

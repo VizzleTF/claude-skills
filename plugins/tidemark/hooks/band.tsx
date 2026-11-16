@@ -4,7 +4,7 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, On } from 'claude-code'
 
 import type { TidemarkConfig, TidemarkConfigState, TidemarkEffort, TidemarkTrack } from '../types'
-import { effectiveConfig } from './config-model'
+import { effectiveConfig, forSurface } from './config-model'
 import { EFFORTS, autoCycle, nextEffort, nextModel, parseEfforts, usableEfforts } from './model-utils'
 import type { EffortSupport } from './model-utils'
 import { WIDGETS } from './widgets'
@@ -103,7 +103,9 @@ export function registerBand(on: On): void {
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
     if (e.props.hasSurvey) return next(e)
     const snap = await read($, snapshotState)
-    const { config, error } = effectiveConfig(await read($, configState))
+    const loaded = effectiveConfig(await read($, configState))
+    const config = forSurface(loaded.config, e.surface)
+    const error = loaded.error
     const probes = await read($, probesState)
     const env = {
       cwd: await $.session.cwd().catch(() => undefined),

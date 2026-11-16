@@ -67,7 +67,7 @@ The **Default** column marks the widgets of the band you get without a config fi
 | `claudeStatus` | `● ok` … `● critical` from status.claude.com | |
 | `gitPr` | `#123 ✓` for the branch's PR or MR; needs `gh` or `glab` | |
 
-The default band uses Nerd Font icons; without such a font in the terminal, set `style.icons` to `text`. Figures are coloured from blue to red by the used share. Options of each widget: [Reference](docs/reference.md#widgets).
+The default band uses Nerd Font icons; without such a font in the terminal, set `style.icons` to `text`. The desktop app draws text labels and can have its own band: the `desktop` key in the [reference](docs/reference.md#config-keys). Figures are coloured from blue to red by the used share. Options of each widget: [Reference](docs/reference.md#widgets).
 
 ## Configure
 

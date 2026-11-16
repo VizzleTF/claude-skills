@@ -30,12 +30,13 @@ const remoteHost = (url: string) => /^(?:[a-z][a-z0-9+.-]*:\/\/)?(?:[^@/]+@)?([^
 // The key a command's result lives under.
 export const commandKey = (command: string) => `command:${command}`
 
-// The requests due now: only for enabled widgets that need them, each when its result is older than its TTL.
+// The requests due now: only for enabled widgets (of any surface) that need them, each when its result is older than its TTL.
 // git refreshes on every completed turn as well.
 export function planProbes(
   config: TidemarkConfig, probes: ProbesState, snap: TidemarkSnapshot, cwd: string, now: number, trigger: 'tick' | 'turn',
 ): ProbeRequest[] {
-  const items = config.lines.flat().filter(i => i.enabled !== false)
+  // The desktop app's own lines need their probes as well.
+  const items = [...config.lines, ...(config.desktop?.lines ?? [])].flat().filter(i => i.enabled !== false)
   const first = (id: TidemarkWidgetId) => items.find(i => i.widget === id)
   const opt = <T>(item: TidemarkWidgetItem, name: string) => optionOf<T>({ options: WIDGET_OPTIONS[item.widget] }, item, name)
   const due = (key: string, ttlS: number) => now - (probes[key]?.at ?? -Infinity) >= ttlS * 1000

@@ -1,6 +1,6 @@
 import { expect, mock, test } from 'claude-code/testing'
 import type { On } from 'claude-code'
-import { DEFAULT_CONFIG, PRESETS, SCHEMA_URL, effectiveConfig, validate } from '../hooks/config-model'
+import { DEFAULT_CONFIG, PRESETS, SCHEMA_URL, effectiveConfig, forSurface, fromSurface, validate } from '../hooks/config-model'
 
 const HOME = '/u/dev'
 const CWD = '/u/dev/proj'
@@ -172,4 +172,20 @@ test('a config stored by an older version, without newer keys, gets their defaul
 
 test('a $schema key is accepted', () => {
   expect(validate({ $schema: SCHEMA_URL, version: 1 }).warnings).toEqual([])
+})
+
+test('a desktop section: validated, drawn on the desktop app only, edits there land in it', () => {
+  const { config, warnings } = validate({ lines: [['context']], desktop: { lines: [['cwd', 'bogus']], alerts: {} } })
+  expect(config.desktop).toEqual({ lines: [[{ widget: 'cwd' }]] })
+  expect(warnings).toEqual(['desktop: unknown key alerts', 'desktop: line 1: unknown widget "bogus"'])
+  expect(forSurface(config, 'terminal').lines).toEqual([[{ widget: 'context' }]])
+  expect(forSurface(config, 'desktop').lines).toEqual([[{ widget: 'cwd' }]])
+  expect(forSurface(config, 'desktop').desktop).toBeUndefined()
+  const view = forSurface(config, 'desktop')
+  const back = fromSurface(config, 'desktop', { ...view, style: { ...view.style, separator: 'dot' } })
+  expect(back.lines).toEqual([[{ widget: 'context' }]])
+  expect(back.desktop?.style?.separator).toBe('dot')
+  expect(back.desktop?.lines).toEqual([[{ widget: 'cwd' }]])
+  expect(fromSurface(config, 'terminal', PRESETS.minimal!).desktop).toEqual(config.desktop)
+  expect(validate({ desktop: 1 }).warnings).toEqual(['desktop: not an object'])
 })

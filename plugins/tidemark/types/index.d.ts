@@ -26,6 +26,8 @@ export type TidemarkConfig = {
   alerts: { enabled: boolean; context: number; quota5h: number; quota7d: number; cacheSeconds: number }
   // The `/compact` button under the band: shown from `at` percent of the context window.
   compact: { enabled: boolean; at: number }
+  // The desktop app's own values of these keys, over the ones above there; the terminal ignores it.
+  desktop?: Partial<Pick<TidemarkConfig, 'lines' | 'style' | 'pane' | 'compact'>>
 }
 
 // The config in effect: what loaded, what was dropped, a file that could not be read, the files used, and

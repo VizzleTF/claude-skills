@@ -50,6 +50,7 @@ This reference covers tidemark 0.1.10. The config is read from two JSON files, t
 | `alerts.cacheSeconds` | number, s | `60` | 0–3600; seconds before the prompt cache goes cold |
 | `compact.enabled` | boolean | `true` | the `/compact` button under the band |
 | `compact.at` | integer, % of the context window | `70` | 1–100 |
+| `desktop` | object with any of `lines`, `style`, `pane`, `compact` | none | the desktop app's own values: each key it holds replaces the top-level key there, the terminal ignores it. `/tidemark-config` in the desktop app edits this object; its `use the terminal's` button removes it |
 
 Thresholds compare with the used share whatever the widget's `mode`. A repeat percentage toast comes after the figure drops 5 points below its threshold. The cache toast comes once per cache write. Quota alerts stay quiet while the session shows the figure saved by a previous session.
 

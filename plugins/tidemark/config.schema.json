@@ -982,6 +982,25 @@
         }
       },
       "additionalProperties": false
+    },
+    "desktop": {
+      "description": "The desktop app's own lines, style, pane and compact, over the top-level ones there; the terminal ignores it.",
+      "type": "object",
+      "properties": {
+        "lines": {
+          "$ref": "#/properties/lines"
+        },
+        "style": {
+          "$ref": "#/properties/style"
+        },
+        "pane": {
+          "$ref": "#/properties/pane"
+        },
+        "compact": {
+          "$ref": "#/properties/compact"
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

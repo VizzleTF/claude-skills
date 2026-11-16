@@ -3,7 +3,7 @@ import { atom, read } from 'claude-code'
 import type { On } from 'claude-code'
 
 import type { TidemarkConfigState } from '../types'
-import { effectiveConfig } from './config-model'
+import { effectiveConfig, forSurface } from './config-model'
 import { drawPaneLines } from './draw'
 import { paneRows } from './pane-rows'
 import { EMPTY_SNAPSHOT } from './snapshot'
@@ -20,7 +20,7 @@ const configState = atom({ plugin: 'tidemark', key: 'config' } as const, null as
 export function registerPane(on: On): void {
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
     const snap = await read($, snapshotState)
-    const { config } = effectiveConfig(await read($, configState))
+    const config = forSurface(effectiveConfig(await read($, configState)).config, e.surface)
     return drawPaneLines($.ui.resolve(e), e.surface, paneRows(snap, config.pane.sections, await $.clock.now()), snap.theme)
   })
 

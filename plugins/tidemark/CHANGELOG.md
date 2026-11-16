@@ -2,6 +2,12 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] - 2026-11-16
+
+### Added
+
+- The `desktop` config key: the desktop app's own `lines`, `style`, `pane` and `compact`, which the terminal ignores. `/tidemark-config` opened in the desktop app edits it; `use the terminal's` removes it.
+
 ## [0.2.3] - 2026-11-16
 
 ### Fixed

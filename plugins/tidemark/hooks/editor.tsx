@@ -6,7 +6,7 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, On } from 'claude-code'
 
 import type { TidemarkConfig, TidemarkConfigState, TidemarkEditor, TidemarkWidgetId } from '../types'
-import { ICONS, PRESETS, SEPARATORS, WIDGET_IDS, WIDGET_OPTIONS, configPathsFrom, configText, effectiveConfig, loadFromTexts, saveContent } from './config-model'
+import { ICONS, PRESETS, SEPARATORS, WIDGET_IDS, WIDGET_OPTIONS, configPathsFrom, configText, effectiveConfig, forSurface, fromSurface, loadFromTexts, saveContent } from './config-model'
 import { drawBand, noFields } from './draw'
 import {
   addItem, moveItem, optionText, raiseSection, removeItem, setAlert, setCompactAt, setLabel, setOption, setPriority, setStyle,
@@ -30,15 +30,16 @@ const probesState = atom({ plugin: 'tidemark', key: 'probes' } as const, EMPTY_P
 
 const onOff = [{ value: 'on' }, { value: 'off' }]
 
-// Applies an edit to the draft (the config in effect until the first one). A refused edit leaves the draft
-// and puts its error under `field`; an applied one clears it.
-async function edit($: EngineInterface, field: string, fn: (c: TidemarkConfig, s: Selection | null) => Edit) {
+// Applies an edit to the draft (the config in effect until the first one) as `surface` draws it. A refused
+// edit leaves the draft and puts its error under `field`; an applied one clears it.
+async function edit($: EngineInterface, surface: string, field: string, fn: (c: TidemarkConfig, s: Selection | null) => Edit) {
   const base = effectiveConfig(await read($, configState)).config
   await update($, editorState, s => {
     const { [field]: _, ...errors } = s.errors
-    const r = fn(s.draft ?? base, s.selected)
+    const draft = s.draft ?? base
+    const r = fn(forSurface(draft, surface), s.selected)
     if ('error' in r) return { ...s, errors: { ...errors, [field]: r.error } }
-    return { ...s, draft: r.config, selected: r.selected === undefined ? s.selected : r.selected, errors, confirm: false, notice: null }
+    return { ...s, draft: fromSurface(draft, surface, r.config), selected: r.selected === undefined ? s.selected : r.selected, errors, confirm: false, notice: null }
   })
 }
 
@@ -106,7 +107,10 @@ export function registerEditor(on: On): void {
     const { Box, Text, Button, Input, Select } = els
     const loaded = effectiveConfig(await read($, configState))
     const ed = await read($, editorState)
-    const draft = ed.draft ?? loaded.config
+    const all = ed.draft ?? loaded.config
+    const draft = forSurface(all, e.surface)
+    const change = (field: string, fn: (c: TidemarkConfig, s: Selection | null) => Edit) => edit($, e.surface, field, fn)
+    const desktop = e.surface === 'desktop'
     const snap = await read($, snapshotState)
     const preview = buildLines(draft, snap, await read($, probesState), e.props.bodyColumns - 2, await $.clock.now(), {
       cwd: await $.session.cwd().catch(() => undefined),
@@ -120,7 +124,7 @@ export function registerEditor(on: On): void {
     const head = (text: string) => <Box marginTop={1}><Text bold>{text}</Text></Box>
     const field = (key: string, label: string, value: string, fn: (c: TidemarkConfig, s: Selection | null, text: string) => Edit) => (
       <Box flexDirection="column">
-        <Input key={key} label={label} value={value} submitLabel="set" onSubmit={text => edit($, key, (c, s) => fn(c, s, text))} />
+        <Input key={key} label={label} value={value} submitLabel="set" onSubmit={text => change(key, (c, s) => fn(c, s, text))} />
         {err(key)}
       </Box>
     )
@@ -138,6 +142,17 @@ export function registerEditor(on: On): void {
         <Text dimColor>{`sources: ${loaded.sources.length > 0 ? loaded.sources.join(' + ') : 'default'}`}</Text>
         {loaded.error !== undefined && <Text color="red">{`error: ${loaded.error}`}</Text>}
         {loaded.warnings.map(w => <Text dimColor>{`warning: ${w}`}</Text>)}
+        {desktop && !all.desktop && <Text dimColor>The desktop app shares this band with the terminal; an edit here gives it its own.</Text>}
+        {desktop && all.desktop && (
+          <Box flexDirection="row" gap={1}>
+            <Text dimColor>The desktop app's own band (section desktop).</Text>
+            <Button key="desktop-shared" label="use the terminal's" onPress={() => update($, editorState, s => {
+              const { desktop: _, ...shared } = s.draft ?? loaded.config
+              return { ...s, draft: shared, selected: null, errors: {}, confirm: false, notice: null }
+            })} />
+          </Box>
+        )}
+        {!desktop && all.desktop && <Text dimColor>The desktop app has its own band (section desktop); edit it there.</Text>}
 
         {head('Lines')}
         {draft.lines.map((line, l) => (
@@ -159,13 +174,13 @@ export function registerEditor(on: On): void {
           <Box flexDirection="column">
             <Text>{`${WIDGETS[item.widget].title} (${item.widget})`}</Text>
             <Box flexDirection="row" flexWrap="wrap" gap={1}>
-              <Button key="left" label="←" onPress={() => edit($, 'lines', selected((c, s) => moveItem(c, s, 'left')))} />
-              <Button key="right" label="→" onPress={() => edit($, 'lines', selected((c, s) => moveItem(c, s, 'right')))} />
-              <Button key="up" label="line up" onPress={() => edit($, 'lines', selected((c, s) => moveItem(c, s, 'up')))} />
-              <Button key="down" label="line down" onPress={() => edit($, 'lines', selected((c, s) => moveItem(c, s, 'down')))} />
-              <Button key="toggle" label={item.enabled === false ? 'enable' : 'disable'} onPress={() => edit($, 'lines', selected(toggleItem))} />
-              <Button key="remove" label="remove" onPress={() => edit($, 'lines', selected(removeItem))} />
-              <Button key="label-none" label="no label" onPress={() => edit($, 'label', selected((c, s) => setLabel(c, s, null)))} />
+              <Button key="left" label="←" onPress={() => change('lines', selected((c, s) => moveItem(c, s, 'left')))} />
+              <Button key="right" label="→" onPress={() => change('lines', selected((c, s) => moveItem(c, s, 'right')))} />
+              <Button key="up" label="line up" onPress={() => change('lines', selected((c, s) => moveItem(c, s, 'up')))} />
+              <Button key="down" label="line down" onPress={() => change('lines', selected((c, s) => moveItem(c, s, 'down')))} />
+              <Button key="toggle" label={item.enabled === false ? 'enable' : 'disable'} onPress={() => change('lines', selected(toggleItem))} />
+              <Button key="remove" label="remove" onPress={() => change('lines', selected(removeItem))} />
+              <Button key="label-none" label="no label" onPress={() => change('label', selected((c, s) => setLabel(c, s, null)))} />
             </Box>
             {field('priority', 'priority', String(item.priority ?? WIDGETS[item.widget].defaultPriority), selected2(setPriority))}
             {field('label', item.label === null ? 'label (none)' : 'label', item.label ?? '', selected2((c, s, t) => setLabel(c, s, t === '' ? undefined : t)))}
@@ -173,8 +188,8 @@ export function registerEditor(on: On): void {
               const key = `opt-${name}`
               const value = optionText(spec, item.options?.[name])
               const set = selected2((c, s, t) => setOption(c, s, name, t))
-              if (spec.kind === 'bool') return pick(key, name, value, onOff, v => edit($, key, (c, s) => set(c, s, v)))
-              if (spec.kind === 'enum') return pick(key, name, value, spec.values.map(v => ({ value: v })), v => edit($, key, (c, s) => set(c, s, v)))
+              if (spec.kind === 'bool') return pick(key, name, value, onOff, v => change(key, (c, s) => set(c, s, v)))
+              if (spec.kind === 'enum') return pick(key, name, value, spec.values.map(v => ({ value: v })), v => change(key, (c, s) => set(c, s, v)))
               return field(key, name, value, set)
             })}
           </Box>
@@ -182,40 +197,40 @@ export function registerEditor(on: On): void {
 
         {head('Add widget')}
         {pick('add', 'add', undefined, WIDGET_IDS.map(id => ({ value: id, label: WIDGETS[id].title })), v =>
-          edit($, 'add', (c, s) => addItem(c, v as TidemarkWidgetId, s?.line ?? c.lines.length - 1)))}
+          change('add', (c, s) => addItem(c, v as TidemarkWidgetId, s?.line ?? c.lines.length - 1)))}
 
         {head('Style')}
         {pick('separator', 'separator', draft.style.separator, SEPARATORS.map(value => ({ value })), v =>
-          edit($, 'separator', c => setStyle(c, { separator: v as TidemarkConfig['style']['separator'] })))}
+          change('separator', c => setStyle(c, { separator: v as TidemarkConfig['style']['separator'] })))}
         {draft.style.separator === 'custom' && field('custom', 'custom separator', draft.style.custom ?? '', (c, _s, t) => setStyle(c, { custom: t }))}
         {pick('icons', 'icons', draft.style.icons, ICONS.map(value => ({ value, ...(value === 'nerd' && { label: 'nerd font' }) })), v =>
-          edit($, 'icons', c => setStyle(c, { icons: v as TidemarkConfig['style']['icons'] })))}
+          change('icons', c => setStyle(c, { icons: v as TidemarkConfig['style']['icons'] })))}
         {pick('buttons', 'buttons', draft.style.buttons === false ? 'off' : 'on', [{ value: 'on' }, { value: 'off' }], v =>
-          edit($, 'buttons', c => setStyle(c, { buttons: v === 'on' })))}
+          change('buttons', c => setStyle(c, { buttons: v === 'on' })))}
 
         {head('Pane sections')}
         {draft.pane.sections.map(s => (
           <Box flexDirection="row" gap={1}>
             <Text>{s.id}</Text>
-            <Button key={`sec-${s.id}`} label={s.enabled ? 'on' : 'off'} onPress={() => edit($, 'sections', c => toggleSection(c, s.id))} />
-            <Button key={`sec-${s.id}-up`} label="↑" onPress={() => edit($, 'sections', c => raiseSection(c, s.id))} />
+            <Button key={`sec-${s.id}`} label={s.enabled ? 'on' : 'off'} onPress={() => change('sections', c => toggleSection(c, s.id))} />
+            <Button key={`sec-${s.id}-up`} label="↑" onPress={() => change('sections', c => raiseSection(c, s.id))} />
           </Box>
         ))}
 
         {head('Alerts')}
         {pick('alerts-enabled', 'toasts', draft.alerts.enabled ? 'on' : 'off', onOff, v =>
-          edit($, 'alerts-enabled', c => ({ config: { ...c, alerts: { ...c.alerts, enabled: v === 'on' } } })))}
+          change('alerts-enabled', c => ({ config: { ...c, alerts: { ...c.alerts, enabled: v === 'on' } } })))}
         {([['context', 'context %'], ['quota5h', '5h quota %'], ['quota7d', '7d quota %'], ['cacheSeconds', 'cache cold in, s']] as const).map(([k, label]) =>
           field(`alerts-${k}`, label, String(draft.alerts[k]), (c, _s, t) => setAlert(c, k, t)))}
 
         {head('Compact button')}
         {pick('compact-enabled', 'button', draft.compact.enabled ? 'on' : 'off', onOff, v =>
-          edit($, 'compact-enabled', c => ({ config: { ...c, compact: { ...c.compact, enabled: v === 'on' } } })))}
+          change('compact-enabled', c => ({ config: { ...c, compact: { ...c.compact, enabled: v === 'on' } } })))}
         {field('compact-at', 'from context %', String(draft.compact.at), (c, _s, t) => setCompactAt(c, t))}
 
         {head('Presets')}
         {pick('preset', 'preset', undefined, Object.keys(PRESETS).map(value => ({ value })), v =>
-          edit($, 'preset', () => (PRESETS[v] ? { config: PRESETS[v]!, selected: null } : { error: `unknown preset ${v}` })))}
+          change('preset', () => (PRESETS[v] ? { config: PRESETS[v]!, selected: null } : { error: `unknown preset ${v}` })))}
 
         {head('Save')}
         {pick('target', 'save to', ed.target, [{ value: 'global' }, { value: 'project' }], v =>

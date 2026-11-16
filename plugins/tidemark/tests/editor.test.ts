@@ -117,7 +117,8 @@ for (const surface of ['terminal', 'desktop'] as const) {
     expect((await ui.find({ key: 'alerts-context' }))?.props.value).toBe('70')
   })
 
-  test(`Save writes the global file, then the project file, and the band takes it at once (${surface})`, async ($, on) => {
+  // File keys do not depend on the surface; the desktop app's own section has its own test.
+  if (surface === 'terminal') test(`Save writes the global file, then the project file, and the band takes it at once (${surface})`, async ($, on) => {
     const { disk, writes } = host(on)
     const ui = await open($, surface)
     const shown = await $.ui.mount(band(surface))
@@ -143,7 +144,8 @@ for (const surface of ['terminal', 'desktop'] as const) {
     expect((await ui.find({ type: 'Text', text: /^sources: / }))?.text).toBe(`sources: ${GLOBAL} + ${PROJECT}`)
   })
 
-  test(`two files: Save keeps each file to its own keys, the preview the merge (${surface})`, async ($, on) => {
+  // File keys do not depend on the surface; the desktop app's own section has its own test.
+  if (surface === 'terminal') test(`two files: Save keeps each file to its own keys, the preview the merge (${surface})`, async ($, on) => {
     const { disk } = host(on, {
       [GLOBAL]: JSON.stringify({ version: 1, lines: [['context', 'cwd']], style: { separator: 'dot', icons: 'text' } }),
       [PROJECT]: JSON.stringify({ lines: [['model']] }),
@@ -172,7 +174,8 @@ for (const surface of ['terminal', 'desktop'] as const) {
     expect((await ui.find({ key: 'alerts-context' }))?.props.value).toBe('70')
   })
 
-  test(`a hand edit since the session loaded the file survives Save; with a draft, Save asks twice (${surface})`, async ($, on) => {
+  // File keys do not depend on the surface; the desktop app's own section has its own test.
+  if (surface === 'terminal') test(`a hand edit since the session loaded the file survives Save; with a draft, Save asks twice (${surface})`, async ($, on) => {
     const { disk } = host(on, { [GLOBAL]: JSON.stringify({ version: 1, lines: [['context']] }) })
     const ui = await open($, surface)
     // Edited by hand after the session loaded it, before any timer or prompt picked the edit up.
@@ -211,4 +214,23 @@ test('mobile: the editor sends the person elsewhere, since the app draws no fiel
   const ui = await open($, 'mobile')
   expect(await ui.find({ type: 'Text', text: /no input fields/ })).toBeDefined()
   expect(await ui.find({ key: 'save' })).toBeUndefined()
+})
+
+test('the desktop app edits its own section; the terminal keeps the shared lines; use the terminal\'s drops it', async ($, on) => {
+  const { disk } = host(on, { [GLOBAL]: JSON.stringify({ version: 1, lines: [['context', 'cwd']] }) })
+  const ui = await open($, 'desktop')
+  expect(await ui.find({ type: 'Text', text: /shares this band with the terminal/ })).toBeDefined()
+  await ui.select({ key: 'preset', value: 'minimal' })
+  await ui.press({ key: 'save' })
+  const saved = JSON.parse(disk.get(GLOBAL)!)
+  expect(ids(saved)).toEqual([['context', 'cwd']])
+  expect(ids(saved.desktop)).toEqual([['context', 'quota5h']])
+  expect(Object.keys(saved.desktop).sort()).toEqual(['compact', 'lines', 'pane', 'style'])
+  expect(await lines(await open($, 'terminal'))).toEqual([['context', 'cwd']])
+  expect(await lines(ui)).toEqual([['context', 'quota5h']])
+
+  await ui.press({ key: 'desktop-shared' })
+  await ui.press({ key: 'save' })
+  expect(JSON.parse(disk.get(GLOBAL)!).desktop).toBeUndefined()
+  expect(await lines(ui)).toEqual([['context', 'cwd']])
 })

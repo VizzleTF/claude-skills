@@ -283,3 +283,9 @@ test('engine: enabled probes run on turn.complete and the band shows git, the PR
   expect(links.map(l => l.props.label)).toContain('major')
   expect(links.some(l => l.props.label === '#7') || !!(await ui.find({ type: 'Text', text: /#7/ }))).toBe(true)
 })
+
+test('a widget only the desktop app shows still gets its probe', () => {
+  const config = validate({ version: 1, lines: [['context']], desktop: { lines: [['git']] } }).config
+  expect(plan(config).some(r => r.key.startsWith('git'))).toBe(true)
+  expect(plan(cfg('context')).some(r => r.key.startsWith('git'))).toBe(false)
+})
