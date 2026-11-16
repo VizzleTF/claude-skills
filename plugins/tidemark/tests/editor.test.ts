@@ -50,7 +50,7 @@ async function open($: any, surface: Surface) {
 
 const band = (surface: Surface) => ({
   plugin: 'tidemark', surface, component: 'AbovePrompt' as const,
-  props: { hasSurvey: false, isWorking: false, maxRows: 10, bodyColumns: 160, scroll: { offset: 0, bodyRows: 9 }, view: {} },
+  props: { hasSurvey: false, isCollapsed: false, isWorking: false, maxRows: 10, bodyColumns: 160, scroll: { offset: 0, bodyRows: 9 }, view: {} },
 })
 
 // The draft's lines as the widget buttons show them (`w-<line>-<index>`, labelled by widget id).

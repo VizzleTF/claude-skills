@@ -53,7 +53,7 @@ function host(on: On, configText?: string, theme?: string, running = 0, onBelow?
 
 const band = (surface: 'terminal' | 'desktop', view: { agentId?: string } = {}, isWorking = false) => ({
   plugin: 'tidemark', surface, component: 'AbovePrompt' as const,
-  props: { hasSurvey: false, isWorking, maxRows: 10, bodyColumns: 160, scroll: { offset: 0, bodyRows: 9 }, view },
+  props: { hasSurvey: false, isCollapsed: false, isWorking, maxRows: 10, bodyColumns: 160, scroll: { offset: 0, bodyRows: 9 }, view },
 })
 
 async function start($: any, on: On, configText?: string, theme?: string, running = 0, onBelow?: () => void) {

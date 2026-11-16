@@ -275,7 +275,7 @@ test('engine: enabled probes run on turn.complete and the band shows git, the PR
   expect(calls).toContain('https://status.claude.com/api/v2/summary.json')
   const ui = await $.ui.mount({
     plugin: 'tidemark', surface: 'terminal', component: 'AbovePrompt',
-    props: { hasSurvey: false, isWorking: false, maxRows: 10, bodyColumns: 160, scroll: { offset: 0, bodyRows: 9 }, view: {} },
+    props: { hasSurvey: false, isCollapsed: false, isWorking: false, maxRows: 10, bodyColumns: 160, scroll: { offset: 0, bodyRows: 9 }, view: {} },
   })
   expect(await ui.find({ type: 'Text', text: /main\*/ })).toBeDefined()
   // The PR number and the status word are links when the band takes presses.
