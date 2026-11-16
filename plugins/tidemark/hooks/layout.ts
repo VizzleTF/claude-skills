@@ -80,12 +80,14 @@ const CONFIG_MARK: Variant = [{ text: '⚠ config', role: 'dim' }]
 // The lines to draw at `width` cells; lines with nothing to show are left out. `configError` marks the
 // end of the first line with a dim `⚠ config`. A line's first two `flex` stay as empty segments that
 // split it into left, (middle,) right; each is reserved as one cell and never narrowed away. Off the
-// terminal (`surface` given and not 'terminal') labels are text: those fonts have no Nerd Font glyphs.
+// terminal (`surface` given and not 'terminal') labels are text, since those fonts have no Nerd Font
+// glyphs, and nothing is narrowed: cells do not measure a proportional font, the rows wrap there instead.
 export function buildLines(
   config: TidemarkConfig, snap: TidemarkSnapshot, probes: TidemarkProbes, width: number, now: number,
   env: BandEnv & { configError?: boolean; surface?: string } = {},
 ): Line[] {
-  const icons = env.surface === undefined || env.surface === 'terminal' ? config.style.icons : 'text'
+  const terminal = env.surface === undefined || env.surface === 'terminal'
+  const icons = terminal ? config.style.icons : 'text'
   const lines = config.lines.map(items => items.flatMap((item): Entry[] => {
     if (item.enabled === false) return []
     if (item.widget === 'flex') return [{ widget: 'flex', priority: Infinity, variants: [[{ text: ' ' }]], at: 0 }]
@@ -97,5 +99,5 @@ export function buildLines(
   })).map(entries => entries.filter((e, i) => e.widget !== 'flex' || entries.slice(0, i).filter(x => x.widget === 'flex').length < 2))
     .filter(entries => entries.some(e => e.widget !== 'flex'))
   if (env.configError && lines.length > 0) lines[0]!.push({ widget: 'config', priority: Infinity, variants: [CONFIG_MARK], at: 0 })
-  return lines.map(entries => fit(entries, width, config.style)).map(line => line.map(seg => (seg.widget === 'flex' ? { ...seg, spans: [] } : seg)))
+  return lines.map(entries => fit(entries, terminal ? width : Infinity, config.style)).map(line => line.map(seg => (seg.widget === 'flex' ? { ...seg, spans: [] } : seg)))
 }

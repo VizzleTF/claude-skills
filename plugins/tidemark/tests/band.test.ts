@@ -246,6 +246,15 @@ for (const surface of ['terminal', 'desktop'] as const) {
   })
 }
 
+test('a narrow band: the terminal drops widgets, the desktop keeps them all and wraps', async ($, on) => {
+  await start($, on)
+  const narrow = (surface: 'terminal' | 'desktop') => { const b = band(surface); return { ...b, props: { ...b.props, bodyColumns: 30 } } }
+  expect(await (await $.ui.mount(narrow('terminal'))).find({ type: 'Text', text: /42%/ })).toBeUndefined()
+  const ui = await $.ui.mount(narrow('desktop'))
+  expect(await ui.find({ type: 'Text', text: /42%/ })).toBeDefined()
+  expect((await ui.findAll({ type: 'Box' })).some(b => b.props.flexWrap === 'wrap')).toBe(true)
+})
+
 test('powerline with text icons uses ▶; dot and custom separators', async ($, on) => {
   await start($, on, JSON.stringify({ style: { separator: 'powerline', icons: 'text' } }))
   expect(await (await $.ui.mount(band('terminal'))).find({ type: 'Text', text: '▶' })).toBeDefined()

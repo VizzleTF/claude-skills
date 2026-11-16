@@ -206,7 +206,7 @@ function richLine(els: Rich, line: Line, style: Style, theme: TidemarkTheme, act
   const power = style.separator === 'powerline'
   const sep = separatorText(style).trim()
   return (
-    <Box flexDirection="row" alignItems="center" gap={1}>
+    <Box flexDirection="row" alignItems="center" flexWrap="wrap" gap={1}>
       {line.flatMap((seg, i) => {
         const p = power ? plaque(seg, theme) : undefined
         return [
@@ -234,7 +234,8 @@ export function drawBand(els: Term | Rich, surface: Surface, lines: Line[], styl
         for (const seg of line) seg.widget === 'flex' ? groups.push([]) : groups[groups.length - 1]!.push(seg)
         if (groups.length === 1) return draw(line)
         return (
-          <Box flexDirection="row" justifyContent="space-between">
+          // Off the terminal a group that does not fit goes to the next row.
+          <Box flexDirection="row" justifyContent="space-between" {...(surface !== 'terminal' && { flexWrap: 'wrap', gap: 1 })}>
             {groups.map(g => (g.length > 0 ? draw(g) : <Box />))}
           </Box>
         )
