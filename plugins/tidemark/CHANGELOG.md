@@ -2,6 +2,12 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.4.2] - 2026-11-17
+
+### Fixed
+
+- `icon.png` has transparent corners, so no white shows around the tile on a dark background.
+
 ## [0.4.1] - 2026-11-17
 
 ### Changed
@@ -181,6 +187,7 @@ All notable changes to the `tidemark` plugin. The format follows [Keep a Changel
 - A `/compact` button under the band once the context fills `compact.at` percent of the window (70 by default).
 - Threshold toasts for context, quota and the prompt cache, off by default.
 
+[0.4.2]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.4.2
 [0.4.1]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.4.1
 [0.1.10]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.10
 [0.1.9]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.9
