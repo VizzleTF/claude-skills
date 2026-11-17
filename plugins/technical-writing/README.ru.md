@@ -1,66 +1,26 @@
 # technical-writing
 
-Плагин Claude Code пишет и проверяет документацию по типу документа. На обычную просьбу Claude пишет типовую страницу. Скилл сначала решает, кто будет читать документ и в каком состоянии: новичок, который учится, инженер посреди задачи, дежурный ночью. Затем он выбирает один из 13 типов (README, ранбук, ADR, changelog и другие) и пишет обязательные разделы этого типа в пределах его бюджета слов. Правила стиля выбираются по языку документа: у русского и английского свои, другие языки получают только общие правила.
+Claude Code пишет и проверяет документацию по типу документа, под того, кто будет её читать.
 
-На 28 тестовых сценариях его документы вышли на 20–30% короче, чем у прежнего скилла `writing-docs`. Opus вслепую оценил каждую пару по рубрике от 1 до 5, и короткие документы получили ту же оценку или выше.
-
-## Установка
-
-Нужен Python 3 для скрипта проверки текста.
+- 13 типов: README, ранбук, ADR, changelog, how-to, постмортем и ещё 7
+- тип выбирается по читателю: новичок, который учится, инженер посреди задачи, дежурный
+- пишет обязательные разделы типа в пределах его бюджета слов
+- правила стиля для русского и английского; другие языки получают общие правила
+- на 28 сценариях на 20–30% короче прежнего скилла `writing-docs`; Opus, не зная, где чей текст, оценил их так же или выше
+- `check.py` находит длинные предложения, стоп-слова, маркеры LLM и битые ссылки
 
 ```
 /plugin marketplace add VizzleTF/claude-skills
 /plugin install technical-writing@vizzletf-skills
 ```
 
-Если у вас стоял `technical-writing-ru`, выполните `/plugin marketplace update vizzletf-skills`, затем команду `install` выше. Обновление переименовывает плагин, а `install` ставит его под новым именем. Команды `/technical-writing-ru:<тип>` становятся `/technical-writing:<тип>`.
+Попробуйте `/technical-writing:runbook алерт QueueWorkerDown`. В ранбуке будут влияние, диагностика, шаги с командой проверки и эскалация.
 
-## Пример
+## Подробнее
 
-Попросите Claude: `Напиши ранбук для алерта QueueWorkerDown` или выполните:
+- Скрипту проверки нужен Python 3: `python3 skills/write/scripts/check.py --lang auto deploy.md`
+- `/technical-writing:write` сам выбирает тип. У каждого типа есть и своя команда `/technical-writing:<тип>`: `adr`, `changelog`, `cli-help-errors`, `conventions`, `docstring`, `explanation`, `how-to`, `postmortem`, `readme`, `reference`, `runbook`, `troubleshooting`, `tutorial`.
+- Если у вас стоял `technical-writing-ru`, выполните `/plugin marketplace update vizzletf-skills`, затем установку выше; `/technical-writing-ru:<тип>` становится `/technical-writing:<тип>`.
+- Удаление: `/plugin uninstall technical-writing@vizzletf-skills`
 
-```
-/technical-writing:runbook алерт QueueWorkerDown
-```
-
-Получится ранбук: влияние, диагностика, действие и команда проверки на каждом шаге, эскалация. Русский запрос на русский документ получает русские правила стиля.
-
-Встроенный скрипт находит в Markdown-файле длинные предложения, стоп-слова, маркеры LLM и битые ссылки:
-
-```sh
-python3 skills/write/scripts/check.py --lang auto deploy.md
-```
-
-## Команды
-
-`/technical-writing:write` выбирает тип по запросу. У каждого типа есть и своя команда, которую Claude сам не вызывает. Запускайте её как `/technical-writing:<тип>`.
-
-| Команда | Документ |
-|---|---|
-| `adr` | Запись о решении и его компромиссах |
-| `changelog` | Что изменилось между версиями |
-| `cli-help-errors` | Текст --help и сообщения об ошибках |
-| `conventions` | Правила, которым следует команда |
-| `docstring` | Docstring или комментарий в коде |
-| `explanation` | Почему система устроена именно так |
-| `how-to` | Шаги к одной цели для того, кто в работе |
-| `postmortem` | Запись об инциденте и мерах после него |
-| `readme` | Первая страница проекта |
-| `reference` | Факты для поиска: параметры, поля, лимиты |
-| `runbook` | Шаги дежурному по сработавшему алерту |
-| `troubleshooting` | Симптом или ошибка, причина и исправление |
-| `tutorial` | Урок для новичка по одному пути |
-
-## Удаление
-
-```
-/plugin uninstall technical-writing@vizzletf-skills
-```
-
-## Ссылки
-
-- [README in English](README.md)
-- [Все плагины маркетплейса](../../README.ru.md)
-- [Changelog](CHANGELOG.md) и [источники правил](skills/write/sources.md) (на английском)
-- [Issues](https://github.com/VizzleTF/claude-skills/issues)
-- Лицензия: [MIT](LICENSE)
+[README in English](README.md) · [Все плагины](../../README.ru.md) · [Changelog](CHANGELOG.md) и [источники правил](skills/write/sources.md) (на английском) · [Issues](https://github.com/VizzleTF/claude-skills/issues) · Лицензия: [MIT](LICENSE)

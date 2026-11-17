@@ -1,40 +1,35 @@
 # tidemark
 
-[![ci](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml)
+A band of widgets above the Claude Code prompt, in the terminal and the desktop app.
 
-A Claude Code mod that draws a band of configurable widgets above the prompt: context fill, prompt cache, 5-hour and weekly quota with time to reset, model, git. A mod is a plugin that draws in the Claude Code interface through its plugin API; it does not patch Claude Code.
+- how full the context is and when the prompt cache expires
+- 5-hour and weekly quota with time to reset
+- model, reasoning effort and git branch
+- press a widget to switch the model or effort, open `/usage` or `/context`, or run `/compact`
+- `/tidemark` shows what fills the context and when the quota runs out
+- `/tidemark-config` edits the band with a live preview and presets
+- the desktop app can have its own band layout
+- works beside your `statusLine`, changes no settings; no telemetry
 
-A `statusLine` script prints one line of text in the terminal. tidemark adds what such a line cannot:
-
-- Widgets are buttons: a press switches the model or effort, opens `/usage` or `/context`, or runs `/compact`.
-- The band shows in the desktop app's Code tab too, with its own layout if you want one.
-- `/tidemark` opens a details pane with the context by source and a quota forecast to reset; `/tidemark-config` edits the band with a live preview and presets.
-- Your `statusLine` and settings stay as they are, so a status line script keeps working beside the band.
-
-Requires Claude Code 2.1.288 or later. No telemetry: with the default widgets the only network traffic is `git fetch` every 5 minutes for the `git` widget, which `git.fetch: 0` turns off. [What it runs, reads and writes](#what-it-runs-reads-and-writes) lists everything.
-
-![The tidemark band: context 4% of 1M, 5-hour quota 28%, weekly quota 86%, git branch and model](docs/images/tidemark-band.png)
-
-## Contents
-
-- [Install](#install)
-- [Commands](#commands)
-- [Widgets](#widgets)
-- [Configure](#configure)
-- [Uninstall](#uninstall)
-- [What it runs, reads and writes](#what-it-runs-reads-and-writes)
-- [Links](#links)
-
-## Install
-
-Run in Claude Code:
+Needs Claude Code 2.1.288 or later.
 
 ```
 /plugin marketplace add VizzleTF/claude-skills
 /plugin install tidemark@vizzletf-skills
 ```
 
-The band appears above the prompt right after the install. If it does not, run `/reload-plugins`.
+The band appears right after the install. If it does not, run `/reload-plugins`.
+
+![The tidemark band: context 4% of 1M, 5-hour quota 28%, weekly quota 86%, git branch and model](docs/images/tidemark-band.png)
+
+## Contents
+
+- [Commands](#commands)
+- [Widgets](#widgets)
+- [Configure](#configure)
+- [Uninstall](#uninstall)
+- [What it runs, reads and writes](#what-it-runs-reads-and-writes)
+- [Links](#links)
 
 ## Commands
 
@@ -98,6 +93,8 @@ The editor also offers presets: `minimal`, `classic`, `default`, `full` (two row
 The config files and project notes stay. To remove them, delete `~/.config/tidemark/`, `.claude/tidemark.json` and `.claude/tidemark-project.txt`.
 
 ## What it runs, reads and writes
+
+tidemark is a mod: a plugin that draws in the Claude Code interface through its plugin API. It does not patch Claude Code. With the default widgets the only network traffic is `git fetch` every 5 minutes for the `git` widget; `git.fetch: 0` turns it off.
 
 tidemark has no telemetry and sends nothing to its author. It never changes Claude Code settings or the permission mode.
 

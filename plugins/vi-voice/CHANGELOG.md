@@ -2,6 +2,12 @@
 
 All notable changes to the `vi-voice` plugin, named `voice-ru` before 0.2.0. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.4.3] - 2026-11-17
+
+### Changed
+
+- The README opens with one line, a short list of what the plugin does and the install command; details follow under one heading. The English and Russian READMEs match.
+
 ## [0.4.2] - 2026-11-17
 
 ### Changed

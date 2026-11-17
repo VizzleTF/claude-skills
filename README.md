@@ -2,18 +2,7 @@
 
 [![ci](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml)
 
-Four Claude Code plugins in the marketplace `vizzletf-skills`. They make Claude write documentation by type, show context and quota above the prompt, and keep replies and code changes short.
-
-| Plugin | What you get | Needs |
-|---|---|---|
-| [technical-writing](#technical-writing) | A README, runbook, ADR, changelog or one of 9 other document types, built for its reader, in English or Russian | Python 3 for the text checker |
-| [tidemark](#tidemark) | Context fill, quota with time to reset, prompt cache, model and git in a clickable band above the prompt, also in the desktop app | Claude Code 2.1.288 or later |
-| [vi-voice](#vi-voice) | Replies that open with the answer and fit in 5 lines; code and errors quoted exactly | — |
-| [vi-code](#vi-code) | Claude reuses the code you have, updates every place a change must reach, and proves a bug's cause before fixing it | — |
-
-## Install
-
-Add the marketplace once, then install the plugins you want:
+Four Claude Code plugins: documents that fit their reader, a status band above the prompt, short replies, small complete code changes.
 
 ```
 /plugin marketplace add VizzleTF/claude-skills
@@ -25,42 +14,59 @@ Add the marketplace once, then install the plugins you want:
 
 ## technical-writing
 
-Ask Claude `Write a runbook for the alert QueueWorkerDown`, or run `/technical-writing:runbook alert QueueWorkerDown`. You get a runbook with impact, diagnosis, an action and a verification command for each step, and escalation. A plain request to Claude gives a generic page; the skill first decides who reads the document and in what state, then picks the matching type and its required sections.
+Claude writes and reviews documentation by type.
 
-On 28 test scenarios its documents came out 20–30% shorter than those of the earlier `writing-docs` skill. Opus scored each pair blind on a 1–5 rubric, and the shorter documents got the same score or higher.
+- 13 types: README, runbook, ADR, changelog, how-to, postmortem and 7 more
+- each document fits its reader: a newcomer, an engineer mid-task, someone on call
+- style rules for English and Russian documents
+- 20–30% shorter than the earlier `writing-docs` skill; Opus, judging blind, scored them the same or higher
+- `check.py` catches long sentences, filler words, LLM tells and broken links before review
 
-The bundled checker flags long sentences, stop words, LLM markers and broken links in any Markdown file:
+Try `/technical-writing:runbook alert QueueWorkerDown`.
 
-```sh
-python3 plugins/technical-writing/skills/write/scripts/check.py deploy.md
-```
-
-![check.py reports one broken link and seven warnings in deploy.md](docs/images/technical-writing-check.png)
-
-All 13 commands and uninstall: [technical-writing README](plugins/technical-writing/README.md).
+[Full README](plugins/technical-writing/README.md)
 
 ## tidemark
 
-tidemark is a mod, a plugin that draws in the Claude Code interface. It draws a band of widgets above the prompt, in the terminal and in the desktop app's Code tab. It does not take your `statusLine`, so a status line script keeps working beside it. Press a widget to switch the model or effort, open `/usage` or run `/compact`. The band appears right after the install. If it does not, run `/reload-plugins`.
+A band of widgets above the prompt, in the terminal and the desktop app.
+
+- how full the context is and when the prompt cache expires
+- 5-hour and weekly quota with time to reset
+- model, reasoning effort and git branch
+- press a widget to switch the model or effort, or run `/compact`
+- `/tidemark` shows what fills the context and when the quota runs out
+- `/tidemark-config` edits the band with a live preview and presets
+- works beside your `statusLine`; no telemetry
 
 ![The tidemark band: context 4% of 1M, 5-hour quota 28%, weekly quota 86%, git branch and model](plugins/tidemark/docs/images/tidemark-band.png)
 
-`/tidemark` opens a details pane with the context breakdown, quota forecast and subagents. `/tidemark-config` edits the widgets with a live preview.
-
-<img src="plugins/tidemark/docs/images/tidemark-pane.png" width="420" alt="The /tidemark pane: context split by source, 5-hour and weekly quota with a forecast to reset">
-
-Widgets, config, privacy and uninstall: [tidemark README](plugins/tidemark/README.md).
+Needs Claude Code 2.1.288 or later. [Full README](plugins/tidemark/README.md)
 
 ## vi-voice
 
-Claude opens each reply with the answer or result and keeps the body to 5 lines. Greetings, recaps and closing offers go; caveats, numbers and next steps stay. The reply ends with what was not checked and what is left to do. On 20 test questions an early version answered in 187 words (median), against 221 and 268 for two other reply-style plugins. Its accuracy score matched the better of them. Details and the measurement: [vi-voice README](plugins/vi-voice/README.md).
+Claude's chat replies get short.
+
+- the first sentence is the answer or result
+- the body fits in 5 lines; a report may run longer
+- no greetings, recaps or closing offers
+- code, errors and numbers quoted exactly
+- the reply ends with what is unverified and what is left for you
+
+[Full README](plugins/vi-voice/README.md)
 
 ## vi-code
 
-Claude reads the code before editing, reuses what the codebase has and adds no options or abstractions nobody asked for. It keeps validation at trust boundaries, that is where outside input enters, and changes every caller. A bug gets its cause proven before the fix. The rules also reach every subagent and cost about 350 words of context. Details: [vi-code README](plugins/vi-code/README.md).
+Claude makes small code changes that reach every caller.
+
+- no broken callers: it lists callers, tests and config before editing
+- reuses your code before writing new code
+- adds no option or abstraction nobody asked for
+- never drops validation of outside input
+- proves a bug's cause before the fix
+- subagents follow the same rules
+
+[Full README](plugins/vi-code/README.md)
 
 ## Links
 
-- [README на русском](README.ru.md)
-- [Contributing](CONTRIBUTING.md)
-- License: [MIT](LICENSE)
+[README на русском](README.ru.md) · [Contributing](CONTRIBUTING.md) · License: [MIT](LICENSE)
