@@ -5,7 +5,7 @@ body:
     id: plugin
     attributes:
       label: Plugin
-      description: "`tidemark`, `technical-writing` or `technical-writing-ru`"
+      description: "`technical-writing`, `tidemark`, `vi-voice` or `vi-code`"
     validations:
       required: true
   - type: textarea

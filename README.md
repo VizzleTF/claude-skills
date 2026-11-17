@@ -6,7 +6,7 @@ The Claude Code plugin marketplace `vizzletf-skills`. It has these plugins:
 
 | Plugin | What it does | Needs |
 |---|---|---|
-| [technical-writing](#technical-writing) | Writes and reviews documentation by type: README, runbook, ADR, changelog and 9 more. Two editions: `technical-writing` with English instructions, `technical-writing-ru` with Russian | Python 3 for the text checker |
+| [technical-writing](#technical-writing) | Writes and reviews documentation by type: README, runbook, ADR, changelog and 9 more. Style rules for English and Russian documents | Python 3 for the text checker |
 | [tidemark](#tidemark) | Draws a band above the prompt: context fill, prompt cache, quota, model, git | Claude Code 2.1.288 or later |
 | [vi-voice](plugins/vi-voice/README.md) | Short chat style at session start, reply language from the `language` setting: answer first, no ceremony, payload verbatim | — |
 | [vi-code](plugins/vi-code/README.md) | Coding rules at session start: reuse first, validate at trust boundaries, fix every caller, cause before fix | — |
@@ -25,7 +25,7 @@ Add the marketplace once, then install the plugins you want:
 
 The skill finds the reader first, picks one of 13 document types and writes to that type's skeleton and length budget. On 28 test scenarios its documents came out 20–30% shorter than with the earlier `writing-docs` skill, at the same judge score or higher.
 
-Install one edition only, `technical-writing` or `technical-writing-ru`: both trigger on the same requests.
+Style rules follow the language of the document: English and Russian have their own, other languages get the core rules only. `technical-writing-ru` is now part of this plugin: run `/plugin marketplace update vizzletf-skills`, then `/plugin install technical-writing@vizzletf-skills`.
 
 Ask Claude `Write a runbook for the alert QueueWorkerDown`, or run `/technical-writing:runbook alert QueueWorkerDown`. You get a runbook: impact, diagnosis, actions with a verification command each, escalation.
 
@@ -60,7 +60,7 @@ python3 plugins/technical-writing/skills/write/scripts/check.py deploy.md
 
 </details>
 
-Changelog: [technical-writing](plugins/technical-writing/CHANGELOG.md), [technical-writing-ru](plugins/technical-writing-ru/CHANGELOG.md).
+Install, commands and uninstall: [technical-writing README](plugins/technical-writing/README.md). Changelog: [technical-writing](plugins/technical-writing/CHANGELOG.md).
 
 ## tidemark
 

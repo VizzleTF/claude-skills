@@ -1,9 +1,0 @@
-{
-  "name": "technical-writing-ru",
-  "version": "1.0.2",
-  "description": "Пишет документацию по типу документа и проводит её ревью. Инструкции на русском.",
-  "author": {
-    "name": "VizzleTF"
-  },
-  "license": "MIT"
-}

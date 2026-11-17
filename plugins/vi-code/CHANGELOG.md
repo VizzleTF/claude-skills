@@ -2,6 +2,12 @@
 
 All notable changes to the `vi-code` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-11-17
+
+### Changed
+
+- The manifest sets `displayName`, an icon, a documentation link and a support link for plugin listings.
+
 ## [0.2.0] - 2026-11-02
 
 Measured with the agentic benchmark of ponytail 5.3.3 (22 tasks, Opus 5.5): 0.1.0 wrote 38% less code than no rules, ponytail 65% less.

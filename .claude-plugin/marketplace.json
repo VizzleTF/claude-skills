@@ -1,26 +1,26 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "vizzletf-skills",
   "description": "Claude Code skills by VizzleTF",
   "owner": {
     "name": "VizzleTF",
     "url": "https://github.com/VizzleTF"
   },
+  "renames": {
+    "technical-writing-ru": "technical-writing"
+  },
   "plugins": [
     {
       "name": "technical-writing",
       "source": "./plugins/technical-writing",
-      "description": "Writes and reviews documentation by document type: tutorial, how-to, runbook, reference, ADR, changelog and more. Instructions in English.",
-      "category": "documentation",
-      "tags": [
-        "docs",
-        "writing",
-        "review"
-      ]
-    },
-    {
-      "name": "technical-writing-ru",
-      "source": "./plugins/technical-writing-ru",
-      "description": "Пишет документацию по типу документа и проводит её ревью: tutorial, how-to, runbook, reference, ADR, changelog и другие. Инструкции на русском.",
+      "description": "Writes and reviews documentation by document type: tutorial, how-to, runbook, reference, ADR, changelog and more. English and Russian style rules, chosen by the language of the document.",
+      "author": {
+        "name": "VizzleTF",
+        "url": "https://github.com/VizzleTF"
+      },
+      "homepage": "https://github.com/VizzleTF/claude-skills/tree/main/plugins/technical-writing",
+      "repository": "https://github.com/VizzleTF/claude-skills",
+      "license": "MIT",
       "category": "documentation",
       "tags": [
         "docs",
@@ -33,6 +33,13 @@
       "name": "tidemark",
       "source": "./plugins/tidemark",
       "description": "Configurable band above the Claude Code prompt: context, cache, quota, model, git and more, with a details pane and a config editor.",
+      "author": {
+        "name": "VizzleTF",
+        "url": "https://github.com/VizzleTF"
+      },
+      "homepage": "https://github.com/VizzleTF/claude-skills/tree/main/plugins/tidemark",
+      "repository": "https://github.com/VizzleTF/claude-skills",
+      "license": "MIT",
       "category": "productivity",
       "tags": [
         "mod",
@@ -45,6 +52,13 @@
       "name": "vi-voice",
       "source": "./plugins/vi-voice",
       "description": "Короткий стиль ответов в чате, язык из настройки language: вывод первым, без церемоний, код дословно. Около 400 токенов на сессию.",
+      "author": {
+        "name": "VizzleTF",
+        "url": "https://github.com/VizzleTF"
+      },
+      "homepage": "https://github.com/VizzleTF/claude-skills/tree/main/plugins/vi-voice",
+      "repository": "https://github.com/VizzleTF/claude-skills",
+      "license": "MIT",
       "category": "productivity",
       "tags": [
         "style",
@@ -56,6 +70,13 @@
       "name": "vi-code",
       "source": "./plugins/vi-code",
       "description": "Coding rules at session start: reuse first, validate at trust boundaries, fix every caller, test new logic, find the cause before the fix.",
+      "author": {
+        "name": "VizzleTF",
+        "url": "https://github.com/VizzleTF"
+      },
+      "homepage": "https://github.com/VizzleTF/claude-skills/tree/main/plugins/vi-code",
+      "repository": "https://github.com/VizzleTF/claude-skills",
+      "license": "MIT",
       "category": "productivity",
       "tags": [
         "coding",

@@ -24,7 +24,6 @@ jobs:
           python3 -m unittest discover -s tests
           python3 tools/parity.py
           python3 plugins/technical-writing/skills/write/scripts/check.py plugins/technical-writing/skills/write/
-          python3 plugins/technical-writing/skills/write/scripts/check.py plugins/technical-writing-ru/skills/write/
       - name: Version bumps
         env:
           BASE: ${{ github.event.pull_request.base.sha || github.event.before }}

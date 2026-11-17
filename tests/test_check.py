@@ -14,7 +14,6 @@ from unittest import mock
 
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPT = ROOT / "plugins/technical-writing/skills/write/scripts/check.py"
-SCRIPT_RU = ROOT / "plugins/technical-writing-ru/skills/write/scripts/check.py"
 
 _spec = importlib.util.spec_from_file_location("check", SCRIPT)
 check = importlib.util.module_from_spec(_spec)
@@ -423,11 +422,6 @@ class Vale(unittest.TestCase):
              mock.patch.object(check.subprocess, "run", side_effect=self.fake_vale(seen)):
             run_main(str(self.doc))
         self.assertIn(f"--config={self.dir.resolve() / '.vale.ini'}", seen[0])
-
-
-class Copies(unittest.TestCase):
-    def test_copies_are_identical(self):
-        self.assertEqual(SCRIPT.read_bytes(), SCRIPT_RU.read_bytes())
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 ---
 name: write
+license: MIT
 description: Writes and reviews documentation of 13 types, chosen by the reader
 when_to_use: Use to write, rewrite, review, shorten or plan documentation: tutorial, how-to, runbook, troubleshooting, reference, explanation, README, conventions, ADR or design doc, postmortem, changelog or release notes, docstring or code comment, CLI help or error message. Triggers: "write docs", "document this", "write a README", "write a guide", "write a runbook", "review this doc", "release notes", "design doc", "postmortem", "write a docstring", «документация», «доки», «напиши README», «инструкция», «методичка», «описание», «ранбук», «гайд», «отревьюй текст», «постмортем», «напиши docstring».
 ---
@@ -68,9 +69,9 @@ One document has one type. When a request needs two types, propose two documents
 
 ## Routing
 
-Read exactly one type file (workflow step 2), the style file and the pattern catalog. When a type file conflicts with the core rules, the type file wins. Type files: [tutorial](types/tutorial.md), [how-to](types/how-to.md), [runbook](types/runbook.md), [troubleshooting](types/troubleshooting.md), [reference](types/reference.md), [explanation](types/explanation.md), [README](types/readme.md), [conventions](types/conventions.md). Records, code and interface: [ADR, design doc, RFC](types/adr.md), [postmortem](types/postmortem.md), [changelog, release notes, migration guide](types/changelog.md), [docstring, code comment](types/docstring.md), [CLI help, error message](types/cli-help-errors.md). Style: [style/english.md](style/english.md). Patterns to remove: [style/llm-patterns.md](style/llm-patterns.md).
+Read exactly one type file (workflow step 2), the style file and the pattern catalog. When a type file conflicts with the core rules, the type file wins. Type files: [tutorial](types/tutorial.md), [how-to](types/how-to.md), [runbook](types/runbook.md), [troubleshooting](types/troubleshooting.md), [reference](types/reference.md), [explanation](types/explanation.md), [README](types/readme.md), [conventions](types/conventions.md). Records, code and interface: [ADR, design doc, RFC](types/adr.md), [postmortem](types/postmortem.md), [changelog, release notes, migration guide](types/changelog.md), [docstring, code comment](types/docstring.md), [CLI help, error message](types/cli-help-errors.md). Style files by the language of the document: [English](style/english.md), [Russian](style/russian.md). Patterns to remove: [style/llm-patterns.md](style/llm-patterns.md).
 
-This version holds English style rules. If the document is in another language, say so once, then apply the core rules, the type file and the pattern catalog, and skip the English style file. The catalog's examples are in English, and its patterns apply to a document in any language.
+The style file is `style/<language>.md`, named in English. It follows the language of the document. A Russian request for an English README loads the English file. A language with no style file gets the core rules, the type file and the pattern catalog; say so once. The catalog's examples are in English, and its patterns apply to a document in any language. Where a style file gives a language form for a type's voice rule, that form replaces the English examples of the type file. A Russian how-to title is an infinitive, not an imperative.
 
 ## Branches
 
@@ -118,7 +119,7 @@ Documentation progress:
 - [ ] 8. Cold reader test passed
 ```
 
-Run all eight steps in one response without pausing for confirmation. A step that cannot run is skipped as its paragraph says. Say nothing about skipped checks in steps 6 and 8 and offer no additions: the response is the document and its questions. The response ends with the final document, given once: never a draft followed by a final version. After it comes the list of questions, if there is one. With no questions the response ends with the document: no note on assumptions or on what was left out. If the user named a file, write the document there; otherwise deliver it in the chat. Keep the checklist and any mention of this skill or its files out of the document.
+Run all eight steps in one response without pausing for confirmation. A step that cannot run is skipped as its paragraph says. Say nothing about skipped checks in steps 6 and 8 and offer no additions: the response is the document and its questions. The response ends with the final document, given once: never a draft followed by a final version. After it comes the list of questions, if there is one. With no questions the response ends with the document: no note on assumptions or on what was left out. If the user named a file, write the document there; otherwise deliver it in the chat as plain Markdown, never wrapped in a code block. Keep the checklist and any mention of this skill or its files out of the document.
 
 **Step 1.** If the arguments start with `type=<type>`, that type is already chosen: skip choosing and go to step 2 with it. Settle in one sentence: who reads the page, what they are trying to do, and in what state. If the type or a key fact is unclear, ask the one clarifying question the core rules allow and continue with its default.
 
@@ -133,8 +134,8 @@ Run all eight steps in one response without pausing for confirmation. A step tha
 **Step 6.** Run the checker from any directory on the file, or pipe the draft through standard input when it exists only in the chat:
 
 ```bash
-python3 "${CLAUDE_SKILL_DIR}/scripts/check.py" --lang en <file>
-python3 "${CLAUDE_SKILL_DIR}/scripts/check.py" --lang en - <<'EOF'
+python3 "${CLAUDE_SKILL_DIR}/scripts/check.py" --lang auto <file>
+python3 "${CLAUDE_SKILL_DIR}/scripts/check.py" --lang auto - <<'EOF'
 <DRAFT>
 EOF
 ```

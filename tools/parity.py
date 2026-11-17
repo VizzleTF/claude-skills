@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Structure and parity checks for the two editions of the technical-writing skill.
+"""Structure checks for the technical-writing skill and repo-wide secret checks.
 
 Run from anywhere without arguments: python3 tools/parity.py
 Prints one "path: message" line per problem. Exit code 0 if clean, 1 otherwise.
@@ -9,23 +9,18 @@ import importlib.util
 import re
 import subprocess
 import sys
-from collections import Counter
 from pathlib import Path
 
 EN = "plugins/technical-writing/skills/write"
-RU = "plugins/technical-writing-ru/skills/write"
 TYPES = ["tutorial", "how-to", "runbook", "troubleshooting", "reference", "explanation",
          "readme", "conventions", "adr", "postmortem", "changelog", "docstring",
          "cli-help-errors"]
 COMMON = ["SKILL.md", "sources.md", "style/llm-patterns.md", "process/doc-set.md",
           "process/review.md", "scripts/check.py"] + [f"types/{t}.md" for t in TYPES]
-STYLE = {EN: "style/english.md", RU: "style/russian.md"}
-SECTIONS = {
-    EN: ["When to use it and when not", "Skeleton", "Voice and verbs", "Length",
-         "Differences from the core rules", "Forbidden", "Type checklist"],
-    RU: ["Когда это он и когда нет", "Каркас", "Голос и глаголы", "Объём",
-         "Отличия от общих правил", "Запрещено", "Чек-лист типа"],
-}
+# English is the default style file; other languages add style/<language>.md beside it.
+STYLE = "style/english.md"
+SECTIONS = ["When to use it and when not", "Skeleton", "Voice and verbs", "Length",
+            "Differences from the core rules", "Forbidden", "Type checklist"]
 CONTENTS = {"Contents", "Содержание", "Оглавление"}
 SKILL_MD_MAX_LINES = 170
 FRONTMATTER_MAX_CHARS = 1536
@@ -68,19 +63,6 @@ def skill_file_refs(text):
     return list(dict.fromkeys(refs + SKILL_FILE_MENTION.findall(prose)))
 
 
-def structure(text):
-    counts = Counter()
-    for line in prose_lines(text):
-        h = re.match(r"^(#{1,6})\s", line)
-        if h:
-            counts[f"h{len(h.group(1))}"] += 1
-        elif re.match(r"^\s*[-*+] \[[ xX]\]", line):
-            counts["checklist items"] += 1
-        elif line.lstrip().startswith("|"):
-            counts["table rows"] += 1
-    return counts
-
-
 def h2_titles(text):
     return [m.group(1).strip() for line in prose_lines(text)
             if (m := re.match(r"^##\s+(.*?)\s*#*\s*$", line))]
@@ -110,7 +92,7 @@ def skill_files(d):
 
 def check_skill(root, base, out):
     d = root / base
-    for rel in COMMON + [STYLE[base]]:
+    for rel in COMMON + [STYLE]:
         if not (d / rel).is_file():
             out.append(f"{base}/{rel}: missing (required by the skill layout)")
     for rel in skill_files(d):
@@ -125,9 +107,9 @@ def check_skill(root, base, out):
                        "with a contents section (## Contents)")
         if rel.startswith("types/"):
             got = [t for t in titles if t not in CONTENTS]
-            if got != SECTIONS[base]:
+            if got != SECTIONS:
                 out.append(f"{path}: type sections {got} do not match the required order "
-                           f"{SECTIONS[base]}")
+                           f"{SECTIONS}")
         if rel.startswith(("types/", "style/", "process/")):
             for t in skill_file_refs(text):
                 out.append(f"{path}: links to {t}; rule files must not point to other skill files")
@@ -139,10 +121,9 @@ def check_skill(root, base, out):
                 if not fm.get(key):
                     out.append(f"{path}: frontmatter has no {key}")
             desc = fm.get("description", "")
-            if re.search(r"[\"“”«»]|\buse when\b|\btrigger", desc, re.I) or (
-                    base == EN and re.search(r"[а-яё]", desc, re.I)):
+            if re.search(r"[\"“”«»]|\buse when\b|\btrigger|[а-яё]", desc, re.I):
                 out.append(f"{path}: description holds triggers (quoted phrases, 'Use when', "
-                           "'Trigger', or Cyrillic in EN); move them to when_to_use")
+                           "'Trigger', or Cyrillic); move them to when_to_use")
             total = len(fm.get("description", "")) + len(fm.get("when_to_use", ""))
             if total > FRONTMATTER_MAX_CHARS:
                 out.append(f"{path}: description + when_to_use is {total} characters; "
@@ -173,33 +154,6 @@ def check_commands(root, base, out):
             out.append(f"{path}: command skills need disable-model-invocation: true")
 
 
-def check_pair(root, out):
-    en, ru = root / EN, root / RU
-    # Style files are language-specific: each version's own is required (check_skill),
-    # but they are not a pair and their structure is not compared.
-    en_files = set(skill_files(en)) - {STYLE[EN]}
-    ru_files = set(skill_files(ru)) - {STYLE[RU]}
-    for rel in sorted(en_files - ru_files):
-        out.append(f"{RU}/{rel}: missing (counterpart of {EN}/{rel})")
-    for rel in sorted(ru_files - en_files):
-        out.append(f"{EN}/{rel}: missing (counterpart of {RU}/{rel})")
-    for rel in sorted(en_files):
-        other = ru / rel
-        if not other.is_file():
-            continue
-        if rel.endswith(".py"):
-            if (en / rel).read_bytes() != other.read_bytes():
-                out.append(f"{RU}/{rel}: differs from {EN}/{rel}; copies must be identical")
-            continue
-        if not rel.endswith(".md"):
-            continue
-        a = structure((en / rel).read_text(encoding="utf-8", errors="replace"))
-        b = structure(other.read_text(encoding="utf-8", errors="replace"))
-        for key in sorted(set(a) | set(b)):
-            if a[key] != b[key]:
-                out.append(f"{RU}/{rel}: {key} {b[key]}, {EN}/{rel} has {a[key]}")
-
-
 def repo_files(root):
     if (root / ".git").exists():
         r = subprocess.run(["git", "-C", str(root), "ls-files", "-z", "--cached", "--others",
@@ -227,21 +181,15 @@ def check_private_paths(root, out):
 
 
 def check_repo(root: Path) -> list:
-    """Return "path: message" strings for every structure or parity problem under root."""
+    """Return "path: message" strings for every structure or secret problem under root."""
     root = Path(root)
     out = []
-    present = [b for b in (EN, RU) if (root / b).is_dir()]
-    for base in (EN, RU):
-        if base not in present:
-            out.append(f"{base}: skill directory not found")
-    for base in present:
-        check_skill(root, base, out)
-        check_commands(root, base, out)
-    if len(present) == 2:
-        check_pair(root, out)
+    if (root / EN).is_dir():
+        check_skill(root, EN, out)
+        check_commands(root, EN, out)
+    else:
+        out.append(f"{EN}: skill directory not found")
     check_private_paths(root, out)
-    missing = {m.split(": ", 1)[0] for m in out if m.endswith("(required by the skill layout)")}
-    out = [m for m in out if not (" (counterpart of " in m and m.split(": ", 1)[0] in missing)]
     return list(dict.fromkeys(out))
 
 

@@ -2,6 +2,12 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.4.1] - 2026-11-17
+
+### Changed
+
+- The manifest sets `displayName` for plugin listings.
+
 ## [0.4.0] - 2026-11-16
 
 ### Added
@@ -175,6 +181,7 @@ All notable changes to the `tidemark` plugin. The format follows [Keep a Changel
 - A `/compact` button under the band once the context fills `compact.at` percent of the window (70 by default).
 - Threshold toasts for context, quota and the prompt cache, off by default.
 
+[0.4.1]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.4.1
 [0.1.10]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.10
 [0.1.9]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.9
 [0.1.8]: https://github.com/VizzleTF/claude-skills/releases/tag/tidemark--v0.1.8

@@ -1,9 +1,22 @@
 {
   "name": "technical-writing",
-  "version": "1.0.2",
-  "description": "Writes and reviews documentation by document type. Instructions in English.",
+  "displayName": "Technical writing",
+  "version": "2.0.0",
+  "description": "Writes and reviews documentation by document type. English and Russian style rules, chosen by the language of the document.",
   "author": {
-    "name": "VizzleTF"
+    "name": "VizzleTF",
+    "url": "https://github.com/VizzleTF"
   },
-  "license": "MIT"
+  "homepage": "https://github.com/VizzleTF/claude-skills/tree/main/plugins/technical-writing",
+  "repository": "https://github.com/VizzleTF/claude-skills",
+  "license": "MIT",
+  "icon": "./icon.png",
+  "keywords": [
+    "docs",
+    "writing",
+    "review",
+    "russian"
+  ],
+  "documentationUrl": "https://github.com/VizzleTF/claude-skills/blob/main/plugins/technical-writing/README.md",
+  "supportUrl": "https://github.com/VizzleTF/claude-skills/issues"
 }

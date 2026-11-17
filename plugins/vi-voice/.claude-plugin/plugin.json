@@ -1,10 +1,22 @@
 {
   "name": "vi-voice",
-  "version": "0.4.0",
+  "displayName": "vi-voice",
+  "version": "0.4.1",
   "description": "Short chat style injected at session start: answer first, a five-line body, no ceremony, payload and facts verbatim, a closing risk line and blocks for what is left. The reply language comes from the language setting. About 400 tokens per session.",
-  "author": { "name": "VizzleTF", "url": "https://github.com/VizzleTF" },
+  "author": {
+    "name": "VizzleTF",
+    "url": "https://github.com/VizzleTF"
+  },
   "homepage": "https://github.com/VizzleTF/claude-skills/tree/main/plugins/vi-voice",
   "repository": "https://github.com/VizzleTF/claude-skills",
   "license": "MIT",
-  "keywords": ["style", "russian", "tokens", "output"]
+  "icon": "./icon.png",
+  "keywords": [
+    "style",
+    "russian",
+    "tokens",
+    "output"
+  ],
+  "documentationUrl": "https://github.com/VizzleTF/claude-skills/blob/main/plugins/vi-voice/README.md",
+  "supportUrl": "https://github.com/VizzleTF/claude-skills/issues"
 }
