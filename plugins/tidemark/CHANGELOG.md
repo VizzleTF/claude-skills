@@ -2,6 +2,12 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.4.3] - 2026-11-17
+
+### Changed
+
+- The README says what a mod is, what the band adds over a `statusLine` script, what network traffic the default widgets make, and what `warm`, `cold` and `◆` mean. The English and Russian references link to each other.
+
 ## [0.4.2] - 2026-11-17
 
 ### Fixed

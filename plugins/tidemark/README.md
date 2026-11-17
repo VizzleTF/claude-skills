@@ -2,9 +2,16 @@
 
 [![ci](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml)
 
-A Claude Code mod that draws a band of configurable widgets above the prompt: context fill, prompt cache, 5-hour and weekly quota, model, git. It leaves your `statusLine` and settings alone.
+A Claude Code mod that draws a band of configurable widgets above the prompt: context fill, prompt cache, 5-hour and weekly quota with time to reset, model, git. A mod is a plugin that draws in the Claude Code interface through its plugin API; it does not patch Claude Code.
 
-Requires Claude Code 2.1.288 or later. The band shows in the terminal and in the desktop app's Code tab.
+A `statusLine` script prints one line of text in the terminal. tidemark adds what such a line cannot:
+
+- Widgets are buttons: a press switches the model or effort, opens `/usage` or `/context`, or runs `/compact`.
+- The band shows in the desktop app's Code tab too, with its own layout if you want one.
+- `/tidemark` opens a details pane with the context by source and a quota forecast to reset; `/tidemark-config` edits the band with a live preview and presets.
+- Your `statusLine` and settings stay as they are, so a status line script keeps working beside the band.
+
+Requires Claude Code 2.1.288 or later. No telemetry: with the default widgets the only network traffic is `git fetch` every 5 minutes for the `git` widget, which `git.fetch: 0` turns off. [What it runs, reads and writes](#what-it-runs-reads-and-writes) lists everything.
 
 ![The tidemark band: context 4% of 1M, 5-hour quota 28%, weekly quota 86%, git branch and model](docs/images/tidemark-band.png)
 
@@ -42,7 +49,7 @@ The band appears above the prompt right after the install. If it does not, run `
 
 ## Widgets
 
-The **Default** column marks the widgets of the band you get without a config file.
+The **Default** column marks the widgets of the band you get without a config file. Some of them stay hidden until they have something to show.
 
 | Widget | Shows | Default |
 |---|---|---|
@@ -66,6 +73,8 @@ The **Default** column marks the widgets of the band you get without a config fi
 | `command` | the first line of your command's output | |
 | `claudeStatus` | `● ok` … `● critical` from status.claude.com | |
 | `gitPr` | `#123 ✓` for the branch's PR or MR; needs `gh` or `glab` | |
+
+The prompt cache keeps the conversation for 5 minutes or an hour after each request. `warm 38m` is the time left; after it, the next request is `cold` and writes the whole context to the cache again, which costs more. A `◆` after a quota percent means you use it faster than its window passes.
 
 The default band uses Nerd Font icons; without such a font in the terminal, set `style.icons` to `text`. The desktop app draws text labels and can have its own band: the `desktop` key in the [reference](docs/reference.md#config-keys). Figures are coloured from blue to red by the used share. Options of each widget: [Reference](docs/reference.md#widgets).
 
@@ -139,4 +148,5 @@ The files in `.claude` are tidemark's own, not Claude Code settings or instructi
 - [Privacy](PRIVACY.md): what it reads, writes and sends
 - [Reference](docs/reference.md): widget options, config keys, presets, alerts, the compact button, troubleshooting
 - [Decisions](docs/adr/), [Changelog](CHANGELOG.md), [README на русском](README.ru.md)
+- [All plugins of the marketplace](../../README.md)
 - Inspired by [ccOverhead](https://github.com/shengyy/ccoverhead) and [ccstatusline](https://github.com/sirmalloc/ccstatusline); [NOTICE.md](NOTICE.md) lists what was borrowed

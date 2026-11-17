@@ -1,5 +1,7 @@
 # Справочник tidemark
 
+[Reference in English](reference.md)
+
 ## Содержание
 
 - Команды

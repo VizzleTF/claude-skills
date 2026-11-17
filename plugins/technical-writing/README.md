@@ -1,6 +1,8 @@
 # technical-writing
 
-A Claude Code plugin that writes and reviews documentation by type. It finds the reader, picks one of 13 types (README, runbook, ADR, changelog and others) and writes to that type's skeleton and length budget. Style rules follow the language of the document: English and Russian have their own, other languages get the core rules only.
+A Claude Code plugin that writes and reviews documentation by type. A plain request to Claude gives a generic page. This skill first decides who reads the document and in what state: a newcomer learning, an engineer mid-task, someone on call at night. Then it picks one of 13 types (README, runbook, ADR, changelog and others) and writes that type's required sections within its word budget. Style rules follow the language of the document: English and Russian have their own, other languages get the core rules only.
+
+On 28 test scenarios its documents came out 20–30% shorter than those of the earlier `writing-docs` skill. Opus scored each pair blind on a 1–5 rubric, and the shorter documents got the same score or higher.
 
 ## Install
 
@@ -41,6 +43,8 @@ python3 skills/write/scripts/check.py --lang auto deploy.md
 
 ## Links
 
+- [README на русском](README.ru.md)
+- [All plugins of the marketplace](../../README.md)
 - [Changelog](CHANGELOG.md)
 - [Rule sources](skills/write/sources.md)
 - [Issues](https://github.com/VizzleTF/claude-skills/issues)

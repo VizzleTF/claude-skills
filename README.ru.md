@@ -2,14 +2,14 @@
 
 [![ci](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml)
 
-Маркетплейс плагинов Claude Code `vizzletf-skills`. В нём такие плагины:
+Четыре плагина Claude Code в маркетплейсе `vizzletf-skills`. С ними Claude пишет документацию по типу документа, показывает над промптом контекст и квоты, отвечает и правит код коротко.
 
-| Плагин | Что делает | Что нужно |
+| Плагин | Что вы получаете | Что нужно |
 |---|---|---|
-| [technical-writing](#technical-writing) | Пишет документацию по типу документа и проводит её ревью: README, runbook, ADR, changelog и ещё 9 типов. Правила стиля для русских и английских документов | Python 3 для скрипта проверки текста |
-| [tidemark](#tidemark) | Рисует над промптом полосу: заполнение контекста, кеш промпта, квоты, модель, git | Claude Code 2.1.288 или новее |
-| [vi-voice](plugins/vi-voice/README.md) | Короткий стиль ответов в чате, язык из настройки `language`: вывод первым, без церемоний, код дословно | — |
-| [vi-code](plugins/vi-code/README.md) | Правила работы с кодом в начале сессии: сначала переиспользовать, валидация на границах доверия, править всех вызывающих, причина до правки | — |
+| [technical-writing](#technical-writing) | README, ранбук, ADR, changelog или ещё 9 типов документов под своего читателя, на русском или английском | Python 3 для скрипта проверки текста |
+| [tidemark](#tidemark) | Заполнение контекста, квоты со временем до сброса, кеш промпта, модель и git в кликабельной полосе над промптом, в том числе в десктопном приложении | Claude Code 2.1.288 или новее |
+| [vi-voice](#vi-voice) | Ответы, которые начинаются с вывода и помещаются в 5 строк; код и ошибки дословно | — |
+| [vi-code](#vi-code) | Claude переиспользует ваш код, правит всё, до чего должна дойти правка, и доказывает причину бага до исправления | — |
 
 ## Установка
 
@@ -19,15 +19,15 @@
 /plugin marketplace add VizzleTF/claude-skills
 /plugin install technical-writing@vizzletf-skills
 /plugin install tidemark@vizzletf-skills
+/plugin install vi-voice@vizzletf-skills
+/plugin install vi-code@vizzletf-skills
 ```
 
 ## technical-writing
 
-Скилл сначала определяет читателя, выбирает один из 13 типов документа и пишет по каркасу и бюджету объёма этого типа. На 28 тестовых сценариях его документы вышли на 20–30% короче, чем с прежним скиллом `writing-docs`. Оценка судьи при этом та же или выше.
+Попросите Claude: `Напиши ранбук для алерта QueueWorkerDown` или запустите `/technical-writing:runbook алерт QueueWorkerDown`. Получится ранбук: влияние, диагностика, действие и команда проверки на каждом шаге, эскалация. На обычную просьбу Claude пишет типовую страницу. Скилл сначала решает, кто будет читать документ и в каком состоянии, затем выбирает подходящий тип и его обязательные разделы.
 
-Правила стиля выбираются по языку документа: у русского и английского свои, другие языки получают только общие правила. Плагин `technical-writing-ru` вошёл в этот: выполните `/plugin marketplace update vizzletf-skills`, затем `/plugin install technical-writing@vizzletf-skills`.
-
-Попросите Claude: `Напиши ранбук для алерта QueueWorkerDown` или запустите `/technical-writing:runbook алерт QueueWorkerDown`. Получится runbook: влияние, диагностика, действия с командой проверки у каждого, эскалация.
+На 28 тестовых сценариях его документы вышли на 20–30% короче, чем у прежнего скилла `writing-docs`. Opus вслепую оценил каждую пару по рубрике от 1 до 5, и короткие документы получили ту же оценку или выше.
 
 Встроенный скрипт находит в любом Markdown-файле длинные предложения, стоп-слова, маркеры LLM и битые ссылки:
 
@@ -37,45 +37,30 @@ python3 plugins/technical-writing/skills/write/scripts/check.py deploy.md
 
 ![check.py находит в deploy.md одну битую ссылку и семь предупреждений](docs/images/technical-writing-check.png)
 
-<details>
-<summary>Все 13 команд</summary>
-
-`/technical-writing:write` выбирает тип по запросу. У каждого типа есть и своя команда:
-
-| Команда | Документ |
-|---|---|
-| `/technical-writing:adr` | Запись о решении и его компромиссах |
-| `/technical-writing:changelog` | Что изменилось между версиями |
-| `/technical-writing:cli-help-errors` | Текст --help и сообщения об ошибках |
-| `/technical-writing:conventions` | Правила, которым следует команда |
-| `/technical-writing:docstring` | Docstring или комментарий в коде |
-| `/technical-writing:explanation` | Почему система устроена именно так |
-| `/technical-writing:how-to` | Шаги к одной цели для того, кто в работе |
-| `/technical-writing:postmortem` | Запись об инциденте и мерах после него |
-| `/technical-writing:readme` | Первая страница проекта |
-| `/technical-writing:reference` | Факты для поиска: параметры, поля, лимиты |
-| `/technical-writing:runbook` | Шаги дежурному по сработавшему алерту |
-| `/technical-writing:troubleshooting` | Симптом или ошибка, причина и исправление |
-| `/technical-writing:tutorial` | Урок для новичка по одному пути |
-
-</details>
-
-Установка, команды и удаление: [README technical-writing](plugins/technical-writing/README.md). Changelog: [technical-writing](plugins/technical-writing/CHANGELOG.md).
+Все 13 команд и удаление: [README technical-writing](plugins/technical-writing/README.ru.md).
 
 ## tidemark
 
-Мод рисует над промптом Claude Code полосу виджетов, в терминале и во вкладке Code десктопного приложения. Ваш `statusLine` и настройки он не трогает. Полоса появляется сразу после установки; если её нет, запустите `/reload-plugins`.
+tidemark — мод, то есть плагин, который рисует в интерфейсе Claude Code. Он рисует над промптом полосу виджетов, в терминале и во вкладке Code десктопного приложения. Ваш `statusLine` он не занимает, так что скрипт строки статуса продолжает работать рядом. Нажатие на виджет переключает модель или effort, открывает `/usage` или запускает `/compact`. Полоса появляется сразу после установки; если её нет, запустите `/reload-plugins`.
 
 ![Полоса tidemark: контекст 4% из 1M, 5-часовая квота 28%, недельная 86%, ветка git и модель](plugins/tidemark/docs/images/tidemark-band.png)
 
-`/tidemark` открывает панель с разбивкой контекста, прогнозом квот и субагентами. `/tidemark-config` настраивает виджеты с живым превью.
+`/tidemark` открывает панель с разбивкой контекста, прогнозом квот и сабагентами. `/tidemark-config` настраивает виджеты с живым превью.
 
 <img src="plugins/tidemark/docs/images/tidemark-pane.png" width="420" alt="Панель /tidemark: контекст по источникам, 5-часовая и недельная квоты с прогнозом до сброса">
 
-Виджеты, конфиг, приватность и удаление описаны в [README tidemark](plugins/tidemark/README.ru.md).
+Виджеты, конфиг, приватность и удаление: [README tidemark](plugins/tidemark/README.ru.md).
+
+## vi-voice
+
+Claude начинает каждый ответ с вывода или результата и укладывает тело ответа в 5 строк. Приветствия, пересказ и предложения в конце Claude убирает; оговорки, числа и следующие шаги остаются. В конце ответа Claude пишет, что не проверено и что осталось сделать. На 20 тестовых вопросах ранняя версия отвечала в 187 слов (медиана), а два других плагина стиля ответов в 221 и 268. Оценка верности у неё та же, что у лучшего из них. Подробности и замер: [README vi-voice](plugins/vi-voice/README.ru.md).
+
+## vi-code
+
+Claude читает код до правки, переиспользует то, что уже есть в кодовой базе, и не добавляет опций и абстракций, о которых не просили. Проверки на границах доверия, то есть там, где входят внешние данные, он сохраняет и правит весь вызывающий код. Причину бага он доказывает до исправления. Правила получают и все сабагенты, в контексте они занимают около 350 слов. Подробности: [README vi-code](plugins/vi-code/README.ru.md).
 
 ## Ссылки
 
 - [README in English](README.md)
-- [Как внести вклад](CONTRIBUTING.md)
+- [Как внести вклад](CONTRIBUTING.md) (на английском)
 - Лицензия: [MIT](LICENSE)

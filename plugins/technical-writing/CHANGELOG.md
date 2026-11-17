@@ -2,6 +2,12 @@
 
 All notable changes to the `technical-writing` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [2.0.1] - 2026-11-17
+
+### Changed
+
+- The README opens with what the skill does that a plain request does not and with the blind-judged result; a Russian README, `README.ru.md`, links to the English one and back.
+
 ## [2.0.0] - 2026-11-17
 
 ### Changed

@@ -1,5 +1,7 @@
 # tidemark reference
 
+[Справочник на русском](reference.ru.md)
+
 ## Contents
 
 - Commands
