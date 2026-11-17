@@ -22,7 +22,7 @@ Claude пишет и проверяет документацию по типу �
 - на 20–30% короче прежнего скилла `writing-docs`; Opus, не зная, где чей текст, оценил их так же или выше
 - `check.py` ловит длинные предложения, слова-паразиты, приметы текста LLM и битые ссылки до ревью
 
-Попробуйте `/technical-writing:runbook алерт QueueWorkerDown`.
+Попробуйте `Напиши ранбук для алерта QueueWorkerDown`.
 
 [Полный README](plugins/technical-writing/README.ru.md)
 

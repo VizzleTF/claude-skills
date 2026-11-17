@@ -22,7 +22,7 @@ Claude writes and reviews documentation by type.
 - 20–30% shorter than the earlier `writing-docs` skill; Opus, judging blind, scored them the same or higher
 - `check.py` catches long sentences, filler words, LLM tells and broken links before review
 
-Try `/technical-writing:runbook alert QueueWorkerDown`.
+Try `Write a runbook for the alert QueueWorkerDown`.
 
 [Full README](plugins/technical-writing/README.md)
 

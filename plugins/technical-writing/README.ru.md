@@ -14,13 +14,13 @@ Claude Code пишет и проверяет документацию по ти�
 /plugin install technical-writing@vizzletf-skills
 ```
 
-Попробуйте `/technical-writing:runbook алерт QueueWorkerDown`. В ранбуке будут влияние, диагностика, шаги с командой проверки и эскалация.
+Попросите `Напиши ранбук для алерта QueueWorkerDown`. В ранбуке будут влияние, диагностика, шаги с командой проверки и эскалация.
 
 ## Подробнее
 
 - Скрипту проверки нужен Python 3: `python3 skills/write/scripts/check.py --lang auto deploy.md`
-- `/technical-writing:write` сам выбирает тип. У каждого типа есть и своя команда `/technical-writing:<тип>`: `adr`, `changelog`, `cli-help-errors`, `conventions`, `docstring`, `explanation`, `how-to`, `postmortem`, `readme`, `reference`, `runbook`, `troubleshooting`, `tutorial`.
-- Если у вас стоял `technical-writing-ru`, выполните `/plugin marketplace update vizzletf-skills`, затем установку выше; `/technical-writing-ru:<тип>` становится `/technical-writing:<тип>`.
+- Claude сам запускает скилл, когда вы просите документ; вручную его запускает `/technical-writing:write`. Чтобы задать тип, начните аргументы с него: `/technical-writing:write type=runbook алерт QueueWorkerDown`. Типы: `adr`, `changelog`, `cli-help-errors`, `conventions`, `docstring`, `explanation`, `how-to`, `postmortem`, `readme`, `reference`, `runbook`, `troubleshooting`, `tutorial`.
+- Если у вас стоял `technical-writing-ru`, выполните `/plugin marketplace update vizzletf-skills`, затем установку выше; `/technical-writing-ru:<тип>` становится `/technical-writing:write type=<тип>`.
 - Удаление: `/plugin uninstall technical-writing@vizzletf-skills`
 
 [README in English](README.md) · [Все плагины](../../README.ru.md) · [Changelog](CHANGELOG.md) и [источники правил](skills/write/sources.md) (на английском) · [Issues](https://github.com/VizzleTF/claude-skills/issues) · Лицензия: [MIT](LICENSE)

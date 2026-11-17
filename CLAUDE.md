@@ -19,8 +19,7 @@ python3 plugins/technical-writing/skills/write/scripts/check.py plugins/technica
 ```
 .claude-plugin/marketplace.json     lists the plugins; renames maps technical-writing-ru to technical-writing
 plugins/technical-writing/          .claude-plugin/plugin.json, README, LICENSE, skills/, evals/
-  skills/write/SKILL.md             main skill /<plugin>:write: glossary, type choice, routing, core rules, workflow
-  skills/<type>/SKILL.md            13 user-only commands /<plugin>:<type>; run write with `type=<type> $ARGUMENTS`
+  skills/write/SKILL.md             the only skill /<plugin>:write: glossary, type choice, routing, core rules, workflow
   skills/write/types/               13 document types, one file each
   skills/write/style/               <language>.md (english.md required, russian.md), llm-patterns.md
   skills/write/process/             doc-set.md, review.md
@@ -44,7 +43,7 @@ tests/                              one test_<tool>.py per tool, test_tidemark_s
 - One skill with English instructions. Style rules per document language live in `style/<language>.md` (`english.md` is required); SKILL.md picks the file by the language of the document, and a language without one gets the core rules only. A new language adds one style file and a link in SKILL.md Routing.
 - `SKILL.md` routes to exactly one `types/<type>.md` plus the style file and `style/llm-patterns.md`; rule files never point to each other, only SKILL.md routes.
 - `parity.py` imports `scripts/check.py` to share fence parsing.
-- `parity.py` checks: required layout, type H2 order, `## Contents` on long files, `write/SKILL.md` limits and frontmatter, the 13 type commands (`disable-model-invocation: true`, no other skill dirs), no skill-file links in `types/` `style/` `process/`, and secrets/private paths in every tracked file.
+- `parity.py` checks: required layout, type H2 order, `## Contents` on long files, `write/SKILL.md` limits and frontmatter, no skill dir besides `write`, no skill-file links in `types/` `style/` `process/`, and secrets/private paths in every tracked file.
 
 ## Conventions
 

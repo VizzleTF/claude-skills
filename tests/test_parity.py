@@ -50,9 +50,6 @@ def build(root):
     for name, text in files.items():
         (d / name).parent.mkdir(parents=True, exist_ok=True)
         (d / name).write_text(text, encoding="utf-8")
-    for t in TYPES:
-        (d.parent / t).mkdir()
-        (d.parent / t / "SKILL.md").write_text(COMMAND, encoding="utf-8")
 
 
 class Parity(unittest.TestCase):
@@ -77,14 +74,10 @@ class Parity(unittest.TestCase):
     def test_good_tree_is_clean(self):
         self.assertEqual(parity.check_repo(self.root), [])
 
-    def test_command_skills(self):
+    def test_extra_skill_dir(self):
         cmds = EN.rsplit("/", 1)[0]
-        (self.root / cmds / "adr/SKILL.md").unlink()
-        self.write(f"{cmds}/runbook/SKILL.md", COMMAND.replace("true", "false"))
-        self.write(f"{cmds}/extra/SKILL.md", COMMAND)
-        self.assertReports(f"{cmds}/adr/SKILL.md", "missing")
-        self.assertReports(f"{cmds}/runbook/SKILL.md", "disable-model-invocation")
-        self.assertReports(f"{cmds}/extra", "unexpected")
+        self.write(f"{cmds}/runbook/SKILL.md", COMMAND)
+        self.assertReports(f"{cmds}/runbook", "unexpected")
 
     def test_missing_skill_dir(self):
         shutil.rmtree(self.root / "plugins")

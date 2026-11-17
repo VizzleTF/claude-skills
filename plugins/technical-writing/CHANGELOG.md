@@ -2,6 +2,12 @@
 
 All notable changes to the `technical-writing` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [3.0.0] - 2026-11-17
+
+### Removed
+
+- The 13 type commands `/technical-writing:<type>`. They were user-only shortcuts that Claude never saw; in a test on 13 requests that did not name the type, `write` picked the right type every time. To fix the type by hand, run `/technical-writing:write type=<type> <request>`.
+
 ## [2.0.2] - 2026-11-17
 
 ### Changed

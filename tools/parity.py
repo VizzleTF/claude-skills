@@ -133,25 +133,14 @@ def check_skill(root, base, out):
                 out.append(f"{path}: when_to_use needs triggers in both Cyrillic and Latin script")
 
 
-def check_commands(root, base, out):
-    """Each type has a user-only command skill next to the main one; nothing else lives there."""
+def check_skill_dirs(root, base, out):
+    """The plugin has one skill, `write`; Claude picks the document type from the request."""
     skills = (root / base).parent
     rel = base.rsplit("/", 1)[0]
-    allowed = {Path(base).name, *TYPES}
     for d in sorted(p for p in skills.iterdir() if p.is_dir()):
-        if d.name not in allowed:
-            out.append(f"{rel}/{d.name}: unexpected skill directory; allowed are "
-                       f"{Path(base).name} and one command per type")
-    for t in TYPES:
-        path = f"{rel}/{t}/SKILL.md"
-        if not (root / path).is_file():
-            out.append(f"{path}: missing (command skill for the {t} type)")
-            continue
-        fm = frontmatter((root / path).read_text(encoding="utf-8", errors="replace"))
-        if not fm.get("description"):
-            out.append(f"{path}: frontmatter has no description")
-        if fm.get("disable-model-invocation") != "true":
-            out.append(f"{path}: command skills need disable-model-invocation: true")
+        if d.name != Path(base).name:
+            out.append(f"{rel}/{d.name}: unexpected skill directory; the plugin has only "
+                       f"{Path(base).name}")
 
 
 def repo_files(root):
@@ -186,7 +175,7 @@ def check_repo(root: Path) -> list:
     out = []
     if (root / EN).is_dir():
         check_skill(root, EN, out)
-        check_commands(root, EN, out)
+        check_skill_dirs(root, EN, out)
     else:
         out.append(f"{EN}: skill directory not found")
     check_private_paths(root, out)

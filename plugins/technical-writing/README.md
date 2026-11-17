@@ -14,13 +14,13 @@ Claude Code writes and reviews documentation by type, for the person who will re
 /plugin install technical-writing@vizzletf-skills
 ```
 
-Try `/technical-writing:runbook alert QueueWorkerDown`: you get impact, diagnosis, an action with a verification command per step, and escalation.
+Ask `Write a runbook for the alert QueueWorkerDown`: you get impact, diagnosis, an action with a verification command per step, and escalation.
 
 ## More
 
 - Needs Python 3 for the checker: `python3 skills/write/scripts/check.py --lang auto deploy.md`
-- `/technical-writing:write` picks the type itself. Each type also has its own command, `/technical-writing:<type>`: `adr`, `changelog`, `cli-help-errors`, `conventions`, `docstring`, `explanation`, `how-to`, `postmortem`, `readme`, `reference`, `runbook`, `troubleshooting`, `tutorial`.
-- Had `technical-writing-ru`? Run `/plugin marketplace update vizzletf-skills`, then the install above; `/technical-writing-ru:<type>` becomes `/technical-writing:<type>`.
+- Claude runs the skill on its own when you ask for a document; `/technical-writing:write` runs it by hand. To fix the type, start the arguments with it: `/technical-writing:write type=runbook alert QueueWorkerDown`. Types: `adr`, `changelog`, `cli-help-errors`, `conventions`, `docstring`, `explanation`, `how-to`, `postmortem`, `readme`, `reference`, `runbook`, `troubleshooting`, `tutorial`.
+- Had `technical-writing-ru`? Run `/plugin marketplace update vizzletf-skills`, then the install above; `/technical-writing-ru:<type>` becomes `/technical-writing:write type=<type>`.
 - Uninstall: `/plugin uninstall technical-writing@vizzletf-skills`
 
 [README на русском](README.ru.md) · [All plugins](../../README.md) · [Changelog](CHANGELOG.md) · [Rule sources](skills/write/sources.md) · [Issues](https://github.com/VizzleTF/claude-skills/issues) · License: [MIT](LICENSE)
