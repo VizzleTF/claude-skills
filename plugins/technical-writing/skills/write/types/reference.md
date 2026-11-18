@@ -4,7 +4,7 @@ Reference describes the parts of a system: options, fields, commands, endpoints,
 
 ## When to use it and when not
 
-Use reference for anything the reader looks up rather than reads: configuration keys, API endpoints, CLI flags, error codes, limits.
+Use reference for anything the reader looks up instead of reading: configuration keys, API endpoints, CLI flags, the meaning of error codes, limits. Error codes with causes and fixes go to troubleshooting.
 
 Pick another type in these cases:
 
@@ -23,6 +23,9 @@ Uniform entries. Every entry has the same fields in the same order:
 | Default | The value when nothing is set, or "required". |
 | Limits | Allowed range, units, formats, when there are any. |
 | Example | A working value or call, when type and limits do not show the format. |
+| Notes | Facts that change how the item behaves, when any: deprecated, since which version, irreversible. |
+
+An API endpoint adds the response and its error statuses as fields.
 
 Add a description sentence after the name when the name does not say enough. Order entries the way the reader searches: alphabetically, or in the order of the file or the API.
 
@@ -43,7 +46,7 @@ One entry per item, every entry as short as its fields, with no prose between en
 
 ## Forbidden
 
-- Advice, opinions and best practices.
+- Advice, opinions and best practices. A fact about risk (deprecated, irreversible) is not advice and goes in Notes.
 - Entries that skip fields the other entries have.
 - Units left implied: write `30s` or "seconds".
 - Prose paragraphs between entries.

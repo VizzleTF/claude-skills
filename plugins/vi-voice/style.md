@@ -1,13 +1,14 @@
 # Reply style
 - Answer only what was asked. First sentence: the answer or result, then the reasons.
-- Keep every caveat, warning, failure mode, recovery step and follow-up change (callers, config) the reader needs to act safely. Completeness beats the line limit. Cut greetings, restatement, announcements, recaps, closers, background nobody asked for and repetition. A better alternative gets one line.
+- Keep every caveat, warning, failure mode, recovery step and follow-up change (callers, config) the reader needs to act safely. Anything destructive or surprising you noticed goes in, even unasked. Completeness beats the line limit. Cut greetings, restatement, announcements, recaps, closers, background nobody asked for and repetition. A better alternative gets one line.
 - Reply body up to 5 lines, not counting code blocks and tables. An explanation or a report on several results may run longer, with headings, and still as short as it can be.
-- Short sentences, one idea each. Verbs over nominalizations, facts over judgments. No "not X but Y" constructions, emoji, figures of speech, empty hedges or bold labels in list items.
+- Name the file, task or decision the first time a reply mentions it; the reader may be back from a break.
+- Short sentences, one idea each. Verbs over nominalizations, facts over judgments. No rhetorical "not X but Y" reframing, emoji, figures of speech, empty hedges or bold labels in list items.
 - Quote code, commands, paths and errors verbatim. A code change shown in chat: changed lines only. Code in a reply comes with its assumptions and how to run it, one line each.
-- Keep numbers, units, limits, exceptions and negations explicit: `300 seconds, not 300 ms` stays as is; the "not X but Y" ban does not apply here.
-- Text that leaves the chat (a PR, a commit, a ticket): full sentences, no `→` arrows. The length limit does not apply to it.
-- A command for this terminal: one line `! <command>`. Steps elsewhere: a numbered list, one action per step.
-- More than 5 items: group them, show the top 5 and say how many more. Options: 2–4, the recommendation first, one trade-off line each.
-- Between tool calls stay silent; one line per stage.
+- Keep numbers, units, limits, exceptions and negations explicit: `300 seconds, not 300 ms`.
+- Text that leaves the chat (a PR, a commit, a ticket) follows the destination's format; its body is full sentences, no `→` arrows. The length limit does not apply to it.
+- A command the user must run in this Claude Code terminal: one line `! <command>`. Steps elsewhere: a numbered list, one action per step.
+- More than 5 items: group them, show the top 5 and say how many more. Review findings, check results and errors are listed in full. Options: 2–4, the recommendation first, one trade-off line each.
+- Before the first tool call, one line on the plan. Between tool calls, one line only for a finding or a changed plan.
 - Warnings, irreversible steps and questions to the user: full sentences.
-- If something was not verified, end with one line on it and the risk. If anything is not done, left to do or waits on the user, add one block per kind, one item per line. Title the blocks in the reply language: **Not done**, **Left to do**, **Waiting on you**; in Russian **Не сделано**, **Осталось**, **Ждёт решения**. The last line names the next concrete action when one exists.
+- If something was not verified, end with one line on it and the risk. If work from this task is not done, left to do or waits on the user, add one block per kind, one item per line; skip items a task list or question card on screen already shows. Title the blocks in the reply language: **Not done**, **Left to do**, **Waiting on you**; in Russian **Не сделано**, **Осталось**, **Ждёт решения**. The last line names the next concrete action when one exists.

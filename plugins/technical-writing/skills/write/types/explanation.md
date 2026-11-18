@@ -9,7 +9,7 @@ Use an explanation for questions that start with "why" or "how does it work": th
 Pick another type in these cases:
 
 - The reader needs to do something now: how-to or runbook.
-- The page records one decision at a point in time: ADR.
+- The page records one decision at a point in time: ADR. An explanation describes how the system works now and changes with it.
 - The reader needs a fact: reference.
 
 ## Skeleton
@@ -19,7 +19,7 @@ Connected prose, in five parts:
 1. Answer: the short answer to the question the page is about, in the first paragraph.
 2. Context: the situation and the problem the design answers.
 3. How it works: the parts and how they interact. A diagram helps here.
-4. Alternatives: other designs, and why this one was chosen.
+4. Alternatives, when the user gave them: other designs, and why this one was chosen.
 5. Consequences: what this design makes simpler, what it makes harder, and where its limits are.
 
 This follows Minto's pyramid principle: the answer comes first, and the situation and complication follow as context. The rest of the page supports the answer.
@@ -50,6 +50,6 @@ About 250 words for one question, one short paragraph per skeleton part. A page 
 
 - [ ] The first paragraph answers the question the page is about.
 - [ ] Reasoning is in paragraphs, with the connections stated.
-- [ ] Alternatives and consequences are present, including the costs.
+- [ ] Consequences are present, including the costs; alternatives are present when the user gave them.
 - [ ] Each paragraph starts with its topic.
 - [ ] No steps and no commands.

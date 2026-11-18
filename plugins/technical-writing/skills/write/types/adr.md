@@ -24,7 +24,7 @@ Michael Nygard's form, with alternatives added from design doc practice:
 6. Alternatives considered: each option and why it was rejected.
 7. Supersedes: a link to the record this one replaces, if any.
 
-A design doc or RFC uses the same parts, with the decision written as a proposal and a section for open questions. Minto's SCQA structure (situation, complication, question, answer) suits its opening.
+A design doc or RFC uses the same parts, with the decision written as a proposal. It adds goals and non-goals after the context, and open questions at the end. Rollout and risks get a part only when the user gave them. A part with no facts from the user is one placeholder line, never invented content: no alternative, setting or plan the user did not name. It stays a living document until it is accepted. Minto's SCQA structure (situation, complication, question, answer) suits its opening.
 
 ## Voice and verbs
 
@@ -36,7 +36,7 @@ Most ADRs fit in about 150 words: one short paragraph per part, one line per alt
 
 ## Differences from the core rules
 
-- **A record is not rewritten.** The core rules fix or delete a living document that is wrong. An ADR is a record: when a decision changes, write a new ADR with a `Supersedes: ADR-NNNN` line. In the old ADR, set the status to `superseded by ADR-MMMM` with a link. Besides typos and broken links, the only changes to a published record are its status mark (`[YANKED]`, `superseded by`) and the link to its replacement.
+- **A record is not rewritten.** The core rules fix or delete a living document that is wrong. An ADR is a record: when a decision changes, write a new ADR with a `Supersedes: ADR-NNNN` line. In the old ADR, set the status to `superseded by ADR-MMMM` with a link. Besides typos and broken links, the only changes to a published record are its status mark (`proposed` to `accepted`, `deprecated`, `superseded by`) and the link to its replacement.
 - **Full sentences in place of lists.** General style advice turns more than two items into a list. Context, decision and consequences are paragraphs, because the reasoning lives in the connections between the items. A list is fine for the alternatives when each item is a full sentence.
 
 ## Forbidden

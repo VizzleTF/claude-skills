@@ -36,7 +36,7 @@ Written for people. Keep a Changelog puts it this way: "Changelogs are for human
 
 ## Length
 
-One line per change, as a rule of thumb. A change that needs a paragraph gets a link to the release notes or the migration guide.
+One line per change, as a rule of thumb. A change that needs a paragraph gets a link to the release notes or the migration guide. Release notes: one short paragraph per highlight, about 300 words in all. A migration guide: about 60 words per breaking change, plus its code.
 
 ## Differences from the core rules
 
@@ -47,7 +47,7 @@ One line per change, as a rule of thumb. A change that needs a paragraph gets a 
 - A dump of commit messages or `git log`.
 - Entries that describe the code change in place of its effect on the user: "Refactored the parser".
 - Dates in any format other than ISO 8601.
-- A breaking change without the `BREAKING:` mark, or placed inside the category groups.
+- A breaking change without the `BREAKING:` mark, placed inside the category groups, or listed twice. It appears once, in the `BREAKING:` block.
 - Deleting or rewriting the section of a published version.
 
 ## Type checklist

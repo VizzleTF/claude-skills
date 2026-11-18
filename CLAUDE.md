@@ -28,7 +28,7 @@ plugins/technical-writing/          .claude-plugin/plugin.json, README, LICENSE,
 tools/parity.py                     skill structure and repo-wide secret checks
 tools/version_check.py              version bump + CHANGELOG entry per changed plugin
 tools/live_smoke.py                 tidemark in a real Claude Code under tmux
-tests/                              one test_<tool>.py per tool, test_tidemark_schema.py, test_vi_code_hook.py
+tests/                              one test_<tool>.py per tool, test_tidemark_schema.py, test_vi_code_hook.py, test_vi_voice_hook.py
 .github/                            ci.yml (all checks), ISSUE_TEMPLATE/ (bug, feature)
 ```
 

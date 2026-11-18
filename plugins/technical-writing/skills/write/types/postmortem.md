@@ -28,7 +28,7 @@ Past tense for events: "The deploy started at 14:02 UTC." Causes name systems an
 
 ## Length
 
-About 400 words for a typical incident. The summary and impact fit on the first screen. This is a rule of thumb.
+About 400 words of prose for a typical incident, not counting the timeline and the action table. The summary and impact fit on the first screen. This is a rule of thumb.
 
 ## Differences from the core rules
 
@@ -40,15 +40,15 @@ About 400 words for a typical incident. The summary and impact fit on the first 
 
 - Naming a person as the cause.
 - "Human error" as a root cause. Ask what let the error reach production.
-- Follow-up actions without an owner or a date.
+- Follow-up actions without an owner or a date. When the user did not give them, write `<OWNER>`, `<DUE_DATE>`, `<LINK>`.
 - Times without a time zone.
 - Editing or appending to a published postmortem.
 
 ## Type checklist
 
-- [ ] Impact is stated in numbers.
+- [ ] Impact is stated in numbers, or as `<IMPACT>` placeholders where the user gave none.
 - [ ] The timeline uses UTC.
 - [ ] Causes name systems and processes.
-- [ ] Every follow-up action has an owner, a due date and a link.
+- [ ] Every follow-up action has an owner, a due date and a link, real or a placeholder.
 - [ ] Events are in the past tense.
 - [ ] New facts went into a new record; the old one changed only its status mark and the link to its replacement.

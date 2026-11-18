@@ -33,7 +33,9 @@ The verb carries the action. Choose it before anything else in the sentence.
 
 - **Pick the specific verb.** "Delete", "rename", "retry" say more than "handle", "manage", "process", "deal with". Keep a general verb only when the specific one is unknown.
 - **Prefer active voice.** The active sentence names who acts. Use passive voice when the actor is unknown or irrelevant: "The file is created on first run." Passive also fits when the thing acted on is the topic and belongs at the front of the sentence.
-- **Use one verb where the draft has a phrase.** | Phrase | Verb |
+- **Use one verb where the draft has a phrase.**
+
+  | Phrase | Verb |
   |---|---|
   | `make use of` | use |
   | `is able to` | can |

@@ -2,6 +2,21 @@
 
 All notable changes to the `vi-code` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] - 2026-11-18
+
+### Changed
+
+- The project's conventions and CLAUDE.md win over the rules; "least" applies to code, not to tests or the reply.
+- A bug fix gets a test that failed before it; after editing, Claude runs the project's tests and linter and never weakens a test to pass.
+- Trust boundaries are listed, and an unsure case counts as one.
+- A vague request gets one question first when the answer changes the design.
+- A flawed helper is named instead of silently reused. Generated, vendored and lock files change only through their source.
+- Debugging starts by reproducing the bug.
+
+### Fixed
+
+- The `SubagentStart` hook printed invalid JSON when `rules.md` was missing or had CRLF line endings or control characters. It now prints nothing for a missing file and strips those characters.
+
 ## [0.2.3] - 2026-11-17
 
 ### Changed

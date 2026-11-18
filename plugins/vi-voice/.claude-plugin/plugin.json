@@ -1,8 +1,8 @@
 {
   "name": "vi-voice",
   "displayName": "vi-voice",
-  "version": "0.4.3",
-  "description": "Short chat style injected at session start: answer first, a five-line body, no ceremony, payload and facts verbatim, a closing risk line and blocks for what is left. The reply language comes from the language setting. About 400 tokens per session.",
+  "version": "0.5.0",
+  "description": "Short chat style injected at session start: answer first, a five-line body, no ceremony, payload and facts verbatim, a closing risk line and blocks for what is left. The reply language comes from the language setting. About 500 tokens per session.",
   "author": {
     "name": "VizzleTF",
     "url": "https://github.com/VizzleTF"

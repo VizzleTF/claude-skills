@@ -138,7 +138,7 @@ class WordRules(unittest.TestCase):
         self.assertEqual(found[0].line, 1)
 
     def test_llm_marker_ru(self):
-        self.assertEqual(rules(check.check_text("Сервис является шлюзом.\n", "ru")), ["llm-marker"])
+        self.assertEqual(rules(check.check_text("Сервис является шлюзом.\n", "ru")), ["stop-word"])
         self.assertEqual(
             rules(check.check_text("Это не просто кеш, а хранилище.\n", "ru")), ["llm-marker"]
         )
@@ -228,6 +228,17 @@ class RussianTypography(unittest.TestCase):
                          ["dated-phrase", "ru-quotes"])
         self.assertEqual(check.check_text('Press "OK" to go.\n', "auto"), [])
 
+    def test_auto_language_per_block(self):
+        text = 'Нажмите кнопку "Сохранить" в окне.\n\nThe "cache" is a copy.\n'
+        self.assertEqual([(f.line, f.rule) for f in check.check_text(text, "auto")], [(1, "ru-quotes")])
+
+    def test_auto_russian_with_latin_names(self):
+        text = 'Настройте ArgoCD Application через Kubernetes Ingress. Используйте "kubectl apply" для CronJob.\n'
+        self.assertEqual(rules(check.check_text(text, "auto")), ["ru-quotes"])
+
+    def test_versioned_as_of_is_not_dated(self):
+        self.assertEqual(check.check_text("As of v2 it works.\n", "en"), [])
+
 
 class Links(unittest.TestCase):
     def setUp(self):
@@ -254,6 +265,10 @@ class Links(unittest.TestCase):
             "[ref]: other.md\n\n`[a](missing.md)`\n"
         )
         self.assertEqual(self.run_check(text), [])
+
+    def test_link_with_parentheses(self):
+        (self.dir / "a(b).md").write_text("# A\n", encoding="utf-8")
+        self.assertEqual(self.run_check("See [x](a(b).md).\n"), [])
 
     def test_broken_anchor(self):
         self.assertEqual(rules(self.run_check("See [x](other.md#nope).\n")), ["broken-link"])

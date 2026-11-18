@@ -12,7 +12,7 @@
 
 ## How to read this file
 
-Each row gives the source, what the skill takes from it, and where the rule appears. Text in quotation marks was checked against the original web page. Rules from books are paraphrased without quotation marks, and terms from books are set in italics, because the books were not available for checking. Books give no figures here, with one exception: the 10% in King's formula, checked against published excerpts of *On Writing* that reproduce the formula. The book itself was not available.
+Each row gives the source, what the skill takes from it, and where the rule appears. Text in quotation marks was checked against the original web page. Rules from books are paraphrased without quotation marks, and terms from books are set in italics, because the books were not available for checking. Books give no figures here.
 
 ## Process and quality
 
@@ -43,7 +43,6 @@ Each row gives the source, what the skill takes from it, and where the rule appe
 | William Zinsser. *On Writing Well*. Harper. | Clutter words and how to cut them. | style/english.md |
 | William Strunk Jr. and E. B. White. *The Elements of Style*. | Active voice; definite, specific, concrete language; omitting needless words. | style/english.md |
 | George Orwell. *Politics and the English Language*. Essay. | Prefer the short everyday word; cut words that can go; prefer active voice. | style/english.md |
-| Stephen King. *On Writing: A Memoir of the Craft*. Scribner. | The second draft is the first minus about 10%, a formula King took from an editor's rejection note. The skill uses it as a rule of thumb. | SKILL.md workflow step 5 |
 | Maxim Ilyakhov, Lyudmila Sarycheva. *Pishi, sokrashchai* (Write, Cut). Alpina. Maxim Ilyakhov. *Yasno, ponyatno*. Alpina. | Stop words by category; a fact in place of an evaluation. | style/russian.md; the evaluation pattern also appears in style/llm-patterns.md |
 | Nora Gal. *Slovo zhivoe i mertvoe* (The Word, Living and Dead). Korney Chukovsky. *Zhivoi kak zhizn* (Alive as Life). | Officialese and verbal nouns in Russian. | style/russian.md |
 | Arkady Milchin, Lyudmila Cheltsova. *Spravochnik izdatelya i avtora* (Handbook for Publishers and Authors). | Russian typography. | style/russian.md and the checker's Russian rules |

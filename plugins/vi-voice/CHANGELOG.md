@@ -2,6 +2,20 @@
 
 All notable changes to the `vi-voice` plugin, named `voice-ru` before 0.2.0. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.5.0] - 2026-11-18
+
+### Changed
+
+- Review findings, check results and errors are listed in full, not cut to the top 5.
+- One line on the plan before the first tool call, then a line only for a finding or a changed plan.
+- Status blocks cover work from this task only and skip items a task list or question card already shows.
+- A reply names the file, task or decision at first mention, and mentions anything destructive or surprising unasked.
+- Text that leaves the chat follows the destination's format; `! <command>` is only for a command the user must run in the Claude Code terminal.
+
+### Added
+
+- `tests/test_vi_voice_hook.py` checks that the hook prints `style.md` verbatim.
+
 ## [0.4.3] - 2026-11-17
 
 ### Changed

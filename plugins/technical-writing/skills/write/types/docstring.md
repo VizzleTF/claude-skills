@@ -25,31 +25,31 @@ A comment is one to three lines above the code it explains. John Ousterhout sepa
 
 ## Voice and verbs
 
-In Python, follow PEP 257: the summary line prescribes the effect as a command, "Return the user's ID", and does not describe it as "Returns the user's ID". PEP 257 also says the one-line docstring should not restate the signature.
+In Python, follow the form the project's existing docstrings use. With no such docstrings, follow PEP 257: the summary line prescribes the effect as a command, "Return the user's ID", and does not describe it as "Returns the user's ID". PEP 257 also says the one-line docstring should not restate the signature.
 
 In other languages, follow the project's convention. Javadoc uses the third person: "Returns the user's ID."
 
 ## Length
 
-One line when the name and the signature say the rest, three to five lines at most otherwise. Extra lines hold only facts a caller would otherwise learn by reading the code or by failing. This is a rule of thumb.
+One line when the name and the signature say the rest; otherwise one line per fact the signature does not show. Extra lines hold only facts a caller would otherwise learn by reading the code or by failing. This is a rule of thumb.
 
 ## Differences from the core rules
 
-- **Imperative summary in Python.** Reference describes an item in the third person. A Python docstring states the same fact as a command, following PEP 257.
+- **Imperative summary in Python.** Reference describes an item in the third person. A Python docstring states the same fact as a command, following PEP 257, unless the project's docstrings use another form.
 - **Why over what.** A comment inside the body gives the reason for the code. The code already shows what it does.
 
 ## Forbidden
 
 - Restating the signature: "Takes a string and returns an int." This includes a parameter or return description that repeats a type or a default the signature already carries.
 - Comments that narrate the code line by line: `# increment i`.
-- Comments that record history: "changed by X in March". Version control holds history.
+- Comments that record history: "changed by X in March". Version control holds history. A reason with a tracker link stays: "Works around lib bug #123; remove after 4.2."
 - Units, ranges or side effects left to the reader to guess.
 - A docstring that disagrees with the code.
 
 ## Type checklist
 
 - [ ] The summary line fits on one line.
-- [ ] In Python, the summary is imperative.
+- [ ] In Python, the summary follows the project's form, or the imperative when there is none.
 - [ ] No description repeats a type or a default from the signature; each parameter and return value adds units, ranges, invariants or meaning.
 - [ ] Units, ranges, side effects and exceptions are stated.
 - [ ] Interface and implementation comments are kept apart.

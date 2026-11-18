@@ -24,10 +24,12 @@ Pick another type in these cases:
 An error message, following Google's Technical Writing course on error messages:
 
 1. What went wrong: the cause, stated precisely.
-2. Which input was invalid: the value the user gave, quoted.
-3. The requirements and constraints the input must meet.
+2. Which input was invalid, when the user gave one: the value, quoted.
+3. The requirements the input must meet, when they are not obvious.
 4. How to fix it: the action.
 5. An example of a valid input, when it helps.
+
+Parts 1 and 4 are required; the others appear only when they apply.
 
 Example: `Error: port "80a" is not a number. Set --port to an integer from 1 to 65535, for example --port 8080.`
 
@@ -41,7 +43,7 @@ An error message takes one to three lines. Google's course asks for concise mess
 
 ## Differences from the core rules
 
-- **Two parts, fixed order.** Google's course reduces a good error message to two questions: what went wrong, and how the user fixes it. The cause comes first, because the fix makes sense only after the reader knows what failed.
+- **Cause before fix.** Google's course reduces a good error message to two questions: what went wrong, and how the user fixes it. The cause comes first, because the fix makes sense only after the reader knows what failed.
 
 ## Forbidden
 
@@ -54,7 +56,7 @@ An error message takes one to three lines. Google's course asks for concise mess
 
 ## Type checklist
 
-- [ ] The error names the cause and the invalid input.
+- [ ] The error names the cause, and the invalid input when there is one.
 - [ ] The error says how to fix it, in the imperative.
 - [ ] An example of valid input is given where it helps.
 - [ ] Terms match the rest of the tool and its documentation.

@@ -12,7 +12,7 @@ The catalog follows the Wikipedia guide "Signs of AI writing" and adds patterns 
 
 ## How to use this catalog
 
-Read the draft once per group below. A single instance is rarely a problem; a pattern that repeats across the page is. The usual fix is to state the fact the decoration stands in for.
+Read the draft once per group below. A single instance is rarely a problem; a pattern that repeats across the page is. The usual fix is to state the fact the decoration stands in for. When the user gave no such fact, cut the word or write a placeholder such as `<MEASURED_VALUE>`; never invent the number. The numbers in the after examples below are illustrations.
 
 ## Content patterns
 
@@ -54,12 +54,12 @@ Read the draft once per group below. A single instance is rarely a problem; a pa
 
 ## Sentence patterns
 
-**Negative parallelism.** The pattern `not X, but Y`, `it's not just X, it's Y`, `not only X but also Y`. It sets up a claim nobody made in order to knock it down. State Y.
+**Negative parallelism.** The pattern `not X, but Y`, `it's not just X, it's Y`, `not only X but also Y`; in Russian `не просто X, а Y`, `не только X, но и Y`. It sets up a claim nobody made to knock it down. State Y.
 
 - Before: `This is not just a linter; it's a complete quality gate.`
 - After: The tool lints the code and blocks the merge when a check fails.
 
-**Rule of three.** Items grouped in threes for rhythm: `fast, reliable, and secure`. Keep a list of three only when there are exactly three real items. Otherwise give the true number, even if it is one.
+**Rule of three.** Items grouped in threes for rhythm: `fast, reliable, and secure`. Keep a list of three only when there are exactly three real items. Otherwise give the true number, even if it is one. A list with three real items stays.
 
 - Before: `The API is fast, flexible, and developer-friendly.`
 - After: The API answers in under 50 ms at the 99th percentile.
@@ -73,7 +73,7 @@ Read the draft once per group below. A single instance is rarely a problem; a pa
 
 **Elegant variation.** A new synonym each time to avoid repeating a word: `service`, `application`, `system`, `platform` for the same thing. In documentation, a new word signals a new concept. Pick one term and repeat it.
 
-**Metadiscourse.** Text about the text: `In this section, we will explore`, `It is worth noting that`, `As mentioned earlier`. Delete it and state the content.
+**Metadiscourse.** Text about the text: `In this section, we will explore`, `It is worth noting that`, `As mentioned earlier`, `Let's dive in`, `Here's the thing`, `Key takeaways`, a first sentence that restates the heading. In Russian: `Давайте разберёмся`, `стоит отметить`. Delete it and state the content.
 
 **Compulsive hedging.** Qualifiers on every claim: `may potentially`, `generally tends to`, `in some cases it might`. Remove the hedge where you know the fact. Where the uncertainty is real, say what is uncertain.
 
@@ -84,7 +84,7 @@ Read the draft once per group below. A single instance is rarely a problem; a pa
 - Before: `The cache — which is shared — expires hourly — unless pinned.`
 - After: The shared cache expires every hour. Pinned entries do not expire.
 
-**Bold overuse.** Several bold phrases per paragraph. Bold one term per section at most: the one the reader scans for.
+**Bold overuse.** Several bold phrases per paragraph. Bold one term per section at most: the one the reader scans for. Interface labels in steps and warnings are exempt.
 
 **Inline-header lists.** Every bullet starts with a bold label and a colon, even when the items are sentences that need no label. Use labels only when the reader scans by them.
 

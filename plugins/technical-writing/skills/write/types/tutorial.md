@@ -14,7 +14,7 @@ Pick another type in these cases:
 
 ## Skeleton
 
-1. Goal and time, on the first line: "In this tutorial, we will build X. It takes about 20 minutes."
+1. Goal and time, on the first line: "In this tutorial, we will build X. It takes about 20 minutes." Without a time from the user, write `<MINUTES>`.
 2. Prerequisites: what the reader installs or has before step 1, with versions.
 3. Steps. Each step has one action, the command or code, and the expected output.
 4. Visible result: what the reader sees at the end and how it proves the goal was reached.
@@ -50,11 +50,10 @@ A tutorial is as long as its one path. Aim for a session of 15 to 30 minutes and
 
 ## Type checklist
 
-- [ ] The first line states the goal and the time it takes.
+- [ ] The first line states the goal and the time it takes, or `<MINUTES>`.
 - [ ] Prerequisites list versions.
 - [ ] One path, no branches.
 - [ ] Each step has one action and its expected output.
 - [ ] Every explanation is one or two sentences and links to more.
 - [ ] Each mistake the user described has a way back.
 - [ ] The end shows a visible result and links to what next.
-- [ ] A cold reader finished the tutorial without help.

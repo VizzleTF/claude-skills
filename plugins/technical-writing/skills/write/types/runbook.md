@@ -24,6 +24,7 @@ Pick another type in these cases:
    - one rollback line, only when the action changes state: the command that undoes it, or for an irreversible action whom to escalate to.
 5. Final verification: how to confirm the alert has cleared.
 6. Escalation: who to call, how, and when (for example, "after 15 minutes without recovery").
+   - Links, when any: the dashboard and the logs for this alert, in one line. They add to the commands and never replace them.
 7. Last verified: the date someone last ran the runbook end to end, and who. A new runbook that nobody has run gets `Last verified: <DATE> by <NAME>`. Never invent the date or the name.
 
 ## Voice and verbs
@@ -34,7 +35,7 @@ Placeholders are explicit and uppercase in angle brackets: `<NAMESPACE>`, `<POD_
 
 ## Length
 
-About 250 words per alert or less: impact in two sentences, verification and rollback in one line each. The reader sees the first action without scrolling past the impact section. This is a rule of thumb.
+About 100 words for the fixed parts plus about 40 per action: impact in two sentences, verification and rollback in one line each. The reader sees the first action without scrolling past the impact section. This is a rule of thumb.
 
 ## Differences from the core rules
 

@@ -14,7 +14,7 @@ Review goes from the largest unit to the smallest. A problem with the type or th
 
 1. **Type.** Name the reader and the type. If the page mixes types (steps interleaved with design rationale, a tutorial that branches into reference), the first finding proposes a split.
 2. **Skeleton.** Compare the sections with the skeleton of the type. Report missing, extra and misplaced sections.
-3. **Facts.** Check commands, flags, defaults, versions and links against the code or the source the user points to. Run commands where possible. Mark each fact you could not check.
+3. **Facts.** Check commands, flags, defaults, versions and links against the code or the source the user points to. Run only read-only commands such as `--help`, `--version` or a dry run; never run a command that changes state. Mark each fact you could not check.
 4. **Paragraphs and cohesion.** Each paragraph opens with its topic; sentences move from known to new; terms stay the same for the same concept.
 5. **Sentences.** Characters as subjects, actions as verbs, no stray nominalizations, reasonable length.
 6. **Words.** Stop words, LLM patterns, evaluations that should be facts.
@@ -22,8 +22,8 @@ Review goes from the largest unit to the smallest. A problem with the type or th
 Before step 4, run the checker on the file, or on standard input for text pasted in the chat, and use its output as input to steps 4 to 6. `<SKILL_BASE_DIR>` is the base directory that Claude Code shows when the skill loads:
 
 ```bash
-python3 <SKILL_BASE_DIR>/scripts/check.py --lang en <file>
-python3 <SKILL_BASE_DIR>/scripts/check.py --lang en - <<'EOF'
+python3 <SKILL_BASE_DIR>/scripts/check.py --lang auto <file>
+python3 <SKILL_BASE_DIR>/scripts/check.py --lang auto - <<'EOF'
 <TEXT>
 EOF
 ```

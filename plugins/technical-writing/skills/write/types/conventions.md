@@ -18,7 +18,7 @@ Each rule is one entry:
 
 1. The rule, in one sentence, with its modality.
 2. Why: the reason, in one or two sentences.
-3. Example: bad, then good.
+3. Example, for a rule about code or text: bad, then good.
 
 Group rules by area. Number them so a reviewer can cite a rule: "See N-4".
 
@@ -36,7 +36,7 @@ State at the top of the page that the words carry these meanings. Every rule car
 
 ## Length
 
-One to three lines per rule. A rule that needs a page of justification belongs in an ADR, linked from the rule. This is a rule of thumb.
+One to three lines per rule, not counting the example. A rule that needs a page of justification belongs in an ADR, linked from the rule. This is a rule of thumb.
 
 ## Differences from the core rules
 
@@ -47,12 +47,12 @@ One to three lines per rule. A rule that needs a page of justification belongs i
 - Rules without a reason.
 - Modal words outside the scale: "try to", "ideally", "it is preferable".
 - Rules no reviewer can check: "write clean code".
-- Examples that show only the good case.
+- Examples that show only the good case. A rule about process (reviews, releases) needs no example.
 
 ## Type checklist
 
 - [ ] Every rule has a modality from the scale.
 - [ ] Every rule has a reason.
-- [ ] Every rule has a bad and a good example.
+- [ ] Every rule about code or text has a bad and a good example.
 - [ ] Rules are numbered and grouped by area.
 - [ ] A reviewer can check every rule.

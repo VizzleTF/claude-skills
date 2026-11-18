@@ -2,6 +2,30 @@
 
 All notable changes to the `technical-writing` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [3.1.0] - 2026-11-18
+
+### Added
+
+- A rewrite branch: a request to rewrite, shorten or fix a text keeps its type, headings and facts and writes the result over the named file.
+- Missing facts in a postmortem, a tutorial's time and similar required fields become `<UPPER_CASE>` placeholders that satisfy the type checklist.
+- Design docs add goals, non-goals, rollout, risks and open questions to the ADR parts.
+- Reference entries get an optional Notes field; troubleshooting entries with an uncertain cause list ordered checks.
+
+### Changed
+
+- A default type is named in one line at the top of the response; questions go after the document. A review report goes to the chat and never over the reviewed file.
+- The cold reader subagent is skipped for docstrings, comments, CLI help, error messages and changelog entries.
+- Runbook, postmortem, changelog, docstring and conventions budgets fit their required parts.
+- In Python, docstrings follow the project's existing form before PEP 257.
+- The review process runs the checker with `--lang auto` and runs only read-only commands from the document.
+- The checker picks the language per paragraph, treats Russian prose with many Latin names as Russian, allows twice the dash density in Russian, and reads link targets with parentheses.
+- The checker no longer flags a bare `as of`; it flags more English and Russian stop words, and `является` as a stop word.
+- `when_to_use` says the skill is not for commit messages, PR descriptions or chat explanations of code.
+
+### Removed
+
+- Stephen King's 10% formula from step 5.
+
 ## [3.0.0] - 2026-11-17
 
 ### Removed

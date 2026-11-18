@@ -36,23 +36,28 @@ class Finding(NamedTuple):
 
 
 MAX_WORDS = {"en": 30, "ru": 25}
+DASH_WORDS = {"en": 40, "ru": 20}
 
 STOP_WORDS = {
     "en": [
         "just", "simply", "obviously", "basically", "very", "really", "easy", "easily",
         "clearly", "actually", "of course", "quite", "extremely", "literally",
         "straightforward", "effortless(?:ly)?", "painless(?:ly)?", "merely", "totally",
+        "highly", "rather", "somewhat", "fairly", "in order to", "due to the fact that",
+        r"utiliz(?:e|es|ed|ing)",
     ],
     "ru": [
         # intensifiers
         "очень", "крайне", "чрезвычайно", "максимально", "абсолютно", "весьма", "действительно",
+        # understatements
+        "просто", "всего лишь", r"легк(?:о|ий|ая|ое|ие)",
         # evaluations
         r"удобн\w*", r"эффективн\w*", r"качественн\w*", r"уникальн\w*", r"инновационн\w*",
         r"современн\w*",
         # officialese
         r"осуществл\w*", "осуществить", r"производит(?:ся|ь)", "посредством", "в рамках",
         "с целью", "в целях", "данный", "данная", "данное", "данного", "данной", "данном",
-        r"вышеуказанн\w*",
+        r"вышеуказанн\w*", r"явля(?:ется|ются|лся|лась|лось|лись)", r"являющ\w*",
         # parentheticals
         "как известно", "безусловно", "конечно", "по сути", "в принципе", "фактически",
         "как бы", "собственно",
@@ -68,10 +73,9 @@ LLM_MARKERS = {
         r"not (?:just|only|merely|simply)\b[^.!?;]{1,60}?\bbut",
     ],
     "ru": [
-        r"явля(?:ется|ются|лся|лась|лось|лись)", r"являющ\w*",
         r"игра(?:ет|ют) (?:ключевую|важную|решающую|значимую) роль",
         "стоит отметить", "важно отметить", "следует отметить", "в современном мире",
-        r"бесшовн\w*", r"не просто\b[^.!?;]{1,60}?,? а",
+        r"бесшовн\w*", r"не просто\b[^.!?;]{1,60}?,? а", r"не только\b[^.!?;]{1,60}?,? но и", r"давайте разбер\w*",
     ],
 }
 
@@ -86,7 +90,7 @@ DATED = {
     "en": [_DATE, r"(?:in|since|by|until|till|from|during|before|after|as of|early|mid|late)"
            r"\s+(?:" + _MONTHS_EN + r"\s+)?20\d\d" + _NOT_QTY,
            _MONTHS_EN + r"\s+(?:\d{1,2},?\s+)?20\d\d", r"20\d\d\s+(?:release|version)",
-           "currently", "as of", "at the moment", "at present", "nowadays",
+           "currently", "at the moment", "at present", "nowadays",
            "latest version"],
     "ru": [_DATE, r"20\d\d\s*(?:год\w*|г\.)", r"(?:в|с|до|к|по|от|на)\s+20\d\d(?=\s*(?:[.,;:!?)]|$))",
            r"(?:январ|феврал|март|апрел|ма[йяе]|июн|июл|август|сентябр|октябр|ноябр|декабр)\w*"
@@ -130,7 +134,7 @@ HEADING_RE = re.compile(r"^\s{0,3}(#{1,6})\s+(.*?)\s*#*\s*$")
 LIST_RE = re.compile(r"^\s*(?:[-*+]|\d+[.)])\s+(?:\[[ xX]\]\s+)?")
 TABLE_SEP_RE = re.compile(r"^[\s|:-]+$")
 INLINE_CODE_RE = re.compile(r"(`+)(.+?)\1")
-LINK_RE = re.compile(r"!?\[([^\]]*)\]\(\s*<?([^)\s>]*)>?(?:\s+\"[^\"]*\")?\s*\)")
+LINK_RE = re.compile(r"!?\[([^\]]*)\]\(\s*<?((?:[^()\s>]|\([^()\s>]*\))*)>?(?:\s+\"[^\"]*\")?\s*\)")
 REF_DEF_RE = re.compile(r"^\s{0,3}\[[^\]]+\]:\s*<?(\S+?)>?(?:\s+.*)?$")
 AUTOLINK_RE = re.compile(r"<([a-z][a-z0-9+.-]*:[^>\s]+)>", re.I)
 URL_RE = re.compile(r"\b[a-z][a-z0-9+.-]*://\S+", re.I)
@@ -241,10 +245,14 @@ class Doc:
             WORD_RE.search(t) for _, t in self.cells)
 
     def language(self):
-        text = " ".join(t for b in self.blocks for _, t in b) + " ".join(t for _, t in self.cells)
-        cyr = len(re.findall(r"[а-яё]", text, re.I))
-        lat = len(re.findall(r"[a-z]", text, re.I))
-        return "ru" if cyr and cyr >= lat else "en"
+        return language(" ".join(t for b in self.blocks for _, t in b) + " ".join(t for _, t in self.cells))
+
+
+def language(text):
+    # Russian IT prose is full of Latin names, so half as many Cyrillic words already make it Russian.
+    cyr = len(re.findall(r"\b[а-яё]+\b", text, re.I))
+    lat = len(re.findall(r"\b[a-z]+\b", text, re.I))
+    return "ru" if cyr and cyr * 2 >= lat else "en"
 
 
 def _joined(block):
@@ -343,9 +351,9 @@ def _check_links(doc, path, check_urls):
 
 def _analyze(text, lang, path, max_words, check_urls):
     doc = Doc(text)
-    if lang == "auto":
+    auto = lang == "auto"
+    if auto:
         lang = doc.language()
-    limit = max_words or MAX_WORDS[lang]
     out = []
 
     def words(regex, t, where, rule, fmt, skip=()):
@@ -353,7 +361,7 @@ def _analyze(text, lang, path, max_words, check_urls):
             if not any(a <= m.start() < b for a, b in skip):
                 out.append(Finding(where(m.start()), "warning", rule, fmt.format(m.group())))
 
-    def word_rules(t, where):
+    def word_rules(t, where, lang=lang):
         spans = [m.span() for m in LLM_RE[lang].finditer(t)]
         spans += [m.span() for m in QUOTED_NAME_RE.finditer(t)]
         words(LLM_RE[lang], t, where, "llm-marker",
@@ -366,17 +374,22 @@ def _analyze(text, lang, path, max_words, check_urls):
 
     for block in doc.blocks:
         text_, where = _joined(block)
+        # A mixed document gets each block checked by the rules of its own language.
+        lang = language(text_) if auto else lang
+        limit = max_words or MAX_WORDS[lang]
         for off, s in _sentences(text_):
             n = len(WORD_RE.findall(s))
             if n > limit:
                 out.append(Finding(where(off + len(s) - len(s.lstrip())), "warning",
                                    "sentence-length",
                                    f"sentence has {n} words (guide: {limit}); split it"))
-        word_rules(text_, where)
+        word_rules(text_, where, lang)
+        # Russian grammar puts a dash between subject and predicate, so it allows twice as many.
+        per = DASH_WORDS[lang]
         nwords, dashes = len(WORD_RE.findall(text_)), text_.count("—")
-        if dashes > max(1, nwords / 40):
+        if dashes > max(1, nwords / per):
             out.append(Finding(block[0][0], "warning", "dash-density",
-                               f"{dashes} em dashes in {nwords} words (guide: 1 per 40)"))
+                               f"{dashes} em dashes in {nwords} words (guide: 1 per {per})"))
         required, pos = [], 0
         for _, t in block:
             m = VERSION_DATE_RE.match(t)

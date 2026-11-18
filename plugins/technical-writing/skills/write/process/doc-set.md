@@ -54,7 +54,7 @@ Name an owner for each page. Tie review to events: a release, a changed flag, a 
 
 ## Plan format
 
-Present the plan as a table and wait for approval before writing:
+Present the plan as a table. Wait for approval before writing when the user asked for a plan or an audit; otherwise write the pages in priority order in the same response:
 
 | Page | Type | Reader | Reader's question | Priority | Source of facts |
 |---|---|---|---|---|---|
