@@ -1,6 +1,6 @@
 import { expect, mock, test } from 'claude-code/testing'
 import type { On } from 'claude-code'
-import { DEFAULT_CONFIG, PRESETS, SCHEMA_URL, effectiveConfig, forSurface, fromSurface, validate } from '../hooks/config-model'
+import { DEFAULT_CONFIG, PRESETS, SCHEMA_URL, effectiveConfig, forSurface, fromSurface, loadFromTexts, validate } from '../hooks/config-model'
 
 const HOME = '/u/dev'
 const CWD = '/u/dev/proj'
@@ -11,8 +11,9 @@ const PROJECT = '/u/dev/proj/.claude/tidemark.json'
 function files(on: On, initial: Record<string, string>, env: Record<string, string> = { HOME }) {
   const disk = new Map(Object.entries(initial))
   const writes: string[] = []
+  const mtimes = new Map<string, number>()
   mock.env(on, env)
-  mock.clock(on, { now: 0 })
+  const clock = mock.clock(on, { now: 0 })
   on('classic.SessionStart', () => ({}))
   on('session.cwd', () => ({ value: CWD }))
   on('fs.read', ($, e) => {
@@ -23,14 +24,14 @@ function files(on: On, initial: Record<string, string>, env: Record<string, stri
   on('fs.exists', ($, e) => ({ value: disk.has(e.path) }))
   on('fs.stat', ($, e) => {
     if (!disk.has(e.path)) throw new Error(`ENOENT: ${e.path}`)
-    return { value: { kind: 'file', size: disk.get(e.path)!.length, mtimeMs: 1, isLink: false } }
+    return { value: { kind: 'file', size: disk.get(e.path)!.length, mtimeMs: mtimes.get(e.path) ?? 1, isLink: false } }
   })
   on('fs.write', ($, e) => {
     disk.set(e.path, e.text)
     writes.push(e.path)
     return { value: undefined }
   })
-  return { disk, writes }
+  return { disk, writes, mtimes, clock }
 }
 
 // The plugin loads its config when the process starts; the editor pane shows what loaded.
@@ -149,6 +150,32 @@ test('the project file replaces the top-level keys it has', async ($, on) => {
   expect(loaded.error).toBeUndefined()
 })
 
+test('a project file cannot set a command or the gh/glab hosts; the global file can', () => {
+  const lines = JSON.stringify({ lines: [[{ widget: 'command', options: { command: 'curl x | sh' } }, { widget: 'gitPr', options: { githubHosts: ['evil.example'], ttl: 60 } }]] })
+  const project = loadFromTexts([{ path: PROJECT, text: lines, project: true }])
+  expect(project.config.lines).toEqual([[{ widget: 'command' }, { widget: 'gitPr', options: { ttl: 60 } }]])
+  expect(project.warnings.filter(w => w.includes('global config')).length).toBe(2)
+  const global = loadFromTexts([{ path: GLOBAL, text: lines }])
+  expect(global.config.lines[0]![0]!.options).toEqual({ command: 'curl x | sh' })
+})
+
+test('a hand edit is picked up by its modification time within 30 seconds', async ($, on) => {
+  const fs = files(on, { [GLOBAL]: JSON.stringify({ version: 1, lines: [['context']] }) })
+  expect((await startup($)).lines).toEqual([['context']])
+  const ui = await $.ui.mount({
+    plugin: 'tidemark', surface: 'desktop', component: 'Pane', requestId: 'tidemark-config',
+    props: { title: 'tidemark config', isFocused: false, bodyColumns: 100, placement: 'inline', scroll: { offset: 0, bodyRows: 60 }, view: {} },
+  })
+  const first = async () => (await ui.find({ key: 'w-0-0' }))?.props.label
+  fs.disk.set(GLOBAL, JSON.stringify({ version: 1, lines: [['cwd']] }))
+  await fs.clock.advance(30_000)
+  // Same modification time: the file is not read again.
+  expect(await first()).toBe('context')
+  fs.mtimes.set(GLOBAL, 2)
+  await fs.clock.advance(30_000)
+  expect(await first()).toBe('cwd')
+})
+
 test('XDG_CONFIG_HOME moves the global file', async ($, on) => {
   files(on, { '/u/xdg/tidemark/config.json': JSON.stringify({ lines: [['model']] }) }, { HOME, XDG_CONFIG_HOME: '/u/xdg' })
   const loaded = await startup($)
@@ -168,6 +195,18 @@ test('a config stored by an older version, without newer keys, gets their defaul
   const { compact: _, ...old } = DEFAULT_CONFIG
   const loaded = effectiveConfig({ config: old as any, warnings: [], sources: [], stamp: '' })
   expect(loaded.config.compact).toEqual({ enabled: true, at: 70 })
+  // One level down too: a `style` and `alerts` that lack a key.
+  const { icons: __, ...style } = DEFAULT_CONFIG.style
+  const { quota7d: ___, ...alerts } = DEFAULT_CONFIG.alerts
+  const nested = effectiveConfig({ config: { ...DEFAULT_CONFIG, style, alerts } as any, warnings: [], sources: [], stamp: '' })
+  expect(nested.config.style).toEqual(DEFAULT_CONFIG.style)
+  expect(nested.config.alerts).toEqual(DEFAULT_CONFIG.alerts)
+})
+
+test('pane sections the file leaves out are shown after the listed ones', () => {
+  const { config, warnings } = validate({ version: 1, pane: { sections: [{ id: 'agents', enabled: false }] } })
+  expect(config.pane.sections).toEqual([{ id: 'agents', enabled: false }, { id: 'context', enabled: true }, { id: 'cacheQuota', enabled: true }])
+  expect(warnings).toEqual([])
 })
 
 test('a $schema key is accepted', () => {

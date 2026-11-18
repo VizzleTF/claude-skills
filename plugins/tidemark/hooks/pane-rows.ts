@@ -42,6 +42,16 @@ export function paneRows(snap: Snapshot, sections: { id: SectionId; enabled: boo
   })
 }
 
+// What the band's colours and marks mean, under the sections.
+export const LEGEND: PaneRow[] = [
+  { head: 'Legend' },
+  row('colour', { text: 'low', tier: 2 }, { text: 'mid', tier: 6 }, { text: 'high', tier: 9 }, dim('share used, or growth')),
+  row('◆', dim('quota use runs ahead of the window')),
+  row('~', dim('estimate before the first response')),
+  row('↻', dim('time to the reset')),
+  row('+N', dim('widgets that did not fit the band')),
+]
+
 // The fill, the auto-compaction threshold and the tokens to go, /context's categories and the costliest MCP servers.
 function context(s: Snapshot): PaneRow[] {
   const ctx = s.ctx

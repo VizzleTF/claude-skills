@@ -16,13 +16,14 @@ export type ProbeOutcome = { ok: true; stdout?: string; text?: string; status?: 
 export const EMPTY_PROBES: ProbesState = {}
 
 // Fixed limits the config has no option for.
-const GIT_TIMEOUT_MS = 2_000
+const GIT_TIMEOUT_MS = 5_000
 const FETCH_TIMEOUT_MS = 15_000
 const GIT_ROOT_TTL_S = 60
 const PR_TIMEOUT_MS = 10_000
 const STATUS_TIMEOUT_MS = 5_000
 
-const GIT = ['git', '--no-optional-locks']
+// A repository's own `.git/config` could otherwise run a program on every refresh: an fsmonitor command or a hook.
+const GIT = ['git', '--no-optional-locks', '-c', 'core.fsmonitor=false', '-c', 'core.hooksPath=/dev/null']
 
 // The host of a remote URL: `git@host:o/r`, `https://host/o/r`, `ssh://git@host:22/o/r`.
 const remoteHost = (url: string) => /^(?:[a-z][a-z0-9+.-]*:\/\/)?(?:[^@/]+@)?([^/:]+)/i.exec(url.trim())?.[1]?.toLowerCase() ?? ''
@@ -46,30 +47,35 @@ export function planProbes(
   }
 
   const dir = items.find(i => i.widget === 'cwd' && opt(i, 'style') === 'project')
-  if (dir) run('gitRoot', GIT_ROOT_TTL_S, ['git', 'rev-parse', '--show-toplevel'], GIT_TIMEOUT_MS)
+  if (dir) run('gitRoot', GIT_ROOT_TTL_S, [...GIT, 'rev-parse', '--show-toplevel'], GIT_TIMEOUT_MS)
 
   // The PR widget needs the branch too, to drop a PR of the branch left.
-  const git = first('git')
+  // The terminal's and the desktop's git widgets may differ: each probe serves the most demanding of them.
+  const gits = items.filter(i => i.widget === 'git')
+  const git = gits.length > 0
   const pr = first('gitPr')
   if (git || pr) {
-    const ttl = trigger === 'turn' ? 0 : git ? opt<number>(git, 'ttl') : (WIDGET_OPTIONS.git.ttl!.default as number)
+    const ttl = trigger === 'turn' ? 0 : git ? Math.min(...gits.map(g => opt<number>(g, 'ttl'))) : (WIDGET_OPTIONS.git.ttl!.default as number)
     // A fetch that landed since the last status makes the status due: it holds the new ahead/behind.
     const fetched = (probes.gitFetch?.at ?? -Infinity) > (probes.gitStatus?.at ?? -Infinity)
     run('gitStatus', fetched ? 0 : ttl, [...GIT, 'status', '--porcelain=v2', '--branch'], GIT_TIMEOUT_MS)
     // The remote's side of ahead/behind is only as fresh as the last fetch; a credential prompt fails instead of waiting.
-    const every = git ? opt<number>(git, 'fetch') : 0
-    if (git && every > 0 && opt(git, 'showSync')) run('gitFetch', every, [...GIT, 'fetch', '--quiet', '--no-tags'], FETCH_TIMEOUT_MS, undefined, { GIT_TERMINAL_PROMPT: '0' })
-    if (git && opt(git, 'showDiff')) run('gitDiff', ttl, [...GIT, 'diff', '--numstat', 'HEAD'], GIT_TIMEOUT_MS)
+    const fetches = gits.filter(g => opt(g, 'showSync')).map(g => opt<number>(g, 'fetch')).filter(n => n > 0)
+    const every = fetches.length > 0 ? Math.min(...fetches) : 0
+    if (every > 0) run('gitFetch', every, [...GIT, '-c', 'gc.auto=0', '-c', 'maintenance.auto=false', 'fetch', '--quiet', '--no-tags', '--no-recurse-submodules'], FETCH_TIMEOUT_MS, undefined, { GIT_TERMINAL_PROMPT: '0' })
+    if (gits.some(g => opt(g, 'showDiff'))) run('gitDiff', ttl, [...GIT, 'diff', '--numstat', 'HEAD'], GIT_TIMEOUT_MS)
   }
 
   if (pr) {
     const ttl = opt<number>(pr, 'ttl')
-    run('gitRemote', ttl, ['git', 'remote', 'get-url', 'origin'], GIT_TIMEOUT_MS)
+    run('gitRemote', ttl, [...GIT, 'remote', 'get-url', 'origin'], GIT_TIMEOUT_MS)
     const remote = probes.gitRemote?.stdout
     if (remote) {
       const host = remoteHost(remote)
-      const github = host === 'github.com' || opt<string[]>(pr, 'githubHosts').some(h => h.toLowerCase() === host)
-      run('gitPr', ttl, github ? ['gh', 'pr', 'view', '--json', 'number,state,statusCheckRollup,headRefName,url'] : ['glab', 'mr', 'view', '-F', 'json'], PR_TIMEOUT_MS)
+      // gh and glab send their login to the host; the remote URL comes with the repository, so only listed hosts get a call.
+      const listed = (name: string, own: string) => host === own || opt<string[]>(pr, name).some(h => h.toLowerCase() === host)
+      if (listed('githubHosts', 'github.com')) run('gitPr', ttl, ['gh', 'pr', 'view', '--json', 'number,state,statusCheckRollup,headRefName,url'], PR_TIMEOUT_MS)
+      else if (listed('gitlabHosts', 'gitlab.com')) run('gitPr', ttl, ['glab', 'mr', 'view', '-F', 'json'], PR_TIMEOUT_MS)
     }
   }
 
@@ -85,11 +91,27 @@ export function planProbes(
   return out
 }
 
+// What of a program's output the widgets read, so a diff of thousands of files is not kept in state and
+// summed again on every draw: the diff as its totals, a command's first line.
+function kept(key: string, stdout: string): string {
+  if (key === 'gitDiff') {
+    let add = 0, del = 0
+    for (const [a, d] of stdout.split('\n').map(l => l.split('\t'))) {
+      add += Number(a) || 0
+      del += Number(d) || 0
+    }
+    return add + del > 0 ? `${add}\t${del}\t*\n` : ''
+  }
+  if (key.startsWith('command:')) return stdout.split('\n')[0]!
+  return stdout
+}
+
 // One finished request folded into the state. A failure (an HTTP error status included) keeps the last
 // result beside the error; a success replaces both.
 export function applyProbeResult(probes: ProbesState, key: string, outcome: ProbeOutcome, now: number): ProbesState {
   if (outcome.ok && !(outcome.status !== undefined && outcome.status >= 400)) {
     const { ok: _, ...result } = outcome
+    if (result.stdout !== undefined) result.stdout = kept(key, result.stdout)
     return { ...probes, [key]: { at: now, ...result } }
   }
   const error = outcome.ok ? `http ${outcome.status}` : outcome.error

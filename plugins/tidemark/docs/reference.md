@@ -15,7 +15,7 @@
 - Limits
 - Troubleshooting
 
-This reference covers tidemark 0.1.10. The config is read from two JSON files, the project file over the global one. A top-level key in the project file replaces the same key of the global file whole: to add one widget in a project, repeat the whole `lines` in the project file. Until a file exists, the default config applies; `Save` in the editor creates the file and its directories. A hand edit is picked up on the next prompt or within 30 seconds. An unknown key, widget or option and an invalid value are dropped, and the editor shows a warning. A file that does not parse is skipped: the band shows a dim `⚠ config`, and the editor shows the path and the error.
+This reference covers tidemark 0.5.0. The config is read from two JSON files, the project file over the global one. A top-level key in the project file replaces the same key of the global file whole: to add one widget in a project, repeat the whole `lines` in the project file. The options `command.command`, `gitPr.githubHosts` and `gitPr.gitlabHosts` are read from the global file only: in a cloned repository's project file they could run a program or send a host's credentials elsewhere. A project file that sets them gets a warning. Until a file exists, the default config applies; `Save` in the editor creates the file and its directories. A hand edit is picked up on the next prompt or within 30 seconds. An unknown key, widget or option and an invalid value are dropped, and the editor shows a warning. A file that does not parse is skipped: the band shows a dim `⚠ config`, and the editor shows the path and the error.
 
 ## Commands
 
@@ -44,7 +44,7 @@ This reference covers tidemark 0.1.10. The config is read from two JSON files, t
 | `style.custom` | string | none | the separator when `separator: "custom"` |
 | `style.icons` | string | `nerd` | `text`, `nerd` (Nerd Font glyphs instead of labels and powerline arrows; the terminal only, the desktop app always shows text labels) |
 | `style.buttons` | boolean | `true` | `false` draws the presses and links of the Widgets table as plain text |
-| `pane.sections` | array of `{id, enabled}` | all three sections on | `id`: `context`, `cacheQuota`, `agents`; the array order is the section order |
+| `pane.sections` | array of `{id, enabled}` | all three sections on | `id`: `context`, `cacheQuota`, `agents`; the array order is the section order; a section left out is shown after the listed ones |
 | `alerts.enabled` | boolean | `false` | turns on a toast when a figure crosses its threshold upwards |
 | `alerts.context` | number, % used | `80` | 0–100 |
 | `alerts.quota5h` | number, % used | `90` | 0–100 |
@@ -82,11 +82,11 @@ A widget in `lines` is a name (`"git"`) or an object with these keys:
 |---|---|---|---|
 | `widget` | string | required | a name from the Widgets table |
 | `enabled` | boolean | `true` | |
-| `label` | string or `null` | `ctx`, `cache`, `5h`, `7d`, `⏱`, `⇣`; the other widgets have none | `null` removes the label |
+| `label` | string or `null` | `ctx`, `cache`, `5h`, `7d`, `⏱`, `compacted`; the other widgets have none | `null` removes the label |
 | `priority` | integer | the widget's priority from the Widgets table | 0–1000 |
 | `options` | object | the default options | keys from the Widget options table |
 
-While a row is wider than the window, the visible widget with the lowest `priority` (the rightmost on a tie) loses its next detail, then disappears. The last widget left is cut with `…`. A widget with nothing to show is hidden.
+While a row is wider than the window, the visible widget with the lowest `priority` (the rightmost on a tie) loses its next detail, then disappears. The last widget left is cut with `…`. A widget with nothing to show is hidden. A dim `+N` at the end of the row counts the widgets that went.
 
 ## Widgets
 
@@ -102,7 +102,7 @@ While a row is wider than the window, the visible widget with the lowest `priori
 | `agents` | a spinner per running subagent, up to three, then `+N` | 20 |
 | `cwd` | project name, directory name, `~/…/a/b` or the full path | 20 |
 | `sessionTime` | `⏱ 1h12m` since the conversation started | 20 |
-| `compactions` | `⇣2` | 20 |
+| `compactions` | `compacted 2` | 20 |
 | `tokenSpeed` | `42 t/s` for the last turn | 20 |
 | `goal` | `goal <text>` from `/tidemark-goal`, cut to 24 characters when narrow; hidden until set | 20 |
 | `project` | `project <text>` from `/tidemark-project`, cut to 24 characters when narrow; hidden until set | 20 |
@@ -113,7 +113,7 @@ While a row is wider than the window, the visible widget with the lowest `priori
 | `actions` | a small `⚙` button that opens `/tidemark-config`; hidden until the session reports | never narrowed away; goes after every other widget |
 | `flex` | nothing; splits the row into groups: one `flex` sends the widgets after it to the right edge, two put the widgets between them in the middle | never narrowed away |
 
-Figures are coloured on a 10-colour scale from blue to red by the used share.
+Figures are coloured on a 10-colour scale from blue to red by the used share. The `/tidemark` pane ends with a legend of the colours and marks. With the `NO_COLOR` environment variable set, the terminal draws the band and the pane without colours and `powerline` as `pipe`.
 
 Some parts of the band are buttons or links. A click works on the desktop and in the fullscreen terminal; otherwise ctrl+x tab focuses the band, Tab moves between buttons and Enter presses. `style.buttons: false` turns them back into text.
 
@@ -125,6 +125,7 @@ Some parts of the band are buttons or links. A click works on the desktop and in
 | the model name, the effort | the next model of `cycle`, the next effort level (see `model` above) |
 | `/compact` in `compact` | compacts the conversation |
 | `⚙` in `actions` | opens `/tidemark-config` |
+| `+N` at the end of a row | opens the `/tidemark` pane |
 | the `gitPr` number | opens the PR in the browser |
 | the `claudeStatus` word | opens status.claude.com |
 
@@ -174,12 +175,13 @@ A row takes its first two `flex`; any other is dropped. The groups spread across
 | `cwd` | `style` | string | `project` | `project`, `basename`, `short`, `full` |
 | `actions` | `config` | boolean | `true` | the `⚙` button |
 | `compactions` | `hideZero` | boolean | `true` | |
-| `command` | `command` | string | empty | run as `sh -c <command>` |
+| `command` | `command` | string | empty | run as `sh -c <command>`; the global file only |
 | `command` | `maxWidth` | integer | `40` | 4–200 |
 | `command` | `timeout` | integer, ms | `2000` | 100–30000 |
 | `command` | `ttl` | integer, s | `10` | 1–3600 |
 | `claudeStatus` | `ttl` | integer, s | `300` | 30–3600 |
-| `gitPr` | `githubHosts` | array of strings | empty | GitHub hosts besides `github.com` |
+| `gitPr` | `githubHosts` | array of strings | empty | GitHub hosts besides `github.com`; the global file only |
+| `gitPr` | `gitlabHosts` | array of strings | empty | GitLab hosts besides `gitlab.com`; the global file only |
 | `gitPr` | `ttl` | integer, s | `120` | 10–3600 |
 
 `cache.ttl: auto` takes the lifetime a model switch, a resume or a pause over five minutes proved. Until then it takes the first one set: `FORCE_PROMPT_CACHING_5M`, `CLAUDE_CODE_PROMPT_CACHE_TTL`, the `promptCacheTtl` setting, `ENABLE_PROMPT_CACHING_1H`. With none set, it takes one hour on a subscription and five minutes otherwise. `5m` or `1h` pins the lifetime, for the cache alert too.
@@ -200,14 +202,14 @@ A preset is picked in the editor, changes the draft and is written on `Save`.
 
 ## External runs
 
-A disabled widget runs nothing. The default band runs `git` locally and `git fetch` against the remote every 5 minutes.
+A disabled widget runs nothing. The default band runs `git` locally and `git fetch` against the remote every 5 minutes. The 30-second tick runs nothing after 10 minutes without a turn. Every `git` run takes no optional locks and sets `core.fsmonitor=false` and `core.hooksPath=/dev/null`, so the repository's own config starts no program.
 
 | Widget | Runs | When |
 |---|---|---|
 | `git` | `git status`, `git diff --numstat HEAD` | after each turn and on the 30-second tick, once `ttl` has passed |
-| `git` with `showSync` | `git fetch --quiet --no-tags` with `GIT_TERMINAL_PROMPT=0`: updates the remote refs, a credential prompt fails instead of waiting | every `fetch` seconds |
+| `git` with `showSync` | `git fetch --quiet --no-tags --no-recurse-submodules` without automatic garbage collection, with `GIT_TERMINAL_PROMPT=0`: updates the remote refs, a credential prompt fails instead of waiting | every `fetch` seconds |
 | `cwd` with `style: "project"` | `git rev-parse --show-toplevel` | at most once a minute |
-| `gitPr` | `git status`, `git remote get-url origin`, then `gh pr view` for `github.com` and `githubHosts` or `glab mr view` for the rest | once `ttl` has passed |
+| `gitPr` | `git status`, `git remote get-url origin`, then `gh pr view` for `github.com` and `githubHosts`, `glab mr view` for `gitlab.com` and `gitlabHosts`; any other host runs neither | once `ttl` has passed |
 | `command` | `sh -c <command>` | once `ttl` has passed |
 | `claudeStatus` | HTTPS GET to `status.claude.com` | once `ttl` has passed |
 
@@ -219,7 +221,7 @@ Besides that, tidemark reads its config files and writes two kinds of file: a co
 |---|---|
 | Colours | a fixed scale; no themes or colour overrides |
 | Width | one cell per code point; emoji and other wide glyphs are undercounted |
-| Timeouts | `git` 2 s, `git fetch` 15 s, `gh` and `glab` 10 s, the status page 5 s; not configurable |
+| Timeouts | `git` 5 s, `git fetch` 15 s, `gh` and `glab` 10 s, the status page 5 s; not configurable |
 | Surfaces | VS Code and mobile do not draw the band. Panes open on both; on mobile `/tidemark-config`, `/tidemark-goal` and `/tidemark-project` without text show a note instead of fields |
 
 ## Troubleshooting

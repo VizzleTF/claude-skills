@@ -110,7 +110,7 @@ test('growth keeps the last 8 totals and restarts on a compaction, /clear and an
   expect(await s.field('history')).toEqual([])
   expect(await s.field('compactions')).toBe(1)
   expect(await s.field('compactionLog')).toEqual([{ before: 400_000, after: 30_000 }])
-  await s.clock.advance(100)
+  await s.clock.advance(500)
   expect(await s.field('ctx')).toEqual({ window: WINDOW, model: MODEL, estimate: 13_689 })
   // A subagent's compaction and a precompute are not counted.
   await $.session.compact({ trigger: 'auto', agentId: 'a1', messages: MSG })
@@ -126,7 +126,7 @@ test('growth keeps the last 8 totals and restarts on a compaction, /clear and an
   await $.classic.SessionStart({ source: 'clear' })
   expect(await s.field('history')).toEqual([])
   expect(await s.field('compactions')).toBe(0)
-  expect(await s.field('startedAt')).toBe(NOW + 5 * MIN + 100)
+  expect(await s.field('startedAt')).toBe(NOW + 5 * MIN + 500)
   expect(await s.field('ctx')).toEqual({ window: WINDOW, model: MODEL, estimate: 9_000 })
 })
 
@@ -281,7 +281,7 @@ test('goal and project note: by command or the field it opens; the note from dis
   on('ui.close', ($, e) => { closed.push(e.id); return { value: undefined } })
   const w = world()
   const s = await start($, on, w, { goals: { s1: 'fix the cache', old: 'gone' } })
-  await s.clock.advance(100)
+  await s.clock.advance(500)
   expect(await s.field('project')).toBe('tidemark')
   expect(await s.field('goal')).toBe('fix the cache')
 

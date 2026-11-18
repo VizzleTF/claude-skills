@@ -25,6 +25,18 @@ export type Span = {
   // Drawn as a link that opens this URL.
   href?: string
 }
+// Escape sequences and control characters (C0, DEL, C1) in text from outside (a branch name, a note, a
+// command's output, a PR's URL) would reach the terminal as commands: a clipboard write, a title, a cursor move.
+const CONTROL = /(?:\x1b\[|\x9b)[0-?]*[ -/]*[@-~]|(?:\x1b\]|\x9d)[^\x07\x1b\x9c]*(?:\x07|\x1b\\|\x9c)|\x1b[@-Z\\-_]|[\x00-\x1f\x7f-\x9f]/g
+export const clean = (text: string) => text.replace(CONTROL, '')
+
+// A span safe to draw: its text cleaned, a link kept only when it is a plain https URL.
+export function safeSpan(s: Span): Span {
+  const { href, ...rest } = s
+  const ok = href !== undefined && /^https:\/\/[^\s\x00-\x1f\x7f-\x9f]+$/i.test(href)
+  return { ...rest, text: clean(s.text), ...(ok && { href }) }
+}
+
 // A widget drawn one way; a widget gives its variants from the fullest to the narrowest.
 export type Variant = Span[]
 
@@ -186,7 +198,7 @@ export function quota(def: WidgetDef, input: WidgetInput, l: TidemarkLimit | und
   if (!w) return []
   const p = Math.trunc(w.limit.percentUsed)
   const left = opt<string>(def, input, 'mode') === 'left'
-  const shown = left ? 100 - p : p
+  const shown = left ? Math.max(0, 100 - p) : p
   const live = input.snap.limitsLive
   const ink: Partial<Span> = live ? { tier: pctTier(p) } : { role: 'dim' }
   const pace = live && opt<boolean>(def, input, 'showPace') && overPace(p, w.resets, quotaWindow(w.limit.kind, input.snap.model).ms, input.now)

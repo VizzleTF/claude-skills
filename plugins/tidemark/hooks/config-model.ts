@@ -39,7 +39,7 @@ export const WIDGET_OPTIONS: Record<WidgetId, Record<string, OptionSpec>> = {
   tokenSpeed: {},
   command: { command: { kind: 'string', default: '' }, maxWidth: int(4, 200, 40), timeout: int(100, 30_000, 2000), ttl: int(1, 3600, 10) },
   claudeStatus: { ttl: int(30, 3600, 300) },
-  gitPr: { githubHosts: { kind: 'strings', default: [] }, ttl: int(10, 3600, 120) },
+  gitPr: { githubHosts: { kind: 'strings', default: [] }, gitlabHosts: { kind: 'strings', default: [] }, ttl: int(10, 3600, 120) },
   flex: {},
   compact: {},
   actions: { config: bool(true) },
@@ -52,6 +52,8 @@ export const ICONS = ['text', 'nerd'] as const
 export const MAX_LINES = 3
 // The keys a `desktop` section may hold: what the desktop app's band and pane draw.
 export const SURFACE_KEYS = ['lines', 'style', 'pane', 'compact'] as const
+// The keys a config file holds besides `$schema` and `version`.
+export const CONFIG_KEYS = ['lines', 'style', 'pane', 'alerts', 'compact', 'desktop'] as const
 // The highest value of each alert threshold: percentages, and the cache warning in seconds.
 export const ALERT_MAX = { context: 100, quota5h: 100, quota7d: 100, cacheSeconds: 3600 } as const
 // The context share from which the band offers `/compact`: a heuristic, not a documented figure:
@@ -177,7 +179,8 @@ export function validate(raw: unknown): { config: Config; warnings: string[] } {
           got.push({ id: s.id as TidemarkSectionId, enabled: s.enabled !== false })
         } else warn(`pane: invalid section ${JSON.stringify(s)}`)
       }
-      pane = { sections: got }
+      // A section the file does not list, such as one a later version adds, is shown after the listed ones.
+      pane = { sections: [...got, ...SECTION_IDS.filter(id => !seen.has(id)).map(id => ({ id, enabled: true }))] }
     }
   }
 
@@ -217,7 +220,7 @@ export function validate(raw: unknown): { config: Config; warnings: string[] } {
   }
 
   for (const key of Object.keys(src)) {
-    if (!['$schema', 'version', 'lines', 'style', 'pane', 'alerts', 'compact', 'desktop'].includes(key)) warn(`unknown key ${key}`)
+    if (key !== '$schema' && key !== 'version' && !CONFIG_KEYS.includes(key as never)) warn(`unknown key ${key}`)
   }
   return { config: { version: 1, lines, style, pane, alerts, compact, ...(desktop && { desktop }) }, warnings }
 }
@@ -249,12 +252,31 @@ export function configPathsFrom(env: { xdg?: string; home?: string; cwd?: string
 
 export type ConfigPaths = { global: string | null; project: string | null }
 
+// Options a project file may not set: it comes with the repository, so it could run a program or send a
+// gh/glab login to a host of its choosing. These come only from the global file.
+const GLOBAL_ONLY: Partial<Record<string, string[]>> = { command: ['command'], gitPr: ['githubHosts', 'gitlabHosts'] }
+
+function dropGlobalOnly(raw: Record<string, unknown>, path: string, warnings: string[]) {
+  for (const lines of [raw.lines, isObject(raw.desktop) ? raw.desktop.lines : undefined]) {
+    if (!Array.isArray(lines)) continue
+    for (const item of lines.flat()) {
+      if (!isObject(item) || !isObject(item.options)) continue
+      for (const k of GLOBAL_ONLY[String(item.widget)] ?? []) {
+        if (!(k in item.options)) continue
+        delete item.options[k]
+        warnings.push(`${path}: ${String(item.widget)}.${k} is read only from the global config`)
+      }
+    }
+  }
+}
+
 // The files' texts (global first, a missing file left out) to the config in effect: the project file's
 // top-level keys over the global's, validated. A file that does not parse is skipped and named in `error`.
-export function loadFromTexts(files: ({ path: string; text: string } | { path: string; error: string })[]): LoadedConfig {
+export function loadFromTexts(files: ({ path: string; text: string; project?: boolean } | { path: string; error: string })[]): LoadedConfig {
   let merged: Record<string, unknown> = {}
   const sources: string[] = []
   const errors: string[] = []
+  const dropped: string[] = []
   for (const file of files) {
     const { path } = file
     let raw: unknown
@@ -273,11 +295,12 @@ export function loadFromTexts(files: ({ path: string; text: string } | { path: s
       errors.push(`${path}: unsupported version ${JSON.stringify(raw.version)}`)
       continue
     }
+    if ('project' in file && file.project) dropGlobalOnly(raw, path, dropped)
     merged = { ...merged, ...raw }
     sources.push(path)
   }
   const { config, warnings } = validate(merged)
-  return { config, warnings, sources, ...(errors.length > 0 && { error: errors.join('; ') }) }
+  return { config, warnings: [...dropped, ...warnings], sources, ...(errors.length > 0 && { error: errors.join('; ') }) }
 }
 
 // What Save writes to `target`, so each file keeps to its own keys (the project file's over the global's):
@@ -286,9 +309,8 @@ export function loadFromTexts(files: ({ path: string; text: string } | { path: s
 // from the global file. `globalOnly` is the global file alone, validated.
 export function saveContent(draft: Config, loaded: Config, globalOnly: Config, projectKeys: string[], target: 'global' | 'project'): Record<string, unknown> {
   const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b)
-  const keys = ['lines', 'style', 'pane', 'alerts', 'compact', 'desktop'] as const
   const out: Record<string, unknown> = { $schema: SCHEMA_URL, version: 1 }
-  for (const k of keys) {
+  for (const k of CONFIG_KEYS) {
     if (target === 'global') out[k] = projectKeys.includes(k) && same(draft[k], loaded[k]) ? globalOnly[k] : draft[k]
     else if (projectKeys.includes(k) || !same(draft[k], globalOnly[k])) out[k] = draft[k]
   }
@@ -302,6 +324,8 @@ export const configText = (config: Config | Record<string, unknown>) => `${JSON.
 export function effectiveConfig(s: TidemarkConfigState | null): LoadedConfig {
   if (!s) return { config: DEFAULT_CONFIG, warnings: [], sources: [] }
   const { stamp: _, ...loaded } = s
-  // Session state outlives a reload of the mod, so a config an older version stored lacks newer keys.
-  return { ...loaded, config: { ...DEFAULT_CONFIG, ...loaded.config } }
+  // Session state outlives a reload of the mod, so a config an older version stored lacks newer keys, at
+  // the top level or inside `style`, `alerts` and `compact`.
+  const c = loaded.config
+  return { ...loaded, config: { ...DEFAULT_CONFIG, ...c, style: { ...DEFAULT_CONFIG.style, ...c.style }, alerts: { ...DEFAULT_CONFIG.alerts, ...c.alerts }, compact: { ...DEFAULT_CONFIG.compact, ...c.compact } } }
 }

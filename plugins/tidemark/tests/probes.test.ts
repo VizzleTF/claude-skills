@@ -33,19 +33,19 @@ test('no context figure yet (ctx null): command and git still planned', () => {
 })
 
 test('cwd as the project name asks for the git root', () => {
-  expect(argv(plan(cfg('cwd')))).toEqual(['git rev-parse --show-toplevel'])
+  expect(argv(plan(cfg('cwd')))).toEqual(['git --no-optional-locks -c core.fsmonitor=false -c core.hooksPath=/dev/null rev-parse --show-toplevel'])
 })
 
-test('git: status and diff with a 2 s timeout; diff only when shown', () => {
+test('git: status and diff with a 5 s timeout; diff only when shown', () => {
   const reqs = plan(cfg({ widget: 'git', options: { fetch: 0 } }))
-  expect(argv(reqs)).toEqual(['git --no-optional-locks status --porcelain=v2 --branch', 'git --no-optional-locks diff --numstat HEAD'])
-  expect(reqs.every(r => r.timeoutMs === 2000)).toBe(true)
-  expect(argv(plan(cfg({ widget: 'git', options: { showDiff: false, fetch: 0 } })))).toEqual(['git --no-optional-locks status --porcelain=v2 --branch'])
+  expect(argv(reqs)).toEqual(['git --no-optional-locks -c core.fsmonitor=false -c core.hooksPath=/dev/null status --porcelain=v2 --branch', 'git --no-optional-locks -c core.fsmonitor=false -c core.hooksPath=/dev/null diff --numstat HEAD'])
+  expect(reqs.every(r => r.timeoutMs === 5000)).toBe(true)
+  expect(argv(plan(cfg({ widget: 'git', options: { showDiff: false, fetch: 0 } })))).toEqual(['git --no-optional-locks -c core.fsmonitor=false -c core.hooksPath=/dev/null status --porcelain=v2 --branch'])
 })
 
 test('git: a fetch every `fetch` seconds without credential prompts, off at 0 or without showSync; a landed fetch makes the status due', () => {
   const fetch = plan(cfg('git')).find(r => r.key === 'gitFetch')!
-  expect(argv([fetch])).toEqual(['git --no-optional-locks fetch --quiet --no-tags'])
+  expect(argv([fetch])).toEqual(['git --no-optional-locks -c core.fsmonitor=false -c core.hooksPath=/dev/null -c gc.auto=0 -c maintenance.auto=false fetch --quiet --no-tags --no-recurse-submodules'])
   expect(fetch).toMatchObject({ timeoutMs: 15_000, env: { GIT_TERMINAL_PROMPT: '0' } })
   expect(plan(cfg({ widget: 'git', options: { showSync: false } })).some(r => r.key === 'gitFetch')).toBe(false)
   const fresh = { gitStatus: done('', NOW - 3_000), gitDiff: done('', NOW - 3_000), gitFetch: done('', NOW - 60_000) }
@@ -62,12 +62,14 @@ test('git: fresh within its TTL on a tick, refreshed on turn.complete', () => {
   expect(plan(cfg('git'), probes, 'tick', NOW + 2_000)).toHaveLength(2)
 })
 
-test('gitPr: the remote first, then gh for github.com and listed hosts, glab otherwise', () => {
-  expect(argv(plan(cfg('gitPr')))).toEqual(['git --no-optional-locks status --porcelain=v2 --branch', 'git remote get-url origin'])
+test('gitPr: the remote first, then gh or glab only for their own or listed hosts', () => {
+  expect(argv(plan(cfg('gitPr')))).toEqual(['git --no-optional-locks -c core.fsmonitor=false -c core.hooksPath=/dev/null status --porcelain=v2 --branch', 'git --no-optional-locks -c core.fsmonitor=false -c core.hooksPath=/dev/null remote get-url origin'])
   const pr = (url: string, options = {}) => argv(plan(cfg({ widget: 'gitPr', options }), { gitRemote: done(`${url}\n`) }).filter(r => r.key === 'gitPr'))
   expect(pr('git@github.com:o/r.git')).toEqual(['gh pr view --json number,state,statusCheckRollup,headRefName,url'])
   expect(pr('https://gitlab.com/o/r.git')).toEqual(['glab mr view -F json'])
   expect(pr('ssh://git@ghe.corp:22/o/r', { githubHosts: ['ghe.corp'] })).toEqual(['gh pr view --json number,state,statusCheckRollup,headRefName,url'])
+  expect(pr('https://git.corp/o/r.git')).toEqual([])
+  expect(pr('https://git.corp/o/r.git', { gitlabHosts: ['git.corp'] })).toEqual(['glab mr view -F json'])
 })
 
 test('gitPr: within its two-minute TTL the PR is not asked again, even on a turn; the branch is', () => {
@@ -225,9 +227,9 @@ test('claudeStatus: a failed check shows a dim ? beside the last known status', 
 // against mocked processes and HTTP, and the band shows their results.
 const CONFIG = '/u/dev/.config/tidemark/config.json'
 const OUTPUT: Record<string, string> = {
-  'git --no-optional-locks status --porcelain=v2 --branch': STATUS('main', undefined, '? x\n'),
-  'git --no-optional-locks diff --numstat HEAD': '4\t1\ta.ts\n',
-  'git remote get-url origin': 'git@github.com:o/r.git\n',
+  'git --no-optional-locks -c core.fsmonitor=false -c core.hooksPath=/dev/null status --porcelain=v2 --branch': STATUS('main', undefined, '? x\n'),
+  'git --no-optional-locks -c core.fsmonitor=false -c core.hooksPath=/dev/null diff --numstat HEAD': '4\t1\ta.ts\n',
+  'git --no-optional-locks -c core.fsmonitor=false -c core.hooksPath=/dev/null remote get-url origin': 'git@github.com:o/r.git\n',
   'gh pr view --json number,state,statusCheckRollup,headRefName,url': JSON.stringify({ number: 7, state: 'OPEN', statusCheckRollup: [run_('SUCCESS')] }),
 }
 
@@ -270,7 +272,7 @@ test('engine: enabled probes run on turn.complete and the band shows git, the PR
   await $.turn.complete({ turnId: 't2', answer: '', durationMs: 1, isAborted: false, reason: 'answer' })
   // The PR waits for the remote, so it runs on the second turn; a third gives its unawaited result time to land.
   await $.turn.complete({ turnId: 't3', answer: '', durationMs: 1, isAborted: false, reason: 'answer' })
-  expect(calls).toContain('git --no-optional-locks status --porcelain=v2 --branch')
+  expect(calls).toContain('git --no-optional-locks -c core.fsmonitor=false -c core.hooksPath=/dev/null status --porcelain=v2 --branch')
   expect(calls).toContain('gh pr view --json number,state,statusCheckRollup,headRefName,url')
   expect(calls).toContain('https://status.claude.com/api/v2/summary.json')
   const ui = await $.ui.mount({
@@ -288,4 +290,12 @@ test('a widget only the desktop app shows still gets its probe', () => {
   const config = validate({ version: 1, lines: [['context']], desktop: { lines: [['git']] } }).config
   expect(plan(config).some(r => r.key.startsWith('git'))).toBe(true)
   expect(plan(cfg('context')).some(r => r.key.startsWith('git'))).toBe(false)
+})
+
+test('stored output: a diff as its totals, a command as its first line, the rest as is', () => {
+  const kept = (key: string, stdout: string) => applyProbeResult(EMPTY_PROBES, key, { ok: true, stdout }, NOW)[key]!.stdout
+  expect(kept('gitDiff', '10\t2\tsrc/a.ts\n2\t1\tsrc/b.ts\n-\t-\timg.png\n')).toBe('12\t3\t*\n')
+  expect(kept('gitDiff', '')).toBe('')
+  expect(kept('command:x', 'one\ntwo\n')).toBe('one')
+  expect(kept('gitStatus', '# a\n# b\n')).toBe('# a\n# b\n')
 })

@@ -1,5 +1,7 @@
 # 0003. Configure through an in-pane editor and JSON files
 
+Partly superseded by [0006](0006-programs-and-hosts-from-the-global-config.md).
+
 ## Context
 
 The user asked for configuration on the level of ccstatusline, which ships a separate TUI and an npm package. The hooks engine allows no npm dependencies and no build step, and it offers panes with `Select`, `Input` and live rendering.

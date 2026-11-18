@@ -55,21 +55,28 @@ test('fit: details go first, then widgets by priority, context last, then cut wi
     if (seen.at(-1) !== t) seen.push(t!)
   }
   const ctx = 'ctx ■■■□□□□□□□ 27% 271k/1M ▁▁▃█▁▇▁ ↑3.4k'
-  expect(seen.slice(0, 13)).toEqual([
+  // Gone widgets are counted in `+N`, which yields before the next widget goes.
+  expect(seen.slice(0, 17)).toEqual([
     `${ctx} │ cache warm 38m │ 5h 42% ↻ 2h34m │ 7d 63% ↻ 2d7h │ opus 5.5 · high`,
     `${ctx} │ cache warm 38m │ 5h 42% ↻ 2h34m │ 7d 63% ↻ 2d7h │ opus 5.5`,
-    `${ctx} │ cache warm 38m │ 5h 42% ↻ 2h34m │ 7d 63% ↻ 2d7h`,
+    `${ctx} │ cache warm 38m │ 5h 42% ↻ 2h34m │ 7d 63% ↻ 2d7h │ +1`,
+    `${ctx} │ cache warm 38m │ 5h 42% ↻ 2h34m │ 7d 63% │ +1`,
     `${ctx} │ cache warm 38m │ 5h 42% ↻ 2h34m │ 7d 63%`,
-    `${ctx} │ cache warm 38m │ 5h 42% ↻ 2h34m`,
+    `${ctx} │ cache warm 38m │ 5h 42% ↻ 2h34m │ +2`,
+    `${ctx} │ cache warm │ 5h 42% ↻ 2h34m │ +2`,
     `${ctx} │ cache warm │ 5h 42% ↻ 2h34m`,
-    `${ctx} │ 5h 42% ↻ 2h34m`,
+    `${ctx} │ 5h 42% ↻ 2h34m │ +3`,
+    `${ctx} │ 5h 42% │ +3`,
     `${ctx} │ 5h 42%`,
-    ctx,
-    'ctx ■■■□□□□□□□ 27% 271k/1M',
-    'ctx ■■■□□□□□□□ 27%',
+    `${ctx} │ +4`,
+    'ctx ■■■□□□□□□□ 27% 271k/1M │ +4',
+    'ctx ■■■□□□□□□□ 27% │ +4',
+    'ctx 27% │ +4',
     'ctx 27%',
     'ctx 2…',
   ])
+  const marker = buildLines(FIGURES, SNAP, {}, 46, NOW)[0]!.at(-1)!
+  expect(marker).toEqual({ widget: 'hidden', spans: [{ text: '+4', role: 'dim', press: 'cache' }] })
   expect(seen.at(-1)).toBe('ctx …')
 })
 
@@ -84,7 +91,7 @@ test('the config button stays at any width and whatever its priority', () => {
 
 test('a priority keeps a widget longer', () => {
   const config = { ...PLAIN, lines: [[{ widget: 'context' as const }, { widget: 'model' as const, priority: 200 }]] }
-  expect(texts(buildLines(config, SNAP, {}, 20, NOW))).toEqual(['opus 5.5 · high'])
+  expect(texts(buildLines(config, SNAP, {}, 20, NOW))).toEqual(['opus 5.5 · high │ +1'])
 })
 
 test('a config error adds a dim ⚠ config at the end; an empty snapshot draws nothing', () => {
@@ -101,6 +108,12 @@ test('flex splits a line: empty segments in their place, kept while narrowing; a
   expect(line.map(s => s.widget)).toEqual(['context', 'flex', 'quota5h', 'flex', 'cache'])
   expect(line[1]!.spans).toEqual([])
   // Narrowed until context alone is left, the flex segment stays.
-  expect(buildLines(cfg([['context', 'flex', 'quota5h']]), SNAP, {}, 40, NOW)[0]!.map(s => s.widget)).toEqual(['context', 'flex'])
+  expect(buildLines(cfg([['context', 'flex', 'quota5h']]), SNAP, {}, 40, NOW)[0]!.map(s => s.widget)).toEqual(['context', 'flex', 'hidden'])
   expect(buildLines(cfg([['flex']]), SNAP, {}, 200, NOW)).toEqual([])
+})
+
+test('a flex takes one cell and no separators: a line that fits exactly keeps every widget', () => {
+  const two = { ...PLAIN, lines: [[{ widget: 'model' as const }, { widget: 'flex' as const }, { widget: 'model' as const }]] }
+  const width = 'opus 5.5 · high'.length * 2 + 1
+  expect(buildLines(two, SNAP, {}, width, NOW)[0]!.filter(s => s.widget === 'model').length).toBe(2)
 })

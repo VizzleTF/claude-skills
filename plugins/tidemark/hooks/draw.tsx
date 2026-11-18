@@ -7,6 +7,7 @@ import type { TidemarkTheme } from '../types'
 import type { Line, Segment, Style } from './layout'
 import { separatorText } from './layout'
 import type { Press, Span } from './widgets'
+import { clean, safeSpan } from './widgets/kit'
 import { SPINNERS, spinnerSvg } from './draw-spinner'
 
 type Ink = { dark: string; light: string }
@@ -54,6 +55,15 @@ export function colorOf(s: Span, theme: TidemarkTheme): string | undefined {
   if (s.role === 'money') return MONEY[mode(theme)]
   const tier = s.tier ?? (s.role === 'activity' ? ACTIVITY_TIER : undefined)
   return tier === undefined ? undefined : tierColor(tier, theme)
+}
+
+// NO_COLOR (no-color.org) on the terminal: spans lose their colours, powerline arrows become pipes.
+export const plain = ({ tier: _t, spark: _s, ...s }: Span): Span => (s.role === 'money' || s.role === 'activity' ? (({ role: _r, ...rest }) => rest)(s) : s)
+export function noColor(lines: Line[], style: Style): { lines: Line[]; style: Style } {
+  return {
+    lines: lines.map(line => line.map(seg => ({ ...seg, spans: seg.spans.map(plain) }))),
+    style: style.separator === 'powerline' ? { ...style, separator: 'pipe' } : style,
+  }
 }
 
 // A powerline segment's background: its figure's tier, else its widget's neutral colour; and its text colour.
@@ -250,8 +260,9 @@ export type PaneRow = { head: string } | { label: string; spans: Span[] }
 const LABEL = 14
 
 // The pane's rows: bold headings; labels in a fixed-width column, then their spans.
-export function drawPaneLines(els: Term | Rich, surface: Surface, rows: PaneRow[], theme: TidemarkTheme) {
+export function drawPaneLines(els: Term | Rich, surface: Surface, raw: PaneRow[], theme: TidemarkTheme) {
   const { Box, Text } = els
+  const rows = raw.map(r => ('head' in r ? { head: clean(r.head) } : { label: clean(r.label), spans: r.spans.map(safeSpan) }))
   return (
     <Box flexDirection="column" paddingX={1}>
       {rows.map((r, i) => 'head' in r

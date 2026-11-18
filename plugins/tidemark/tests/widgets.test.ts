@@ -4,6 +4,7 @@ import { expect, test } from 'claude-code/testing'
 import type { TidemarkSnapshot } from '../types'
 import { EMPTY_SNAPSHOT } from '../hooks/snapshot'
 import { WIDGETS } from '../hooks/widgets'
+import { safeSpan } from '../hooks/widgets/kit'
 import type { Span, WidgetInput } from '../hooks/widgets'
 
 const NOW = Date.parse('2026-10-03T15:00:00Z')
@@ -112,6 +113,7 @@ test('quota5h: percent, reset, mode, showReset, bar; a passed window is hidden',
   expect(full('quota5h', s, { options: { mode: 'left' } })).toBe('5h 58% left ↻ 2h34m')
   expect(spanOf(run('quota5h', s, { options: { mode: 'left' } })[0], /58%/)?.tier).toBe(4)
   expect(full('quota5h', s, { options: { showReset: false } })).toBe('5h 42%')
+  expect(full('quota5h', snap({ limits: [{ ...FIVE, percentUsed: 105 }], limitsLive: true }), { options: { mode: 'left', showPace: false } })).toBe('5h 0% left ↻ 2h34m')
   expect(full('quota5h', s, { options: { bar: true } })).toBe('5h ■■□□□ 42% ↻ 2h34m')
   expect(run('quota5h', snap({ limits: [{ ...FIVE, resetsAt: iso(-MIN) }], limitsLive: true }))).toEqual([])
   // A window that reports no reset is shown without one.
@@ -165,9 +167,9 @@ test('cwd styles: project, basename, short, full', () => {
 test('session time, compactions, token speed', () => {
   expect(full('sessionTime', snap({ startedAt: NOW - 72 * MIN }))).toBe('⏱ 1h12m')
   expect(run('sessionTime', snap())).toEqual([])
-  expect(full('compactions', snap({ compactions: 2 }))).toBe('⇣2')
+  expect(full('compactions', snap({ compactions: 2 }))).toBe('compacted 2')
   expect(run('compactions', snap())).toEqual([])
-  expect(full('compactions', snap(), { options: { hideZero: false } })).toBe('⇣0')
+  expect(full('compactions', snap(), { options: { hideZero: false } })).toBe('compacted 0')
   expect(full('tokenSpeed', snap({ speed: 42.4 }))).toBe('42 t/s')
   expect(run('tokenSpeed', snap())).toEqual([])
 })
@@ -212,4 +214,11 @@ test('quota pace: ◆ once use runs over 5 points ahead of the window\'s time; o
   expect(full('quota5h', snap({ limits: [ahead], limitsLive: true }), { options: { showPace: false } })).toBe('5h 30% ↻ 4h0m')
   expect(full('quota5h', snap({ limits: [ahead] }))).toBe('5h 30% ↻ 4h0m')
   expect(full('quota5h', snap({ limits: [{ kind: 'five_hour', percentUsed: 90 }], limitsLive: true }))).toBe('5h 90%')
+})
+
+test('safeSpan: escape sequences and C0/C1 controls stripped; only plain https links kept', () => {
+  expect(safeSpan({ text: 'ma\x1b]52;c;ZXZpbA==\x07in\x9b2J\x07' }).text).toBe('main')
+  expect(safeSpan({ text: '#1', href: 'https://github.com/o/r/pull/1' }).href).toBe('https://github.com/o/r/pull/1')
+  expect(safeSpan({ text: '#1', href: 'javascript:alert(1)' }).href).toBeUndefined()
+  expect(safeSpan({ text: '#1', href: 'https://x.example/\x1b]0;t\x07' }).href).toBeUndefined()
 })

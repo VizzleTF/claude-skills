@@ -762,6 +762,13 @@
                       },
                       "default": []
                     },
+                    "gitlabHosts": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "default": []
+                    },
                     "ttl": {
                       "type": "integer",
                       "minimum": 10,

@@ -117,11 +117,11 @@ Each runs in the session's directory.
 
 | Program | Why | When |
 |---|---|---|
-| `git status`, `git diff --numstat HEAD` | branch, changes and diff size for the `git` widget | after each turn, at most every 5 seconds |
+| `git status`, `git diff --numstat HEAD` | branch, changes and diff size for the `git` widget; the repository's fsmonitor and hooks are turned off for these runs | after each turn, at most every 5 seconds |
 | `git fetch --quiet --no-tags` | ahead and behind counts; contacts your remote | every 5 minutes; `git.fetch: 0` turns it off |
 | `git rev-parse --show-toplevel` | the project name for `cwd` with `style: "project"` | at most once a minute |
-| `git remote get-url origin`, then `gh pr view` or `glab mr view` | the pull request of the branch for `gitPr`; contacts GitHub or GitLab with those tools' own login | once its `ttl` has passed |
-| `sh -c <command>` | the `command` widget runs the command you configure, nothing else | once its `ttl` has passed |
+| `git remote get-url origin`, then `gh pr view` or `glab mr view` | the pull request of the branch for `gitPr`; contacts `github.com`, `gitlab.com` or a host the global config lists, with those tools' own login | once its `ttl` has passed |
+| `sh -c <command>` | the `command` widget runs the command you set in the global config, nothing else; a project file cannot set it | once its `ttl` has passed |
 
 ### Network
 

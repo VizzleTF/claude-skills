@@ -10,7 +10,7 @@ import type { EffortSupport } from './model-utils'
 import { WIDGETS } from './widgets'
 import { opt } from './widgets/kit'
 import type { Press } from './widgets'
-import { drawBand } from './draw'
+import { drawBand, noColor } from './draw'
 import { buildLines } from './layout'
 import { EMPTY_PROBES } from './probes'
 import { EMPTY_SNAPSHOT, STORE_EFFORTS } from './snapshot'
@@ -120,9 +120,11 @@ export function registerBand(on: On): void {
     let drawn: ReturnType<typeof drawBand> | undefined
     try {
       // The band's own padding takes a cell at each side.
-      const lines = buildLines(config, snap, probes, e.props.bodyColumns - 2, now, env)
+      const built = buildLines(config, snap, probes, e.props.bodyColumns - 2, now, env)
+      const { lines, style } = e.surface === 'terminal' && await $.env.get('NO_COLOR').catch(() => undefined)
+        ? noColor(built, config.style) : { lines: built, style: config.style }
       const act = (what: Press) => { void press($, what, config).catch((err: unknown) => $.ui.toast(`tidemark: ${err instanceof Error ? err.message : String(err)}`)) }
-      if (lines.length > 0) drawn = drawBand(els, e.surface, lines, config.style, snap.theme, config.style.buttons === false ? undefined : act)
+      if (lines.length > 0) drawn = drawBand(els, e.surface, lines, style, snap.theme, config.style.buttons === false ? undefined : act)
     } catch (err) {
       // A band that cannot be drawn is left out; what is drawn below stays.
       $.ui.log(`band: ${err instanceof Error ? err.message : String(err)}`, { to: 'debug' })

@@ -3,9 +3,10 @@
 import type { TidemarkConfig, TidemarkProbes, TidemarkSnapshot, TidemarkWidgetId } from '../types'
 import { WIDGETS } from './widgets'
 import type { BandEnv, Span, Variant } from './widgets'
+import { safeSpan } from './widgets/kit'
 
 // `config` is the trailing `⚠ config` mark of a config that did not load.
-export type Segment = { widget: TidemarkWidgetId | 'config'; spans: Span[] }
+export type Segment = { widget: TidemarkWidgetId | 'config' | 'hidden'; spans: Span[] }
 export type Line = Segment[]
 export type Style = TidemarkConfig['style']
 
@@ -24,9 +25,12 @@ export function separatorText(style: Style): string {
 const cells = (s: string) => [...s].length
 const spansWidth = (spans: Span[]) => spans.reduce((n, s) => n + cells(s.text), 0)
 
-export function lineWidth(segments: Span[][], style: Style): number {
-  const extra = style.separator === 'powerline' ? 3 * segments.length : cells(separatorText(style)) * Math.max(segments.length - 1, 0)
-  return segments.reduce((n, s) => n + spansWidth(s), 0) + extra
+// `flex[i]` marks a flex segment: it takes one cell, and the band draws no separator beside it.
+export function lineWidth(segments: Span[][], style: Style, flex: boolean[] = []): number {
+  const plain = segments.filter((_, i) => !flex[i]).length
+  const seps = segments.filter((_, i) => i > 0 && !flex[i] && !flex[i - 1]).length
+  const extra = style.separator === 'powerline' ? 3 * plain : cells(separatorText(style)) * seps
+  return segments.reduce((n, s, i) => n + (flex[i] ? 1 : spansWidth(s)), 0) + extra
 }
 
 // The spans cut to `width` cells, the last of them ending in `…`; a cut graphic becomes plain text.
@@ -55,18 +59,31 @@ const keep = (e: Entry) => (e.widget === 'actions' ? 2 : e.priority === Infinity
 
 // Narrows one line to `width`: while it is too wide, the visible widget with the lowest priority (the
 // rightmost on a tie) moves to its next variant, or goes when it has none; the last one left is cut.
-// The config button outlasts every other widget, so the editor stays one press away.
+// The config button outlasts every other widget, so the editor stays one press away. Widgets that went are
+// counted in a dim `+N` at the end, which goes before the next widget does; a press on it opens the details pane.
 function fit(entries: Entry[], width: number, style: Style): Line {
   const shown = () => entries.map(e => e.variants[e.at]!)
-  while (entries.length > 0 && lineWidth(shown(), style) > width) {
-    let k = 0
+  const marker: Entry = { widget: 'hidden', priority: 0, variants: [[]], at: 0 }
+  let hidden = 0
+  while (entries.length > 0 && lineWidth(shown(), style, entries.map(e => e.widget === 'flex')) > width) {
+    let k = entries.findIndex(e => e !== marker)
     entries.forEach((e, i) => {
+      if (e === marker) return
       const a = keep(e), b = keep(entries[k]!)
       if (a < b || (a === b && e.priority <= entries[k]!.priority)) k = i
     })
     const e = entries[k]!
     if (e.at + 1 < e.variants.length) e.at++
-    else if (entries.length > 1) entries.splice(k, 1)
+    // Before a widget goes, the marker does; it comes back with the new count if there is room.
+    else if (entries.includes(marker)) entries.splice(entries.indexOf(marker), 1)
+    else if (entries.length > 1) {
+      const [gone] = entries.splice(k, 1)
+      if (gone !== marker && gone!.widget !== 'flex' && gone!.widget !== 'config') {
+        hidden++
+        marker.variants[0] = [{ text: `+${hidden}`, role: 'dim', press: 'cache' }]
+        if (!entries.includes(marker)) entries.splice(entries.findIndex(x => x.widget === 'actions') >>> 0, 0, marker)
+      }
+    }
     else {
       const pad = style.separator === 'powerline' ? 3 : 0
       return [{ widget: e.widget, spans: truncate(e.variants[e.at]!, width - pad) }]
@@ -94,7 +111,7 @@ export function buildLines(
     const def = WIDGETS[item.widget]
     const variants = def.render({
       snap, probes, now, env, icons, options: item.options ?? {}, label: item.label,
-    }).filter(v => v.length > 0)
+    }).filter(v => v.length > 0).map(v => v.map(safeSpan))
     return variants.length > 0 ? [{ widget: item.widget, priority: item.priority ?? def.defaultPriority, variants, at: 0 }] : []
   })).map(entries => entries.filter((e, i) => e.widget !== 'flex' || entries.slice(0, i).filter(x => x.widget === 'flex').length < 2))
     .filter(entries => entries.some(e => e.widget !== 'flex'))

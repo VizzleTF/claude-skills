@@ -2,6 +2,40 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.5.0] - 2026-11-18
+
+### Security
+
+- A project's `.claude/tidemark.json` can no longer set `command.command`, `gitPr.githubHosts` or `gitPr.gitlabHosts`; the editor warns when it tries. These options come from the global config only ([ADR 0006](docs/adr/0006-programs-and-hosts-from-the-global-config.md)).
+- `gitPr` runs `glab` only for `gitlab.com` and the new `gitlabHosts`; any other host runs neither `gh` nor `glab`.
+- Every `git` run sets `core.fsmonitor=false` and `core.hooksPath=/dev/null` and takes no optional locks; `git fetch` skips submodules and automatic garbage collection.
+- Escape sequences and control characters are stripped from all band and pane text, and only plain `https` links stay links.
+
+### Added
+
+- A dim `+N` at the end of a band row counts the widgets that did not fit; a press on it opens `/tidemark`.
+- The `/tidemark` pane ends with a legend of the colours and marks.
+- With `NO_COLOR` set, the terminal draws the band and the pane without colours, and `powerline` as `pipe`.
+- A pane section the config leaves out is shown after the listed ones.
+
+### Changed
+
+- The `compactions` text label is `compacted 2`, not `⇣2`, which the `git` sync also uses.
+- The `git` timeout is 5 seconds, not 2.
+- The 30-second tick runs no probe after 10 minutes without a turn.
+- Two `git` widgets share one set of runs; the stored `git diff` and `command` output keep only what the band shows.
+- State updates that change nothing are skipped, and a burst of events refreshes probes once per 500 ms.
+
+### Fixed
+
+- `left` mode never shows a negative percentage when use passes 100%.
+- A row with `flex` counts it as one cell, so a row that fits keeps all its widgets.
+- An unknown prompt-cache lifetime after a model switch no longer reads as one hour.
+- `git` results of the previous directory are dropped when the session's directory changes.
+- A slow status-page request no longer overlaps the next one, and alert toasts no longer race.
+- Failures after `/clear`, `/resume` and in a usage measurement go to the debug log instead of being lost.
+- A config stored by an older version gets defaults for newer keys inside `style`, `alerts` and `compact` too.
+
 ## [0.4.4] - 2026-11-17
 
 ### Changed

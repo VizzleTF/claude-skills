@@ -18,6 +18,9 @@ export type Snapshot = TidemarkSnapshot
 // Prompt-cache lifetimes: the short one, and the hour main conversations were seen to get.
 export { SHORT_TTL_MS, LONG_TTL_MS as CACHE_TTL_MS } from './model-utils'
 const TICK_MS = 30_000
+// Without a turn for this long the tick stops running git, gh and the status check; the band still counts down.
+const IDLE_MS = 10 * 60_000
+let lastActive = 0
 const STORE_LIMITS = 'limits'
 // What requests showed of each model's effort levels (EffortSupport); the band reads it under the same key.
 export const STORE_EFFORTS = 'effortSupport'
@@ -46,7 +49,12 @@ export async function readSnapshot($: EngineInterface): Promise<Snapshot> {
   return read($, snapshotState)
 }
 
-const set = ($: EngineInterface, fn: (s: Snapshot) => Partial<Snapshot>) => update($, snapshotState, s => ({ ...s, ...fn(s) }))
+// A patch that changes nothing is not written: every write redraws the band.
+const same = (a: unknown, b: unknown) => Object.is(a, b) || JSON.stringify(a) === JSON.stringify(b)
+const set = ($: EngineInterface, fn: (s: Snapshot) => Partial<Snapshot>) => update($, snapshotState, s => {
+  const patch = fn(s)
+  return Object.entries(patch).every(([k, v]) => same(s[k as keyof Snapshot], v)) ? s : { ...s, ...patch }
+})
 const setTrack = ($: EngineInterface, fn: (t: TidemarkTrack) => Partial<TidemarkTrack>) => update($, track, t => ({ ...t, ...fn(t) }))
 
 // Bumped by a conversation reset, so reads that started before it are dropped.
@@ -183,7 +191,8 @@ async function readActiveAgents($: EngineInterface) {
 // The engine installs readings after the hook returns; one coalesced read picks them up.
 function refreshSoon($: EngineInterface) {
   settling?.cancel()
-  settling = $.clock.after(100, async () => {
+  // A tool-heavy turn steps many times a second; one refresh covers a burst.
+  settling = $.clock.after(500, async () => {
     await readActiveAgents($)
     await load($).catch(logTo($, 'load'))
   })
@@ -205,6 +214,10 @@ async function learnEfforts($: EngineInterface, model: string, asked: string, se
 
 // Probe keys with a request in flight: a key never runs twice at once.
 const running = new Set<string>()
+let statusInFlight = false
+// The directory the git results belong to: after a move to another directory they are dropped, not shown.
+let probedCwd: string | undefined
+const GIT_KEYS = ['gitRoot', 'gitStatus', 'gitDiff', 'gitFetch', 'gitRemote', 'gitPr']
 
 // A failure the band survives goes to the debug log (`claude --debug`), led by the plugin's name.
 const logTo = ($: EngineInterface, where: string) => (err: unknown) =>
@@ -220,7 +233,11 @@ async function runProbe($: EngineInterface, req: ProbeRequest, cwd: string): Pro
     const timeout = new Promise<never>((_, reject) => { timer = $.clock.after(req.timeoutMs, () => reject(new Error('timeout'))) })
     try {
       // The one request tidemark makes itself; the address stays literal so a reader of the call sees the host.
-      const r = await Promise.race([$.http.fetch('https://status.claude.com/api/v2/summary.json'), timeout])
+      // A timeout does not cancel it, so the next check waits until this one has settled.
+      const fetching = $.http.fetch('https://status.claude.com/api/v2/summary.json')
+      statusInFlight = true
+      void fetching.then(() => undefined, () => undefined).finally(() => { statusInFlight = false })
+      const r = await Promise.race([fetching, timeout])
       return { ok: true, text: r.text, status: r.status }
     } finally {
       timer?.cancel()
@@ -234,10 +251,14 @@ async function runProbe($: EngineInterface, req: ProbeRequest, cwd: string): Pro
 async function probe($: EngineInterface, trigger: 'tick' | 'turn') {
   const { config } = effectiveConfig(await read($, configState))
   const cwd = await $.session.cwd().catch(() => '')
+  if (probedCwd !== undefined && probedCwd !== cwd) {
+    await update($, probesState, p => Object.fromEntries(Object.entries(p).filter(([k]) => !GIT_KEYS.includes(k))))
+  }
+  probedCwd = cwd
   const now = await $.clock.now()
   const plan = planProbes(config, await read($, probesState), await read($, snapshotState), cwd, now, trigger)
   for (const req of plan) {
-    if (running.has(req.key)) continue
+    if (running.has(req.key) || (req.kind === 'status' && statusInFlight)) continue
     running.add(req.key)
     void runProbe($, req, cwd).then(async outcome => {
       const at = await $.clock.now()
@@ -246,8 +267,16 @@ async function probe($: EngineInterface, trigger: 'tick' | 'turn') {
   }
 }
 
-// Threshold toasts from the alerts module; its memory kept in the `alerts` atom.
-async function alert($: EngineInterface) {
+// Threshold toasts from the alerts module; its memory kept in the `alerts` atom. Runs one at a time, so a
+// measure and the tick that overlap read the memory the other wrote and toast a crossing once.
+let alerting: Promise<void> = Promise.resolve()
+function alert($: EngineInterface): Promise<void> {
+  const run = alerting.then(() => alertOnce($))
+  alerting = run.catch(() => undefined)
+  return run
+}
+
+async function alertOnce($: EngineInterface) {
   const { config } = effectiveConfig(await read($, configState))
   const now = await $.clock.now()
   const { toasts, memory } = evaluateAlerts(await read($, snapshotState), config, await read($, alertsState), now)
@@ -256,11 +285,12 @@ async function alert($: EngineInterface) {
 }
 
 async function snapshotStart($: EngineInterface): Promise<void> {
+    lastActive = await $.clock.now()
     tick?.cancel()
     tick = $.clock.every(TICK_MS, async () => {
       await load($).catch(logTo($, 'tick load'))
       await readActiveAgents($).catch(logTo($, 'tick agents'))
-      await probe($, 'tick').catch(logTo($, 'tick probe'))
+      if ((await $.clock.now()) - lastActive < IDLE_MS) await probe($, 'tick').catch(logTo($, 'tick probe'))
       await alert($).catch(logTo($, 'tick alert'))
       $.ui.invalidate('ui.render')
     })
@@ -277,6 +307,7 @@ async function snapshotStart($: EngineInterface): Promise<void> {
 }
 
 async function snapshotTurnStart($: EngineInterface): Promise<void> {
+    lastActive = await $.clock.now()
     await syncSession($)
     const r = revision
     const reading = await $.session.usage().catch(() => undefined)
@@ -287,6 +318,7 @@ async function snapshotTurnStart($: EngineInterface): Promise<void> {
 }
 
 async function snapshotTurnComplete($: EngineInterface): Promise<void> {
+    lastActive = await $.clock.now()
     const r = revision
     await readActiveAgents($)
     refreshSoon($)
@@ -328,9 +360,12 @@ export function registerSnapshot(on: On): void {
     try {
       return await next(e)
     } finally {
-      await resetConversation($, await $.clock.now())
-      await load($)
-      if (e.source !== 'clear') await resumed($, e)
+      // A failure here goes to the debug log; it must not fail /clear, /resume or /branch.
+      await (async () => {
+        await resetConversation($, await $.clock.now())
+        await load($)
+        if (e.source !== 'clear') await resumed($, e)
+      })().catch(logTo($, 'conversation reset'))
     }
   })
 
@@ -339,13 +374,17 @@ export function registerSnapshot(on: On): void {
     const r = revision
     const result = await next(e)
     if (r !== revision) return result
-    await syncSession($)
-    if (r !== revision) return result
-    await readModel($)
-    await takeCost($, e.cost?.usd)
-    await takeContext($, e.context, true, r)
-    if (r === revision) await takeLimits($, e.rateLimits, e.changed.includes('rateLimits'))
-    await alert($).catch(logTo($, 'alert'))
+    // The band's own bookkeeping never fails the event it rides on.
+    await (async () => {
+      await syncSession($)
+      if (r !== revision) return
+      await readModel($)
+      // A measure for a quota change alone carries no cost; the last one stays.
+      if (e.cost?.usd !== undefined) await takeCost($, e.cost.usd)
+      await takeContext($, e.context, true, r)
+      if (r === revision) await takeLimits($, e.rateLimits, e.changed.includes('rateLimits'))
+      await alert($)
+    })().catch(logTo($, 'measure'))
     return result
   })
 
@@ -362,7 +401,8 @@ export function registerSnapshot(on: On): void {
   on('classic.PostModelSwitch', async ($, e, next) => {
     const result = await next(e)
     await setModel($, e.to_model)
-    await set($, () => ({ cacheTtl: e.cache_ttl === '5m' ? SHORT_TTL_MS : CACHE_TTL_MS }))
+    // An unreported lifetime stays unknown, so the account's default applies.
+    await set($, () => ({ cacheTtl: e.cache_ttl === '5m' ? SHORT_TTL_MS : e.cache_ttl === '1h' ? CACHE_TTL_MS : null }))
     refreshSoon($)
     return result
   })

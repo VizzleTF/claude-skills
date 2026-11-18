@@ -39,7 +39,7 @@ export const context = widget('context', {
         if (!ctx.estimate) return out([[{ text: `--/${ktok(window)}`, role: 'dim' }]])
         // Before the window's first response: /context's estimate, dim and marked ~.
         const p = Math.trunc((ctx.estimate * 100) / window)
-        const shown = left ? 100 - p : p
+        const shown = left ? Math.max(0, 100 - p) : p
         const b: Span = { text: bar(shown, width), role: 'dim', bar: { percent: shown, dim: true } }
         const pct: Span = { text: `~${shown}%${left ? ' left' : ''}`, role: 'dim' }
         const tok: Span | false = showTokens && { text: `~${ktok(ctx.estimate)}/${ktok(window)}`, role: 'dim' }
@@ -53,7 +53,7 @@ export const context = widget('context', {
     }
 
     function figures(p: number, t: number, w: number | undefined, h: number[]): Span[][] {
-      const shown = left ? 100 - p : p
+      const shown = left ? Math.max(0, 100 - p) : p
       const tier = pctTier(p)
       const core: Span[] = w === undefined
         ? [{ text: ktok(t) }]

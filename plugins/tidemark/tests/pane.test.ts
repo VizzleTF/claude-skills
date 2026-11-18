@@ -159,7 +159,7 @@ for (const surface of ['terminal', 'desktop', 'vscode', 'mobile'] as const) {
   test(`the pane draws every section from the session (${surface})`, async ($, on) => {
     await start($, on)
     const ui = await mountPane($, surface)
-    for (const t of ['Context', 'Cache & quota', 'Session & agents', /27%/, /42%/, 'sess-9']) {
+    for (const t of ['Context', 'Cache & quota', 'Session & agents', /27%/, /42%/, 'sess-9', 'Legend', '+N']) {
       expect(await ui.find({ type: 'Text', text: t })).toBeDefined()
     }
   })
@@ -169,7 +169,7 @@ test('the pane follows the config: agents first, context off', async ($, on) => 
   await start($, on, JSON.stringify({ version: 1, pane: { sections: [{ id: 'agents', enabled: true }, { id: 'context', enabled: false }, { id: 'cacheQuota', enabled: true }] } }))
   const ui = await mountPane($, 'terminal')
   const heads = (await ui.findAll({ type: 'Text' })).filter((t: any) => t.props.bold).map((t: any) => t.text)
-  expect(heads).toEqual(['Session & agents', 'Cache & quota'])
+  expect(heads).toEqual(['Session & agents', 'Cache & quota', 'Legend'])
   expect(await ui.find({ type: 'Text', text: 'Context' })).toBeUndefined()
 })
 

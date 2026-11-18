@@ -9,11 +9,11 @@ const GLOBAL = '/u/dev/.config/tidemark/config.json'
 const LIMITS: SessionRateLimit[] = [{ kind: 'five_hour', percentUsed: 42, resetsAt: new Date(NOW + 3_600_000).toISOString() }]
 
 // The running model; a test that switches it sets it before `start`.
-const world = { model: 'claude-opus-5-5' }
+const world = { model: 'claude-opus-5-5', noColor: false }
 
 // The fake host: a session at 27% of a 1M window, a config file when given, a downstream band `below`.
 function host(on: On, configText?: string, theme?: string, running = 0, onBelow?: () => void) {
-  mock.env(on, { HOME: '/u/dev' })
+  mock.env(on, { HOME: '/u/dev', ...(world.noColor && { NO_COLOR: '1' }) })
   mock.clock(on, { now: NOW })
   on('session.start', ($, e) => ({ cwd: e.cwd }))
   on('session.id', () => ({ value: 's1' }))
@@ -282,6 +282,19 @@ test('a desktop section: the desktop app draws its lines, the terminal the share
 test('powerline with text icons uses ▶; dot and custom separators', async ($, on) => {
   await start($, on, JSON.stringify({ style: { separator: 'powerline', icons: 'text' } }))
   expect(await (await $.ui.mount(band('terminal'))).find({ type: 'Text', text: '▶' })).toBeDefined()
+})
+
+test('NO_COLOR on the terminal: no colours, powerline drawn as pipes', async ($, on) => {
+  world.noColor = true
+  try {
+    await start($, on, JSON.stringify({ style: { separator: 'powerline', icons: 'text' } }))
+    const ui = await $.ui.mount(band('terminal'))
+    expect(await ui.find({ type: 'Text', text: '▶' })).toBeUndefined()
+    expect(await ui.find({ type: 'Text', text: ' │ ' })).toBeDefined()
+    expect((await ui.findAll({ type: 'Text' })).filter(t => t.props.color !== undefined || t.props.backgroundColor !== undefined)).toEqual([])
+  } finally {
+    world.noColor = false
+  }
 })
 
 test('the dot separator', async ($, on) => {

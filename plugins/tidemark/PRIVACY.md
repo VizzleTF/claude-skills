@@ -22,9 +22,11 @@ tidemark makes no network request of its own except the ones below, each made by
 | Widget | Request | Goes to |
 |---|---|---|
 | `git` (in the default band) | `git fetch` every 5 minutes; set `git.fetch` to `0` to stop it | the remote of the repository you work in |
-| `gitPr` | `gh pr view` or `glab mr view` | your GitHub or GitLab host, with the credentials of those tools |
+| `gitPr` | `gh pr view` or `glab mr view` | `github.com`, `gitlab.com` or a host the global config lists in `githubHosts` or `gitlabHosts`, with the credentials of those tools |
 | `claudeStatus` | HTTPS GET of the public status page | `status.claude.com` |
-| `command` | the shell command you configure | wherever that command goes |
+| `command` | the shell command you set in the global config; it gets the session id, model, working directory and context percentage on stdin | wherever that command goes |
+
+A project's `.claude/tidemark.json` cannot set `command` or the PR hosts, so a repository you clone cannot make tidemark run a program or contact its host. Every `git` run sets `core.fsmonitor=false` and `core.hooksPath=/dev/null`, so the repository's own git config starts no program either.
 
 The full list of commands and when they run is in [External runs](docs/reference.md#external-runs).
 

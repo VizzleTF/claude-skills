@@ -29,7 +29,7 @@ async function loadConfig($: EngineInterface): Promise<LoadedConfig> {
   const files: Parameters<typeof loadFromTexts>[0] = []
   for (const path of [global, project]) {
     if (!path || !(await $.fs.exists(path).catch(() => false))) continue
-    files.push(await $.fs.read(path).then(text => ({ path, text }), (err: unknown) => ({ path, error: err instanceof Error ? err.message : String(err) })))
+    files.push(await $.fs.read(path).then(text => ({ path, text, project: path === project }), (err: unknown) => ({ path, error: err instanceof Error ? err.message : String(err) })))
   }
   return loadFromTexts(files)
 }
