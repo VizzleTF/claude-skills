@@ -239,6 +239,17 @@ class RussianTypography(unittest.TestCase):
     def test_versioned_as_of_is_not_dated(self):
         self.assertEqual(check.check_text("As of v2 it works.\n", "en"), [])
 
+    def test_short_russian_block_full_of_names_is_russian(self):
+        found = check.check_text("Включите Redis, Kafka, Nginx, Envoy, Istio, Cilium - просто.\n", "auto")
+        self.assertEqual(rules(found), ["ru-dash", "stop-word"])
+
+    def test_plain_coordination_and_big_numbers_pass(self):
+        for text, lang in (("Поддерживается не только Linux, но и macOS.\n", "ru"),
+                           ("Допустимы значения от 1024 до 2048.\n", "ru"),
+                           ("Retry after 2000 milliseconds. Use X rather than Y.\n", "en")):
+            with self.subTest(text):
+                self.assertEqual(check.check_text(text, lang), [])
+
 
 class Links(unittest.TestCase):
     def setUp(self):
@@ -269,6 +280,10 @@ class Links(unittest.TestCase):
     def test_link_with_parentheses(self):
         (self.dir / "a(b).md").write_text("# A\n", encoding="utf-8")
         self.assertEqual(self.run_check("See [x](a(b).md).\n"), [])
+
+    def test_encoded_and_html_anchors(self):
+        text = '# Установка\n\n<a id="myid"></a>\n\n[b](#%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0) [c](#myid)\n'
+        self.assertEqual(self.run_check(text), [])
 
     def test_broken_anchor(self):
         self.assertEqual(rules(self.run_check("See [x](other.md#nope).\n")), ["broken-link"])

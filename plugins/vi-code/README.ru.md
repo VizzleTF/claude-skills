@@ -17,7 +17,7 @@ Claude Code делает небольшие правки кода и не заб
 
 ## Подробнее
 
-- Правила лежат в [rules.md](rules.md): около 440 слов, по-английски; отвечать Claude может на любом языке.
+- Правила лежат в [rules.md](rules.md): около 370 слов, по-английски; отвечать Claude может на любом языке.
 - Хук `SessionStart` добавляет их при старте, `resume`, `clear` и `compact`; хук `SubagentStart` добавляет их каждому сабагенту.
 - Стиль ответов в чате задаёт плагин [vi-voice](../vi-voice/README.ru.md).
 - Удаление: `/plugin uninstall vi-code@vizzletf-skills`

@@ -28,7 +28,7 @@ List what already exists: README, wiki pages, comments, runbooks, chat threads t
 
 ## Friction log
 
-Walk through the main reader tasks yourself, from a clean environment where possible: install, first run, the most common task, the most common failure. Record every point where you had to guess, search, read the code or ask someone. Each entry is a line: step, what happened, what was missing. The inventory lists what exists; the friction log shows which pages readers need, and it is the better guide to what to write.
+Walk through the main reader tasks by reading the source, scripts and CI: install, first run, the most common task, the most common failure. Run only read-only commands unless the user names a disposable environment. Record every point where you had to guess, search, read the code or ask someone. Each entry is a line: step, what happened, what was missing. The inventory lists what exists; the friction log shows which pages readers need, and it is the better guide to what to write.
 
 ## Minimum set
 

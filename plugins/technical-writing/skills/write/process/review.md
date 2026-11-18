@@ -64,7 +64,7 @@ An ADR, a postmortem or a published changelog entry records a moment. The review
 
 ## Report format
 
-Report only findings that are wrong (a fact, a command, a link) or that stop the reader from finding or doing what they came for. Leave out matters of taste and minor style. Merge findings with one cause into one line, for example all filler phrases. Give a numbered list ordered by impact on the reader, at most ten items, one line each: where, what, fix.
+Report only findings that are wrong (a fact, a command, a link) or that stop the reader from finding or doing what they came for. Leave out matters of taste and minor style. Merge findings with one cause into one line, for example all filler phrases. Give a numbered list ordered by impact on the reader, at most ten items, one line each: where, what, fix. Past ten, one line says how many more.
 
 1. "Install" section, step 3: the command uses `--force`, removed in version 2 of the tool. Replace with `tool install --replace <PACKAGE>`.
 2. Whole page: steps and design rationale are mixed. Split into a how-to and an explanation; link them.

@@ -14,7 +14,7 @@ Pick another type in these cases:
 
 ## Skeleton
 
-1. Alert name, exactly as it appears in the alerting system, as the title.
+1. Alert or event name, exactly as it appears in the alerting system, as the title.
 2. Impact and urgency: who is affected, how badly, and how fast to act.
 3. Diagnosis: commands that confirm the cause, each with the output that means "yes".
 4. Actions, one per step. Each step has:

@@ -2,6 +2,19 @@
 
 All notable changes to the `vi-code` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.4.0] - 2026-11-18
+
+### Changed
+
+- The rules say they apply when editing code, so read-only subagents can ignore them. 439 words down to 368.
+- The smallest diff that fixes the root cause wins, so a shared fix beats a one-site patch.
+- A question goes first only when someone can answer it; otherwise Claude states the assumption.
+- A bug-fix test is required where the project has tests; Claude runs the relevant tests, not the whole suite.
+
+### Fixed
+
+- The `SessionStart` hook stays silent when `rules.md` is missing.
+
 ## [0.3.0] - 2026-11-18
 
 ### Changed

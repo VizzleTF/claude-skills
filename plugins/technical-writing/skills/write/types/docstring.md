@@ -51,6 +51,6 @@ One line when the name and the signature say the rest; otherwise one line per fa
 - [ ] The summary line fits on one line.
 - [ ] In Python, the summary follows the project's form, or the imperative when there is none.
 - [ ] No description repeats a type or a default from the signature; each parameter and return value adds units, ranges, invariants or meaning.
-- [ ] Units, ranges, side effects and exceptions are stated.
+- [ ] Units, ranges, side effects and exceptions are stated where they exist.
 - [ ] Interface and implementation comments are kept apart.
 - [ ] Every comment says something the code does not.

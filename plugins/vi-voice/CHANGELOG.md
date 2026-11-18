@@ -2,6 +2,19 @@
 
 All notable changes to the `vi-voice` plugin, named `voice-ru` before 0.2.0. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.6.0] - 2026-11-18
+
+### Changed
+
+- The rules open with one line on the reader: someone who scans, ADHD included. 417 words down to 362.
+- No plan line before tools; a line between tools only for a finding or a changed plan.
+- Two closing blocks, **Left to do** and **Waiting on you**, that never repeat the reply.
+- Safety caveats always stay; real uncertainty is stated once. `! <command>` is only for a command Claude cannot run itself; commands the user asked for go in a plain code block.
+
+### Fixed
+
+- The `SessionStart` hook stays silent when `style.md` is missing, instead of reporting a hook error at every start.
+
 ## [0.5.0] - 2026-11-18
 
 ### Changed

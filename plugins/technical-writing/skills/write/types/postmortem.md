@@ -42,7 +42,7 @@ About 400 words of prose for a typical incident, not counting the timeline and t
 - "Human error" as a root cause. Ask what let the error reach production.
 - Follow-up actions without an owner or a date. When the user did not give them, write `<OWNER>`, `<DUE_DATE>`, `<LINK>`.
 - Times without a time zone.
-- Editing or appending to a published postmortem.
+- Changing the account in a published postmortem. Action status lives in the tracker.
 
 ## Type checklist
 

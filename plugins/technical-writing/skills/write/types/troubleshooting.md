@@ -19,7 +19,7 @@ A table, one row per problem:
 | Message or symptom | Cause | Action |
 |---|---|---|
 | `connection refused: 5432` | The database is not running. | Start it: `docker compose up db`. |
-| Build hangs at "Resolving dependencies" | The proxy blocks the registry. | Set `HTTPS_PROXY` and run the build again. |
+| Build hangs at `Resolving dependencies` | The proxy blocks the registry. | Set `HTTPS_PROXY` and run the build again. |
 
 When a fix takes more than one step, or the cause is uncertain, give the row a short section below the table, with the message as the heading. An uncertain cause becomes numbered checks, most likely first, each with what its result means. A section ends with how to confirm the fix worked.
 

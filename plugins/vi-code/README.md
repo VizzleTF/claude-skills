@@ -17,7 +17,7 @@ Claude Code makes small code changes that reach every caller.
 
 ## More
 
-- The rules are [rules.md](rules.md), about 440 words, in English; replies can be in any language.
+- The rules are [rules.md](rules.md), about 370 words, in English; replies can be in any language.
 - A `SessionStart` hook adds them on startup, `resume`, `clear` and `compact`; a `SubagentStart` hook adds them to every subagent.
 - The chat reply style is the [vi-voice](../vi-voice/README.md) plugin.
 - Uninstall: `/plugin uninstall vi-code@vizzletf-skills`

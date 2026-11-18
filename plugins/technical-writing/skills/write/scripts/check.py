@@ -43,7 +43,7 @@ STOP_WORDS = {
         "just", "simply", "obviously", "basically", "very", "really", "easy", "easily",
         "clearly", "actually", "of course", "quite", "extremely", "literally",
         "straightforward", "effortless(?:ly)?", "painless(?:ly)?", "merely", "totally",
-        "highly", "rather", "somewhat", "fairly", "in order to", "due to the fact that",
+        "somewhat", "in order to", "due to the fact that",
         r"utiliz(?:e|es|ed|ing)",
     ],
     "ru": [
@@ -70,12 +70,12 @@ LLM_MARKERS = {
         r"it(?:'|’)?s worth noting", "it is worth noting", r"tapestry", r"in today(?:'|’)s",
         r"game[- ]changer", "cutting-edge", r"empower(?:s|ed|ing)?", "in the realm of",
         r"plays? an? (?:crucial|key|vital|pivotal) role", "a testament to",
-        r"not (?:just|only|merely|simply)\b[^.!?;]{1,60}?\bbut",
+        r"not (?:just|merely|simply)\b[^.!?;]{1,60}?\bbut",
     ],
     "ru": [
         r"игра(?:ет|ют) (?:ключевую|важную|решающую|значимую) роль",
         "стоит отметить", "важно отметить", "следует отметить", "в современном мире",
-        r"бесшовн\w*", r"не просто\b[^.!?;]{1,60}?,? а", r"не только\b[^.!?;]{1,60}?,? но и", r"давайте разбер\w*",
+        r"бесшовн\w*", r"не просто\b[^.!?;]{1,60}?,? а", r"давайте разбер\w*",
     ],
 }
 
@@ -84,17 +84,17 @@ _MONTHS_EN = ("(?:January|February|March|April|May|June|July|August|September|Oc
               "November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)")
 # A number followed by a range word, another number or a unit is a quantity, not a year.
 _NOT_QTY = (r"(?!\s*(?:to|and|or|[-–—]|\d|%|(?:ms|s|secs?|seconds?|min|minutes?|h|hours?|"
-            r"days?|bytes?|[kmgt]i?b|px|pt|lines?|chars?|characters?|rows?|items?|requests?|"
+            r"milliseconds?|entries|entry|records?|values?|days?|bytes?|[kmgt]i?b|px|pt|lines?|chars?|characters?|rows?|items?|requests?|"
             r"users?|tokens?|words?|times|ports?|errors?|files?)\b))")
 DATED = {
     "en": [_DATE, r"(?:in|since|by|until|till|from|during|before|after|as of|early|mid|late)"
-           r"\s+(?:" + _MONTHS_EN + r"\s+)?20\d\d" + _NOT_QTY,
+           r"\s+(?:" + _MONTHS_EN + r"\s+)?20[0-3]\d" + _NOT_QTY,
            _MONTHS_EN + r"\s+(?:\d{1,2},?\s+)?20\d\d", r"20\d\d\s+(?:release|version)",
            "currently", "at the moment", "at present", "nowadays",
            "latest version"],
-    "ru": [_DATE, r"20\d\d\s*(?:год\w*|г\.)", r"(?:в|с|до|к|по|от|на)\s+20\d\d(?=\s*(?:[.,;:!?)]|$))",
+    "ru": [_DATE, r"20\d\d\s*(?:год\w*|г\.)", r"(?:в|с|до|к|по|от|на)\s+20[0-3]\d(?=\s*(?:[.,;:!?)]|$))",
            r"(?:январ|феврал|март|апрел|ма[йяе]|июн|июл|август|сентябр|октябр|ноябр|декабр)\w*"
-           r"\s+20\d\d",
+           r"\s+20[0-3]\d",
            "сейчас", "в настоящее время", "на данный момент",
            "на сегодняшний день", r"последн(?:яя|ей|юю) верси\w*", "недавно"],
 }
@@ -184,9 +184,10 @@ class Doc:
     """Markdown split into prose blocks, table cells, link lines and anchors."""
 
     def __init__(self, text):
-        text = COMMENT_RE.sub(lambda m: "\n" * m.group().count("\n"), text)
+        text = COMMENT_RE.sub(lambda m: "\n" * m.group().count("\n"), text.lstrip("\ufeff"))
         lines = text.split("\n")
-        self.blocks, self.cells, self.link_lines, self.anchors = [], [], [], set()
+        self.blocks, self.cells, self.link_lines = [], [], []
+        self.anchors = {a.lower() for a in re.findall(r'\b(?:id|name)="([^"]+)"', text)}
         slugs = {}
         block, start, code = None, 0, code_lines(lines)
         if lines and lines[0].strip() == "---":
@@ -249,10 +250,10 @@ class Doc:
 
 
 def language(text):
-    # Russian IT prose is full of Latin names, so half as many Cyrillic words already make it Russian.
+    # Russian IT prose is full of capitalised Latin names, so only lowercase Latin words count as English.
     cyr = len(re.findall(r"\b[а-яё]+\b", text, re.I))
-    lat = len(re.findall(r"\b[a-z]+\b", text, re.I))
-    return "ru" if cyr and cyr * 2 >= lat else "en"
+    lat = len(re.findall(r"\b[a-z]+\b", text))
+    return "ru" if cyr and cyr >= lat else "en"
 
 
 def _joined(block):
@@ -326,7 +327,7 @@ def _check_links(doc, path, check_urls):
                         out.append(Finding(no, "error", "broken-link", f"{target}: {err}"))
                 continue
             file_part, _, anchor = target.partition("#")
-            file_part = urllib.parse.unquote(file_part)
+            file_part, anchor = urllib.parse.unquote(file_part), urllib.parse.unquote(anchor)
             if file_part.startswith("/"):
                 continue
             if file_part:

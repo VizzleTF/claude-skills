@@ -73,13 +73,13 @@ Read the draft once per group below. A single instance is rarely a problem; a pa
 
 **Elegant variation.** A new synonym each time to avoid repeating a word: `service`, `application`, `system`, `platform` for the same thing. In documentation, a new word signals a new concept. Pick one term and repeat it.
 
-**Metadiscourse.** Text about the text: `In this section, we will explore`, `It is worth noting that`, `As mentioned earlier`, `Let's dive in`, `Here's the thing`, `Key takeaways`, a first sentence that restates the heading. In Russian: `Давайте разберёмся`, `стоит отметить`. Delete it and state the content.
+**Metadiscourse.** Text about the text: `In this section, we will explore`, `It is worth noting that`, `As mentioned earlier`, `Let's dive in`, `Here's the thing`, `Key takeaways`, a first sentence that only restates the heading (a page's opening sentence that names its reader stays). In Russian: `Давайте разберёмся`, `стоит отметить`. Delete it and state the content.
 
 **Compulsive hedging.** Qualifiers on every claim: `may potentially`, `generally tends to`, `in some cases it might`. Remove the hedge where you know the fact. Where the uncertainty is real, say what is uncertain.
 
 ## Formatting patterns
 
-**Frequent em dashes.** Dashes used where a comma, colon, period or parentheses would do. More than one dash in a short paragraph usually means two sentences were joined. Split them or use a colon.
+**Frequent em dashes.** In English, dashes used where a comma, colon, period or parentheses would do. More than one dash in a short paragraph usually means two sentences were joined. Split them or use a colon.
 
 - Before: `The cache — which is shared — expires hourly — unless pinned.`
 - After: The shared cache expires every hour. Pinned entries do not expire.

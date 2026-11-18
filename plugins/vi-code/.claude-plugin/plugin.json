@@ -1,8 +1,8 @@
 {
   "name": "vi-code",
   "displayName": "vi-code",
-  "version": "0.3.0",
-  "description": "Coding rules injected at session start and into every subagent: the smallest complete change, reuse first, validate at trust boundaries, reach every caller, test new logic and bug fixes, run the tests, find the cause before the fix. About 560 tokens.",
+  "version": "0.4.0",
+  "description": "Coding rules injected at session start and into every subagent: the smallest complete change, reuse first, validate at trust boundaries, reach every caller, test new logic and bug fixes, run the tests, find the cause before the fix. About 500 tokens.",
   "author": {
     "name": "VizzleTF",
     "url": "https://github.com/VizzleTF"

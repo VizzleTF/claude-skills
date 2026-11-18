@@ -54,7 +54,7 @@ One entry per item, every entry as short as its fields, with no prose between en
 
 ## Type checklist
 
-- [ ] Every entry has the same fields in the same order.
+- [ ] Every entry has the same fields, after dropped columns, in the same order.
 - [ ] Every default and unit is stated.
 - [ ] Every example works as written.
 - [ ] Verbs are in the indicative, third person.

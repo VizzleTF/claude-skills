@@ -17,7 +17,7 @@ Pick another type in these cases:
 Michael Nygard's form, with alternatives added from design doc practice:
 
 1. Title: a number and a short noun phrase, "ADR-0012: Event store for orders". Numbers are sequential and never reused.
-2. Status: proposed, accepted, deprecated, or superseded by ADR-NNNN. Date of the status.
+2. Status: proposed, accepted, rejected, deprecated, or superseded by ADR-NNNN. Date of the status.
 3. Context: the forces at play, stated as facts.
 4. Decision: what we will do.
 5. Consequences: every consequence, the costs and risks as well as the benefits.

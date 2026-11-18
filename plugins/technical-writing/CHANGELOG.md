@@ -2,6 +2,18 @@
 
 All notable changes to the `technical-writing` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [3.2.0] - 2026-11-18
+
+### Changed
+
+- Facts come from the user, the files they point to and the repository. A required part without a fact gets one placeholder; an optional part or detail without one is left out. The cold reader does not count a placeholder as a stall.
+- A docstring, a comment or a changelog entry is inserted into its file by an edit; only a standalone page replaces the named file.
+- A short section of a second type inside a page is allowed. The rewrite branch adds no parts, shortens only when asked and never rewrites a record.
+- The four-axes table and the checklist ticking are gone; step 7 sends a draft back once. The reply never reports checks and never repeats a document written to a file.
+- ADR status `rejected`; runbooks for an event without an alert; postmortem action status lives in the tracker.
+- The doc-set friction log reads the source and runs only read-only commands. Past ten findings, a review says how many more.
+- The checker no longer flags `not only … but`, `не только … но и`, `rather`, `highly` or `fairly`, or numbers from 2040 up as years. It treats a short Russian block full of Latin names as Russian, decodes percent-encoded anchors, accepts `id` and `name` anchors, and skips a byte order mark.
+
 ## [3.1.0] - 2026-11-18
 
 ### Added
