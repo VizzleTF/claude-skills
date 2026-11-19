@@ -138,7 +138,7 @@ export function registerBand(on: On): void {
       <els.Box flexDirection="row" paddingX={1}>
         <els.Button
           key="tidemark-compact"
-          label={`/compact · context ${Math.round(pct)}%`}
+          label={`/compact · context ${Math.trunc(pct)}%`}
           hotkey="c"
           variant="primary"
           onPress={() => compact($)}

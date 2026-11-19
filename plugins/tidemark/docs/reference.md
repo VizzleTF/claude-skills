@@ -82,7 +82,7 @@ A widget in `lines` is a name (`"git"`) or an object with these keys:
 |---|---|---|---|
 | `widget` | string | required | a name from the Widgets table |
 | `enabled` | boolean | `true` | |
-| `label` | string or `null` | `ctx`, `cache`, `5h`, `7d`, `⏱`, `compacted`; the other widgets have none | `null` removes the label |
+| `label` | string or `null` | `ctx`, `cache`, `5h`, `7d`, `⏱`, `compacted`, `goal`, `project`; the other widgets have none | `null` removes the label |
 | `priority` | integer | the widget's priority from the Widgets table | 0–1000 |
 | `options` | object | the default options | keys from the Widget options table |
 

@@ -2,6 +2,14 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.5.1] - 2026-11-19
+
+### Fixed
+
+- The `/compact` button shows the context share cut down, as the `context` widget does, not rounded up.
+- A git probe that finishes after a change of directory no longer writes its result into the new directory.
+- The reference lists `goal` and `project` among the widgets with a default label.
+
 ## [0.5.0] - 2026-11-18
 
 ### Security

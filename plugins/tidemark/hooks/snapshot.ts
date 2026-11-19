@@ -261,6 +261,7 @@ async function probe($: EngineInterface, trigger: 'tick' | 'turn') {
     if (running.has(req.key) || (req.kind === 'status' && statusInFlight)) continue
     running.add(req.key)
     void runProbe($, req, cwd).then(async outcome => {
+      if (probedCwd !== cwd) return
       const at = await $.clock.now()
       await update($, probesState, p => applyProbeResult(p, req.key, outcome, at))
     }).catch(logTo($, `probe ${req.key}`)).finally(() => running.delete(req.key))
