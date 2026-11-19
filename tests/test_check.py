@@ -81,6 +81,14 @@ class NotProse(unittest.TestCase):
         text = f"Run this.\n\n```bash\n{self.long_line}\n```\n\n~~~\n{self.long_line}\n~~~\n"
         self.assertEqual(check.check_text(text, "en"), [])
 
+    def test_fence_with_info_string_does_not_close(self):
+        text = f"Run this.\n\n```\n```js\n{self.long_line}\n```\n"
+        self.assertEqual(check.check_text(text, "en"), [])
+
+    def test_comment_opener_in_code_keeps_prose(self):
+        text = "```\n<!-- start\n```\n\nIt is very good.\n\n<!-- end -->\n"
+        self.assertEqual(rules(check.check_text(text, "en")), ["stop-word"])
+
     def test_inline_code(self):
         text = f"Run `{self.long_line}` now.\n"
         self.assertEqual(check.check_text(text, "en"), [])
@@ -203,6 +211,10 @@ class RussianTypography(unittest.TestCase):
         self.assertEqual(rules(found), ["ru-dash"])
         self.assertEqual(found[0].level, "error")
         self.assertEqual(check.check_text("Кто-то пишет код.\n", "ru"), [])
+
+    def test_dash_after_code_paren_or_quote(self):
+        for text in ["Флаг `-v` - выводит лог.\n", "Команда (build) - запускает.\n", "Ответ «да» - ок.\n"]:
+            self.assertEqual(rules(check.check_text(text, "ru")), ["ru-dash"], text)
 
     def test_numeric_range_gets_en_dash_advice(self):
         found = check.check_text("Нужно 10 - 20 узлов.\n", "ru")

@@ -21,7 +21,7 @@ This skill writes and reviews documentation by type. It finds the reader first, 
 - **Skeleton**: the ordered parts a type requires: sections of a page, or parts of an entry, a table row or a comment.
 - **Core rules**: the rules in this file. They apply to every type unless the type file says otherwise.
 - **Living document**: a page that changes with the product and is fixed or deleted when it stops being true.
-- **Record**: a page that captures a moment. Besides typos and broken links, the only changes to a published record are its status mark (`[YANKED]`, `superseded by`) and the link to its replacement.
+- **Record**: a page that captures a moment. Besides typos and broken links, the only changes to a published record are its status mark (`accepted`, `deprecated`, `[YANKED]`, `superseded by`) and the link to its replacement.
 - **Superseded**: the status of a record that a newer record replaces. The old record gets this status and a link to the newer one.
 - **Finding**: one problem found in review, reported as where, what, and how to fix.
 - **Cold reader**: someone who has not seen the draft or its context: a fresh subagent or a person.
@@ -72,7 +72,7 @@ The style file is `style/<language>.md`, named in English. It follows the langua
 
 **Review.** Identify the type of the existing text, load its type file, the style file and the pattern catalog, then follow [process/review.md](process/review.md). The report is the document of this branch, also when the request asks for the final or complete document. It goes to the chat; a file the user named is the text under review, never the place for the report. A record under review stays as written: propose a new record that supersedes it.
 
-**Rewrite.** When the user asks to rewrite, shorten, rework or fix an existing text, load the same files as for review. Keep its type, headings and facts unless the user asks to change them. Fix what breaks the type file and the style file; cut toward the type's budget only when asked to shorten. It adds no parts. A record is not rewritten: propose a new one. Write the result over the file the user named, or give it in the chat. Add at most three lines on what changed, with no findings list.
+**Rewrite.** When the user asks to rewrite, shorten, rework or fix an existing text, load the same files as for review. Keep its type, headings and facts unless the user asks to change them. Fix what breaks the type file and the style file; cut toward the type's budget only when asked to shorten. It adds no parts the type does not require. A record is not rewritten: propose a new one. Write the result over the file the user named, or give it in the chat. Add at most three lines on what changed, with no findings list.
 
 **Doc set.** For "document this project", a request that needs several types, or a docs audit, follow [process/doc-set.md](process/doc-set.md). Then run the create branch for each page in priority order.
 
@@ -116,7 +116,7 @@ Documentation progress:
 
 Run all eight steps in one response without pausing for confirmation. A step that cannot run is skipped as its paragraph says. Say nothing about checks, run or skipped, and offer no additions: the response is the document and its questions. The only other lines: one each for a default type, an unreadable type file or a language with no style file, and the rewrite's three lines on what changed. A document written to a file is not repeated in the reply: one line names the file. The response ends with the final document, given once: never a draft followed by a final version. After it comes the list of questions, if there is one. With no questions the response ends with the document: no note on assumptions or on what was left out. If the user named a file for a new or rewritten page, write it there. A docstring, a comment or a changelog entry is inserted into its file by an edit. Otherwise deliver it in the chat as plain Markdown, never wrapped in a code block. Keep the checklist and any mention of this skill or its files out of the document.
 
-**Step 1.** If the arguments start with `type=<type>`, that type is already chosen: skip choosing and go to step 2 with it. Settle in one sentence: who reads the page, what they are trying to do, and in what state. If the type is unclear, take the default type and name it in one line; a missing fact becomes a placeholder.
+**Step 1.** If the arguments start with `type=<type>`, where `<type>` is a type file name without `.md` (`how-to`, `adr`), that type is already chosen: skip choosing and go to step 2 with it. Settle in one sentence: who reads the page, what they are trying to do, and in what state. If the type is unclear, take the default type and name it in one line; a missing fact becomes a placeholder.
 
 **Step 2.** Before drafting, read `${CLAUDE_SKILL_DIR}/types/<type>.md` with the Read tool, then the style file and the pattern catalog. If the type file cannot be read, say so in one line and do not rebuild the skeleton from memory. Still draft in the same response with the core rules only, and note that the type skeleton was not applied. The Skeleton, Forbidden and Type checklist sections of that file drive steps 3, 4 and 7.
 

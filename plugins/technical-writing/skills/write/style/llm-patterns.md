@@ -102,7 +102,7 @@ Text written for the chat, left in the document.
 
 - Offers and sign-offs: `I hope this helps`, `Let me know if you want more detail`, `Feel free to reach out`.
 - Knowledge-cutoff notes: `As of my last update`, `I don't have information about`.
-- Placeholders left unfilled: `[insert link]`, `TODO: add example`.
+- Placeholders left unfilled: `[insert link]`, `TODO: add example`. The `<UPPER_CASE>` placeholders for missing facts stay.
 - Praise for the request: `Great question`.
 
 Delete all of them. If information is missing, draft anyway with a `<UPPER_CASE>` placeholder in the gap and list the questions that fill it at the end of the response.

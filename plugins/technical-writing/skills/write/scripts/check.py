@@ -139,7 +139,6 @@ REF_DEF_RE = re.compile(r"^\s{0,3}\[[^\]]+\]:\s*<?(\S+?)>?(?:\s+.*)?$")
 AUTOLINK_RE = re.compile(r"<([a-z][a-z0-9+.-]*:[^>\s]+)>", re.I)
 URL_RE = re.compile(r"\b[a-z][a-z0-9+.-]*://\S+", re.I)
 HTML_TAG_RE = re.compile(r"</?[a-z][^>]*>", re.I)
-COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
 SCHEME_RE = re.compile(r"^[a-z][a-z0-9+.-]*:", re.I)
 
 
@@ -157,7 +156,8 @@ def code_lines(lines):
     for line in lines:
         m = FENCE_RE.match(line)
         if fence:
-            if m and m.group(1)[0] == fence[0] and len(m.group(1)) >= len(fence):
+            if m and m.group(1)[0] == fence[0] and len(m.group(1)) >= len(fence) \
+                    and not line[m.end():].strip():
                 fence = None
             out.append(True)
         elif m:
@@ -180,11 +180,27 @@ def slugify(heading):
     return re.sub(r"\s", "-", re.sub(r"[^\w\- ]", "", text))
 
 
+def strip_comments(text):
+    """HTML comments become blank lines; an opener inside fenced code is text."""
+    code = code_lines(text.split("\n"))
+    parts, pos = [], 0
+    while (i := text.find("<!--", pos)) != -1:
+        if code[text.count("\n", 0, i)]:
+            parts.append(text[pos:i + 4])
+            pos = i + 4
+            continue
+        if (j := text.find("-->", i + 4)) == -1:
+            break
+        parts.append(text[pos:i] + "\n" * text.count("\n", i, j))
+        pos = j + 3
+    return "".join(parts) + text[pos:]
+
+
 class Doc:
     """Markdown split into prose blocks, table cells, link lines and anchors."""
 
     def __init__(self, text):
-        text = COMMENT_RE.sub(lambda m: "\n" * m.group().count("\n"), text.lstrip("\ufeff"))
+        text = strip_comments(text.lstrip("\ufeff"))
         lines = text.split("\n")
         self.blocks, self.cells, self.link_lines = [], [], []
         self.anchors = {a.lower() for a in re.findall(r'\b(?:id|name)="([^"]+)"', text)}
@@ -408,7 +424,7 @@ def _analyze(text, lang, path, max_words, check_urls):
         for m in re.finditer(r"\"[^\"]*\"|\"", text_):
             out.append(Finding(where(m.start()), "error", "ru-quotes",
                                "straight quotes in Russian prose; use «ёлочки»"))
-        for m in re.finditer(r"(?<=[^\W_])\s+--?\s+(?=[^\W_])", text_):
+        for m in re.finditer(r"(?<=[^\s-])\s+--?\s+(?=[^\s-])", text_):
             if text_[m.start() - 1].isdigit() and text_[m.end()].isdigit():
                 out.append(Finding(where(m.start()), "error", "ru-dash",
                                    "hyphen in a numeric range; use an en dash without spaces "

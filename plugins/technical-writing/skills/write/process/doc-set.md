@@ -12,7 +12,7 @@
 - Maintenance and retirement
 - Plan format
 
-Use this process before the first page when the request covers a whole project, several readers, or a docs audit. The output is a short plan the user approves. After approval, each page is written as a single document of one type.
+Use this process before the first page when the request covers a whole project, several readers, or a docs audit. The output is a short plan; each page is then written as a single document of one type.
 
 ## Audience
 
@@ -20,7 +20,7 @@ List the readers. For each, write one line: who they are, what they came to do, 
 
 Ginny Redish frames a page as one side of a conversation: the reader arrives with a question, and the page answers it. For each reader, write down the questions they bring. Those questions become page titles and headings.
 
-When readers are unknown, ask the user one question with a default: "Who reads these docs first: people evaluating the tool, or engineers on your team? I will assume engineers on the team."
+When readers are unknown, assume the most likely ones. Name them in one question at the end: "Who reads these docs first: people evaluating the tool, or engineers on your team? I assumed engineers on the team."
 
 ## Inventory
 

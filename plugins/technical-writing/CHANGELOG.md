@@ -2,6 +2,14 @@
 
 All notable changes to the `technical-writing` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [3.3.1] - 2026-11-19
+
+### Fixed
+
+- A doc set waits for approval only when the user asked for a plan or an audit. It names the assumed readers in the closing question instead of asking first.
+- The record status marks include ADR statuses `accepted` and `deprecated`. A rewrite adds the parts its type requires. `type=<type>` takes a type file name. Cleaning up placeholders keeps the `<UPPER_CASE>` ones.
+- The checker flags a spaced hyphen after inline code, a closing parenthesis or a quote in Russian prose. A fence line with an info string no longer closes a code block, and an HTML comment opener inside code no longer hides the prose after it.
+
 ## [3.3.0] - 2026-11-19
 
 ### Changed
