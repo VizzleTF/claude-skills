@@ -2,6 +2,12 @@
 
 All notable changes to the `vi-code` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.5.1] - 2026-11-19
+
+### Fixed
+
+- The README says that your project's conventions and CLAUDE.md win over the rules.
+
 ## [0.5.0] - 2026-11-19
 
 ### Changed

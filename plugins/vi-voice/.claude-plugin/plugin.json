@@ -1,7 +1,7 @@
 {
   "name": "vi-voice",
   "displayName": "vi-voice",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Short chat style injected at session start: answer first, a five-line body, no ceremony, payload and facts verbatim, a closing risk line and blocks for what is left. The reply language comes from the language setting. About 500 tokens per session.",
   "author": {
     "name": "VizzleTF",

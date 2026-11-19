@@ -2,6 +2,12 @@
 
 All notable changes to the `vi-voice` plugin, named `voice-ru` before 0.2.0. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.6.1] - 2026-11-19
+
+### Fixed
+
+- The README gives the rules as about 370 words; the marketplace entry is in English and gives the same 500-token cost as the manifest.
+
 ## [0.6.0] - 2026-11-18
 
 ### Changed

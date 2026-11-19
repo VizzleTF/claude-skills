@@ -1,7 +1,7 @@
 {
   "name": "vi-code",
   "displayName": "vi-code",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Coding rules injected at session start and into every subagent: the smallest complete change, reuse first, validate at trust boundaries, reach every caller, test new logic and bug fixes, run the tests, find the cause before the fix, comment only what the code cannot show. About 600 tokens.",
   "author": {
     "name": "VizzleTF",
