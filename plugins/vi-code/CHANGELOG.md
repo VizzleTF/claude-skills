@@ -2,6 +2,12 @@
 
 All notable changes to the `vi-code` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.5.0] - 2026-11-19
+
+### Changed
+
+- Comments: none unless the code alone would mislead or puzzle; then a short lowercase English fragment with no period. No narration of the code or the edit, no step numbers, no commented-out code. Public API may get a one-line doc comment plus any section its language requires. Existing comments stay and move with their code. A shortcut gets `TODO: <the limit>`. In an A/B test over six tasks, useless comments per run fell from 0.8 to 0.4, and off-taste ones from 0.9 to 0.2. The useless ones left are one-line doc comments on public API. 368 words up to 450.
+
 ## [0.4.0] - 2026-11-18
 
 ### Changed

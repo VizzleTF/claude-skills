@@ -9,6 +9,7 @@ Claude Code makes small code changes that reach every caller.
 - adds a small test for new logic and a failing-first test for a bug fix
 - runs the project's tests and linter, never weakens a test to pass
 - proves a bug's cause before the fix
+- comments only what the code cannot show, in a few lowercase words
 
 ```
 /plugin marketplace add VizzleTF/claude-skills
@@ -17,7 +18,7 @@ Claude Code makes small code changes that reach every caller.
 
 ## More
 
-- The rules are [rules.md](rules.md), about 370 words, in English; replies can be in any language.
+- The rules are [rules.md](rules.md), about 450 words, in English; replies can be in any language.
 - A `SessionStart` hook adds them on startup, `resume`, `clear` and `compact`; a `SubagentStart` hook adds them to every subagent.
 - The chat reply style is the [vi-voice](../vi-voice/README.md) plugin.
 - Uninstall: `/plugin uninstall vi-code@vizzletf-skills`
