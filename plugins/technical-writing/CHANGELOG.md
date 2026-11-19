@@ -2,6 +2,12 @@
 
 All notable changes to the `technical-writing` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [3.3.0] - 2026-11-19
+
+### Changed
+
+- A docstring goes on public API where the project's code has them or where a caller needs facts the signature does not show, not on every public item. This matches the comment rule in `vi-code`.
+
 ## [3.2.0] - 2026-11-18
 
 ### Changed

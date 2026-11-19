@@ -4,7 +4,7 @@ A docstring documents an interface for the people who call it. A code comment ex
 
 ## When to use it and when not
 
-Use a docstring on every public module, class, function and method. Use a comment where the code alone leaves a question: why this approach, what invariant holds, what breaks if this line changes.
+Use a docstring on public API where the project's code has them or where a caller needs facts the signature does not show. Use a comment where the code alone leaves a question: why this approach, what invariant holds, what breaks if this line changes.
 
 Pick another type in these cases:
 
