@@ -1,6 +1,6 @@
 # claude-skills
 
-Claude Code plugin marketplace `vizzletf-skills`: the documentation-writing plugin `technical-writing` (English instructions, style rules per document language), plus the `tidemark` mod and two always-on rule plugins injected by a `SessionStart` hook: `vi-voice` (chat style; the reply language comes from the `language` setting) and `vi-code` (coding rules, also injected into every subagent by a `SubagentStart` hook).
+Claude Code plugin marketplace `vizzletf-skills`: the documentation-writing plugin `technical-writing` (English instructions, style rules per document language), plus the `tidemark` mod, the user-invoked `critique` plugin (`/critique:run`: parallel critic and cold-reader subagents) and two always-on rule plugins injected by a `SessionStart` hook: `vi-voice` (chat style; the reply language comes from the `language` setting) and `vi-code` (coding rules, also injected into every subagent by a `SubagentStart` hook).
 
 ## Commands
 
@@ -19,6 +19,7 @@ python3 plugins/technical-writing/skills/write/scripts/check.py plugins/technica
 ```
 .claude-plugin/marketplace.json     lists the plugins; renames maps technical-writing-ru to technical-writing
 plugins/technical-writing/          .claude-plugin/plugin.json, README, LICENSE, skills/, evals/
+plugins/critique/                   skills/run/ (SKILL.md, lenses.md), agents/ (critic, cold-reader)
   skills/write/SKILL.md             the only skill /<plugin>:write: glossary, type choice, routing, core rules, workflow
   skills/write/types/               13 document types, one file each
   skills/write/style/               <language>.md (english.md required, russian.md), llm-patterns.md

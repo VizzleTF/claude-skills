@@ -51,7 +51,7 @@
     {
       "name": "vi-voice",
       "source": "./plugins/vi-voice",
-      "description": "Короткий стиль ответов в чате, язык из настройки language: вывод первым, без церемоний, код дословно. Около 400 токенов на сессию.",
+      "description": "Short chat replies: answer first, a five-line body, no ceremony, facts verbatim. The reply language comes from the language setting. About 500 tokens per session.",
       "author": {
         "name": "VizzleTF",
         "url": "https://github.com/VizzleTF"
@@ -82,6 +82,24 @@
         "coding",
         "rules",
         "debugging"
+      ]
+    },
+    {
+      "name": "critique",
+      "source": "./plugins/critique",
+      "description": "Parallel read-only critics and a cold reader review your work; Claude checks each finding, fixes what holds up inside the zone you own, and repeats until nothing critical is left.",
+      "author": {
+        "name": "VizzleTF",
+        "url": "https://github.com/VizzleTF"
+      },
+      "homepage": "https://github.com/VizzleTF/claude-skills/tree/main/plugins/critique",
+      "repository": "https://github.com/VizzleTF/claude-skills",
+      "license": "MIT",
+      "category": "productivity",
+      "tags": [
+        "review",
+        "subagents",
+        "critic"
       ]
     }
   ]

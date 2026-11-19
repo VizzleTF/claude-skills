@@ -2,7 +2,7 @@
 
 [![ci](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml)
 
-Четыре плагина Claude Code: документы под читателя, полоса статуса над промптом, короткие ответы, небольшие и полные правки кода.
+Пять плагинов Claude Code: документы под читателя, полоса статуса над промптом, короткие ответы, небольшие и полные правки кода, субагенты-критики для проверки работы.
 
 ```
 /plugin marketplace add VizzleTF/claude-skills
@@ -10,6 +10,7 @@
 /plugin install tidemark@vizzletf-skills
 /plugin install vi-voice@vizzletf-skills
 /plugin install vi-code@vizzletf-skills
+/plugin install critique@vizzletf-skills
 ```
 
 ## technical-writing
@@ -66,6 +67,18 @@ Claude делает небольшие правки кода и не забыв�
 - сабагенты следуют тем же правилам
 
 [Полный README](plugins/vi-code/README.ru.md)
+
+## critique
+
+Субагенты-критики и холодный читатель проверяют вашу работу; Claude исправляет подтверждённое.
+
+- от 2 до 5 критиков только на чтение, у каждого свой ракурс, к каждому замечанию доказательство
+- холодный читатель выполняет задачи читателя только по вашей документации
+- правки не выходят за вашу зону; придирки к стилю отклоняются
+- `loop` повторяет раунды, пока не исчезнут критичные и важные замечания, не больше 3
+- запускается только вручную: `/critique:run`
+
+[Полный README](plugins/critique/README.ru.md)
 
 ## Ссылки
 

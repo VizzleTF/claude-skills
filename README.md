@@ -2,7 +2,7 @@
 
 [![ci](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml)
 
-Four Claude Code plugins: documents that fit their reader, a status band above the prompt, short replies, small complete code changes.
+Five Claude Code plugins: documents that fit their reader, a status band above the prompt, short replies, small complete code changes, critic subagents that review your work.
 
 ```
 /plugin marketplace add VizzleTF/claude-skills
@@ -10,6 +10,7 @@ Four Claude Code plugins: documents that fit their reader, a status band above t
 /plugin install tidemark@vizzletf-skills
 /plugin install vi-voice@vizzletf-skills
 /plugin install vi-code@vizzletf-skills
+/plugin install critique@vizzletf-skills
 ```
 
 ## technical-writing
@@ -66,6 +67,18 @@ Claude makes small code changes that reach every caller.
 - subagents follow the same rules
 
 [Full README](plugins/vi-code/README.md)
+
+## critique
+
+Critic subagents and a cold reader review your work; Claude fixes what holds up.
+
+- 2 to 5 read-only critics, each through one lens, every finding with proof
+- a cold reader tries the reader's tasks using only your docs
+- fixes stay inside the zone you own; style nits are rejected
+- `loop` repeats rounds until nothing critical or important is left, at most 3
+- runs only when you type `/critique:run`
+
+[Full README](plugins/critique/README.md)
 
 ## Links
 
