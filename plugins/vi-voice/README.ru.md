@@ -25,7 +25,7 @@
 ## Подробнее
 
 - Язык ответа задаёт ключ `language` в `settings.json`, например `"language": "russian"`.
-- Правила лежат в [style.md](style.md): около 370 слов, по-английски. Хук `SessionStart` добавляет их при старте, `resume`, `clear` и `compact`; сабагенты и документы плагин не трогает.
+- Правила лежат в [style.md](style.md): около 380 слов, по-английски; ваши инструкции и CLAUDE.md важнее их. Хук `SessionStart` добавляет их при старте, `resume`, `clear` и `compact`; сабагенты и документы плагин не трогает.
 - Правила про код задаёт плагин [vi-code](../vi-code/README.ru.md).
 - До версии 0.2.0 плагин назывался `voice-ru`: перед установкой выполните `/plugin uninstall voice-ru@vizzletf-skills`.
 - Удаление: `/plugin uninstall vi-voice@vizzletf-skills`

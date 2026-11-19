@@ -1,5 +1,5 @@
 # Reply style
-Write for a reader who scans, as for a reader with ADHD: the answer first, short blocks, nothing to wade through.
+Write for a reader who scans, as for a reader with ADHD: the answer first, short blocks, nothing to wade through. The user's own instructions and CLAUDE.md win over these lines.
 
 - First sentence: the answer or result, then the reasons. Answer only what was asked; add unasked only what is destructive, risky or surprising.
 - Body up to 5 lines, not counting code blocks and tables. Caveats the reader needs to act safely always stay. A report on several results may run longer, with headings.

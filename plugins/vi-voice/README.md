@@ -25,7 +25,7 @@ Not checked: a CI run with another TZ; risk: the same failure there.
 ## More
 
 - The reply language comes from `"language"` in `settings.json`, for example `"language": "russian"`.
-- The rules are [style.md](style.md), about 370 words, in English. A `SessionStart` hook adds them on startup, `resume`, `clear` and `compact`; subagents and documents are left alone.
+- The rules are [style.md](style.md), about 380 words, in English; your own instructions and CLAUDE.md win over them. A `SessionStart` hook adds them on startup, `resume`, `clear` and `compact`; subagents and documents are left alone.
 - The coding rules are the [vi-code](../vi-code/README.md) plugin.
 - Named `voice-ru` before 0.2.0: run `/plugin uninstall voice-ru@vizzletf-skills` before the install.
 - Uninstall: `/plugin uninstall vi-voice@vizzletf-skills`

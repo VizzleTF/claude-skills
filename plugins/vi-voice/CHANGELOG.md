@@ -2,6 +2,12 @@
 
 All notable changes to the `vi-voice` plugin, named `voice-ru` before 0.2.0. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.7.0] - 2026-11-19
+
+### Changed
+
+- The rules say that the user's own instructions and CLAUDE.md win over them. 384 words.
+
 ## [0.6.1] - 2026-11-19
 
 ### Fixed
