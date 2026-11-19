@@ -270,6 +270,19 @@ function dropGlobalOnly(raw: Record<string, unknown>, path: string, warnings: st
   }
 }
 
+// The global-only options a file would hold, as `widget.option`.
+export function globalOnlyIn(file: Record<string, unknown>): string[] {
+  const out: string[] = []
+  for (const lines of [file.lines, isObject(file.desktop) ? file.desktop.lines : undefined]) {
+    if (!Array.isArray(lines)) continue
+    for (const item of lines.flat()) {
+      if (!isObject(item) || !isObject(item.options)) continue
+      for (const k of GLOBAL_ONLY[String(item.widget)] ?? []) if (k in item.options) out.push(`${String(item.widget)}.${k}`)
+    }
+  }
+  return out
+}
+
 // The files' texts (global first, a missing file left out) to the config in effect: the project file's
 // top-level keys over the global's, validated. A file that does not parse is skipped and named in `error`.
 export function loadFromTexts(files: ({ path: string; text: string; project?: boolean } | { path: string; error: string })[]): LoadedConfig {

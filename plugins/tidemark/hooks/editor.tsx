@@ -6,7 +6,7 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, On } from 'claude-code'
 
 import type { TidemarkConfig, TidemarkConfigState, TidemarkEditor, TidemarkWidgetId } from '../types'
-import { ICONS, PRESETS, SEPARATORS, WIDGET_IDS, WIDGET_OPTIONS, configPathsFrom, configText, effectiveConfig, forSurface, fromSurface, loadFromTexts, saveContent } from './config-model'
+import { ICONS, PRESETS, SEPARATORS, WIDGET_IDS, WIDGET_OPTIONS, configPathsFrom, configText, effectiveConfig, forSurface, fromSurface, globalOnlyIn, loadFromTexts, saveContent } from './config-model'
 import { drawBand, noFields } from './draw'
 import {
   addItem, moveItem, optionText, raiseSection, removeItem, setAlert, setCompactAt, setLabel, setOption, setPriority, setStyle,
@@ -89,8 +89,12 @@ async function save($: EngineInterface) {
   } catch {
     // A project file that does not parse overrides nothing.
   }
+  const content = saveContent(s.draft ?? onDisk.config, onDisk.config, globalOnly, projectKeys, s.target)
+  // the project file drops these on load, so the widget would vanish
+  const blocked = s.target === 'project' ? globalOnlyIn(content) : []
+  if (blocked.length > 0) return note(`${blocked.join(', ')} come only from the global config; save to global`)
   try {
-    await $.fs.write(path, configText(saveContent(s.draft ?? onDisk.config, onDisk.config, globalOnly, projectKeys, s.target)))
+    await $.fs.write(path, configText(content))
   } catch (err) {
     return note(`save failed: ${err instanceof Error ? err.message : String(err)}`)
   }

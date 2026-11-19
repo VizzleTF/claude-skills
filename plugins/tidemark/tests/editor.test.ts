@@ -174,6 +174,16 @@ for (const surface of ['terminal', 'desktop'] as const) {
     expect((await ui.find({ key: 'alerts-context' }))?.props.value).toBe('70')
   })
 
+  if (surface === 'terminal') test(`Save to the project refuses a global-only option instead of losing the widget (${surface})`, async ($, on) => {
+    const { writes } = host(on, { [GLOBAL]: JSON.stringify({ version: 1, lines: [[{ widget: 'command', options: { command: 'date' } }]] }) })
+    const ui = await open($, surface)
+    await ui.select({ key: 'target', value: 'project' })
+    await ui.select({ key: 'add', value: 'cwd' })
+    await ui.press({ key: 'save' })
+    expect(writes).toEqual([])
+    expect(await ui.find({ type: 'Text', text: /command\.command come only from the global config/ })).toBeDefined()
+  })
+
   // File keys do not depend on the surface; the desktop app's own section has its own test.
   if (surface === 'terminal') test(`a hand edit since the session loaded the file survives Save; with a draft, Save asks twice (${surface})`, async ($, on) => {
     const { disk } = host(on, { [GLOBAL]: JSON.stringify({ version: 1, lines: [['context']] }) })

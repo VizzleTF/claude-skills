@@ -2,6 +2,12 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.5.2] - 2026-11-19
+
+### Fixed
+
+- Save to the project config refuses `command.command` and the `gitPr` hosts, which a project file drops on load, so the widget no longer vanishes after Save.
+
 ## [0.5.1] - 2026-11-19
 
 ### Fixed
