@@ -8,7 +8,7 @@ Parallel critic subagents and a cold reader review your work; Claude checks each
 - fixes stay inside the zone you own; findings outside it come back as a list
 - findings against your project rules and style nits are rejected
 - `loop` repeats rounds on the new diff until nothing critical or important is left, at most 3
-- runs only when you type it; the two subagent descriptions are all it adds to the context
+- runs when you type it or ask Claude for critics or a cold reader
 
 ```
 /plugin marketplace add VizzleTF/claude-skills

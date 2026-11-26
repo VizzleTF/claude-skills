@@ -76,7 +76,7 @@ Critic subagents and a cold reader review your work; Claude fixes what holds up.
 - a cold reader tries the reader's tasks using only your docs
 - fixes stay inside the zone you own; style nits are rejected
 - `loop` repeats rounds until nothing critical or important is left, at most 3
-- runs only when you type `/critique:run`
+- runs on `/critique:run` or when you ask Claude for critics or a cold reader
 
 [Full README](plugins/critique/README.md)
 

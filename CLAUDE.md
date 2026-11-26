@@ -1,6 +1,6 @@
 # claude-skills
 
-Claude Code plugin marketplace `vizzletf-skills`: the documentation-writing plugin `technical-writing` (English instructions, style rules per document language), plus the `tidemark` mod, the user-invoked `critique` plugin (`/critique:run`: parallel critic and cold-reader subagents) and two always-on rule plugins injected by a `SessionStart` hook: `vi-voice` (chat style; the reply language comes from the `language` setting) and `vi-code` (coding rules, also injected into every subagent by a `SubagentStart` hook).
+Claude Code plugin marketplace `vizzletf-skills`: the documentation-writing plugin `technical-writing` (English instructions, style rules per document language), plus the `tidemark` mod, the `critique` plugin (`/critique:run` or on request: parallel critic and cold-reader subagents) and two always-on rule plugins injected by a `SessionStart` hook: `vi-voice` (chat style; the reply language comes from the `language` setting) and `vi-code` (coding rules, also injected into every subagent by a `SubagentStart` hook).
 
 ## Commands
 

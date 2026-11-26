@@ -1,6 +1,5 @@
 ---
-description: Reviews work with parallel read-only critic subagents and an optional cold reader, fixes the findings that hold up inside the owned zone, and repeats until no critical or important finding is left.
-disable-model-invocation: true
+description: Reviews work with parallel read-only critic subagents and an optional cold reader, fixes the findings that hold up inside the owned zone, and repeats until no critical or important finding is left. Use only when the user asks for critics, a critique round or loop, or a cold reader ("run critics", "cold read it", «прогони критиков», «критики», «холодный читатель», «холодное чтение»); not for an ordinary review request.
 argument-hint: "[target] [N critics] [loop] [cold] [report only]"
 ---
 
