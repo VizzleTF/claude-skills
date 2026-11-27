@@ -21,7 +21,7 @@ The **zone** is the set of paths you may edit: the target plus what this session
 
 ## 2. Lenses
 
-A **lens** is one way the target can fail its users. Pick one lens per critic from [lenses.md](lenses.md), matched to the target's kind; no two lenses share a question. Done when each lens names its files, its questions and the commands that prove a finding.
+A **lens** is one way the target can fail its users. Pick one lens per critic from [lenses.md](lenses.md), matched to the target's kind; no two lenses share a question. When the target is new work and not a fix of a known defect, one critic takes the approach lens. Done when each lens names its files, its questions and the commands that prove a finding.
 
 ## 3. Critic round
 
@@ -48,7 +48,7 @@ Check each finding once yourself (read the cited line, rerun its command) and gi
 - **fix** for a minor one only when it is a one-line change inside the zone;
 - **reject**: not reproduced, style or taste, or an option, wrapper or abstraction nobody asked for. Reject too what goes against a project rule or a user decision, such as a request for comments the coding rules forbid. Keep the reason;
 - **outside**: the defect, or a change its fix needs (a caller, a test), lives outside the zone; never edit it, it goes to the leftover list;
-- **decision**: only the user can settle it (ownership, platform, product choice).
+- **decision**: only the user can settle it (ownership, platform, product choice, a different approach).
 
 Note which checks already fail, apply the fixes, then run the project's tests and linters without auto-fix flags. A fix that breaks a check is reverted and becomes a decision. Done when every finding has a verdict and no check fails that passed before.
 

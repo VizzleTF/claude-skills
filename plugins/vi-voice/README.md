@@ -3,6 +3,7 @@
 Claude Code's chat replies get short and lead with the answer, for readers who scan, ADHD included.
 
 - the first sentence is the answer or result
+- a request that would break your own goal, lose data or open a hole is flagged in the first sentence, before the code or config
 - the body fits in 5 lines; a report on several results may run longer
 - no greetings, restated questions or closing offers
 - caveats, numbers, code and errors stay, quoted exactly
@@ -25,7 +26,7 @@ Not checked: a CI run with another TZ; risk: the same failure there.
 ## More
 
 - The reply language comes from `"language"` in `settings.json`, for example `"language": "russian"`.
-- The rules are [style.md](style.md), about 380 words, in English; your own instructions and CLAUDE.md win over them. A `SessionStart` hook adds them on startup, `resume`, `clear` and `compact`; subagents and documents are left alone.
+- The rules are [style.md](style.md), about 440 words, in English; your own instructions and CLAUDE.md win over them. A `SessionStart` hook adds them on startup, `resume`, `clear` and `compact`; subagents and documents are left alone.
 - The coding rules are the [vi-code](../vi-code/README.md) plugin.
 - Named `voice-ru` before 0.2.0: run `/plugin uninstall voice-ru@vizzletf-skills` before the install.
 - Uninstall: `/plugin uninstall vi-voice@vizzletf-skills`

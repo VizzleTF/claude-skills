@@ -51,7 +51,7 @@
     {
       "name": "vi-voice",
       "source": "./plugins/vi-voice",
-      "description": "Short chat replies: answer first, a five-line body, no ceremony, facts verbatim. The reply language comes from the language setting. About 500 tokens per session.",
+      "description": "Short chat replies: answer first, a five-line body, no ceremony, facts verbatim. The reply language comes from the language setting. About 570 tokens per session.",
       "author": {
         "name": "VizzleTF",
         "url": "https://github.com/VizzleTF"

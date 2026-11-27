@@ -2,6 +2,10 @@
 
 Pick lenses for the target's kind; mix kinds when the target spans them. Each lens lists what to hunt and what proves it.
 
+## Any kind
+
+- approach: whether the goal needs this approach at all. Hunt up to three strong reasons it fails the goal and the plain alternative that avoids them; prove with the stated goal and a concrete case where the approach fails
+
 ## Code
 
 - correctness: wrong output for valid input, edge cases, error paths; prove with a failing test or a run
