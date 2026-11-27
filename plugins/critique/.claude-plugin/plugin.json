@@ -1,7 +1,7 @@
 {
   "name": "critique",
   "displayName": "critique",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Parallel read-only critic subagents and a cold reader review your work; Claude checks each finding, fixes what holds up inside the zone you own, and repeats until nothing critical is left. Runs when you type /critique:run or ask Claude for critics or a cold reader.",
   "author": {
     "name": "VizzleTF",

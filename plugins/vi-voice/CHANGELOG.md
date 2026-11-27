@@ -2,6 +2,13 @@
 
 All notable changes to the `vi-voice` plugin, named `voice-ru` before 0.2.0. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.8.0] - 2026-11-27
+
+### Added
+
+- The first sentence names a request or plan that would break the user's own goal, lose data or open a hole, before any deliverable. A deliverable that differs from the request names the change first. Insistence alone does not change the answer. 438 words.
+- Measured with Opus 5.5 on such requests: the first sentence flagged the problem in 23 of 24 runs, against 17 of 23 without the rule. Replies on correct plans and on wrong pushback did not change.
+
 ## [0.7.0] - 2026-11-19
 
 ### Changed

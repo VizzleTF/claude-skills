@@ -3,6 +3,7 @@
 Parallel critic subagents and a cold reader review your work; Claude checks each finding and fixes what holds up.
 
 - 2 to 5 read-only critics, each through one lens: correctness, security, docs vs behaviour and more
+- on new work one critic asks whether the approach itself is wrong for the goal and names the plain alternative
 - every finding comes with proof: a command and its output
 - a cold reader tries the reader's tasks using only your docs and reports where they stall
 - fixes stay inside the zone you own; findings outside it come back as a list
