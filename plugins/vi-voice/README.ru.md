@@ -27,6 +27,7 @@
 
 - Язык ответа задаёт ключ `language` в `settings.json`, например `"language": "russian"`.
 - Правила лежат в [style.md](style.md): около 440 слов, по-английски; ваши инструкции и CLAUDE.md важнее их. Хук `SessionStart` добавляет их при старте, `resume`, `clear` и `compact`; сабагенты и документы плагин не трогает.
+- В claude.ai: добавьте `VizzleTF/claude-skills` как marketplace в разделе Plugins и включите vi-voice. Claude Code и облачные сессии под этим аккаунтом загружают его как `vi-voice@synced`; локально установленный `vi-voice@vizzletf-skills` важнее этой копии. В чатах claude.ai хуков нет, там правила не действуют.
 - Правила про код задаёт плагин [vi-code](../vi-code/README.ru.md).
 - До версии 0.2.0 плагин назывался `voice-ru`: перед установкой выполните `/plugin uninstall voice-ru@vizzletf-skills`.
 - Удаление: `/plugin uninstall vi-voice@vizzletf-skills`

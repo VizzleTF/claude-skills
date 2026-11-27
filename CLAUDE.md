@@ -11,6 +11,7 @@ python3 -m unittest discover -s tests          # all tests, offline
 python3 tools/parity.py                         # skill structure + secrets; prints "parity: ok"
 claude plugin validate .                        # marketplace + plugin manifests
 python3 tools/version_check.py origin/main      # each plugin changed since the base bumps its version + CHANGELOG entry
+python3 tools/pack.py [PLUGIN...]               # dist/<plugin>-<version>.zip for upload to claude.ai
 python3 plugins/technical-writing/skills/write/scripts/check.py plugins/technical-writing/skills/write/   # text checks (dir or files)
 ```
 
@@ -29,8 +30,9 @@ plugins/critique/                   skills/run/ (SKILL.md, lenses.md), agents/ (
 tools/parity.py                     skill structure and repo-wide secret checks
 tools/version_check.py              version bump + CHANGELOG entry per changed plugin
 tools/live_smoke.py                 tidemark in a real Claude Code under tmux
+tools/pack.py                       plugin zips for claude.ai upload, --notes prints the CHANGELOG entry
 tests/                              one test_<tool>.py per tool, test_tidemark_schema.py, test_vi_code_hook.py, test_vi_voice_hook.py
-.github/                            ci.yml (all checks), ISSUE_TEMPLATE/ (bug, feature)
+.github/                            ci.yml (all checks), release.yml (tag -> GitHub release with the zip), ISSUE_TEMPLATE/ (bug, feature)
 ```
 
 ## Key files
@@ -48,7 +50,7 @@ tests/                              one test_<tool>.py per tool, test_tidemark_s
 
 ## Conventions
 
-- Versioning: any change to a plugin's files bumps its `version` in `plugin.json` only, never in `marketplace.json` (semver: patch for wording fixes, minor for new rules or types, major for changes that alter what documents the skill produces) and adds a `CHANGELOG.md` entry; release tag `<plugin>--v<version>`. Run `tools/version_check.py origin/main` before a commit.
+- Versioning: any change to a plugin's files bumps its `version` in `plugin.json` only, never in `marketplace.json` (semver: patch for wording fixes, minor for new rules or types, major for changes that alter what documents the skill produces) and adds a `CHANGELOG.md` entry; release tag `<plugin>--v<version>` (push it from the Mac; release.yml attaches the zip, which then goes to claude.ai Customize > Plugins so cloud sessions and projects get it). Run `tools/version_check.py origin/main` before a commit.
 - Every `types/*.md` has seven H2 in this order: When to use it and when not, Skeleton, Voice and verbs, Length, Differences from the core rules, Forbidden, Type checklist.
 - Files in `types/`, `style/`, `process/` must not link to or name other skill files.
 - Any skill `.md` over 100 lines starts with `## Contents` (`## Содержание` in `style/russian.md`).

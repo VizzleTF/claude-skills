@@ -1,0 +1,31 @@
+name: release
+
+# A plugin release tag <plugin>--v<version> publishes a GitHub release with the plugin zip,
+# ready to upload to claude.ai (Customize > Plugins) so cloud sessions and projects get it.
+on:
+  push:
+    tags: ["*--v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pack and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          plugin="${TAG%--v*}"
+          version="${TAG##*--v}"
+          manifest_version=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['version'])" "plugins/$plugin/.claude-plugin/plugin.json")
+          if [ "$version" != "$manifest_version" ]; then
+            echo "$TAG: plugin.json has version $manifest_version" >&2
+            exit 1
+          fi
+          zip=$(python3 tools/pack.py "$plugin")
+          python3 tools/pack.py --notes "$plugin" > notes.md
+          gh release create "$TAG" "$zip" --title "$plugin $version" --notes-file notes.md

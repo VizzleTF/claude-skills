@@ -2,6 +2,12 @@
 
 All notable changes to the `vi-voice` plugin, named `voice-ru` before 0.2.0. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.8.1] - 2026-11-27
+
+### Changed
+
+- README: how to get the plugin through a claude.ai plugin marketplace, and that a local install takes precedence over the `@synced` copy.
+
 ## [0.8.0] - 2026-11-27
 
 ### Added
