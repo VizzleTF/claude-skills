@@ -4,7 +4,7 @@ Pick lenses for the target's kind; mix kinds when the target spans them. Each le
 
 ## Any kind
 
-- approach: whether the goal needs this approach at all. Hunt the three strongest reasons it fails the goal and the plain alternative that avoids them; prove with the stated goal and a concrete case where the approach fails
+- approach: whether the goal needs this approach at all. Hunt up to three strong reasons it fails the goal and the plain alternative that avoids them; prove with the stated goal and a concrete case where the approach fails
 
 ## Code
 
