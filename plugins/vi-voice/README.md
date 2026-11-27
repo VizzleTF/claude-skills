@@ -27,6 +27,7 @@ Not checked: a CI run with another TZ; risk: the same failure there.
 
 - The reply language comes from `"language"` in `settings.json`, for example `"language": "russian"`.
 - The rules are [style.md](style.md), about 440 words, in English; your own instructions and CLAUDE.md win over them. A `SessionStart` hook adds them on startup, `resume`, `clear` and `compact`; subagents and documents are left alone.
+- On claude.ai: add `VizzleTF/claude-skills` as a plugin marketplace in Plugins and turn on vi-voice. Claude Code and cloud sessions signed in to that account load it as `vi-voice@synced`; a locally installed `vi-voice@vizzletf-skills` takes precedence over that copy. Chats on claude.ai run no hooks, so the rules do not apply there.
 - The coding rules are the [vi-code](../vi-code/README.md) plugin.
 - Named `voice-ru` before 0.2.0: run `/plugin uninstall voice-ru@vizzletf-skills` before the install.
 - Uninstall: `/plugin uninstall vi-voice@vizzletf-skills`
