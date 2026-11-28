@@ -135,7 +135,7 @@ Besides the programs above, tidemark makes one request itself: an HTTPS GET of `
 | `.claude/tidemark.json` | project config | ✓ | on `Save` in `/tidemark-config` |
 | `.claude/tidemark-project.txt` | project name | ✓ | by `/tidemark-project` |
 | Plugin store | last quota, effort levels each model accepted, goals of recent sessions | ✓ | as the session goes |
-| `HOME`, `XDG_CONFIG_HOME` | where the global config lives | ✓ | |
+| `HOME` (on Windows without it, `USERPROFILE`), `XDG_CONFIG_HOME` | where the global config lives | ✓ | |
 | `CLAUDE_CODE_PROMPT_CACHE_TTL`, `ENABLE_PROMPT_CACHING_1H`, `FORCE_PROMPT_CACHING_5M`, setting `promptCacheTtl` | the prompt cache's lifetime | ✓ | |
 
 The files in `.claude` are tidemark's own, not Claude Code settings or instructions. [Privacy](PRIVACY.md) and [External runs](docs/reference.md#external-runs) give the details.

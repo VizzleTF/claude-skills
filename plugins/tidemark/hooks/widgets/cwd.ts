@@ -2,7 +2,7 @@
 // short `~/…/a/b`, or the full path. The git root comes from the `gitRoot` probe when it ran.
 import { distinct, labelled, opt, widget } from './kit'
 
-const name = (p: string) => p.split('/').filter(Boolean).at(-1) ?? p
+const name = (p: string) => p.split(/[\\/]/).filter(Boolean).at(-1) ?? p
 
 export const cwd = widget('cwd', {
   title: 'Directory',
@@ -10,16 +10,18 @@ export const cwd = widget('cwd', {
   render(input) {
     const { cwd: dir, home } = input.env
     if (!dir) return []
-    const path = dir.replace(/\/+$/, '') || '/'
+    // a Windows path keeps its backslashes
+    const sep = dir.includes('\\') ? '\\' : '/'
+    const path = dir.replace(/[\\/]+$/, '') || sep
     let text: string
     switch (opt<string>(cwd, input, 'style')) {
       case 'basename': text = name(path); break
       case 'full': text = path; break
       case 'short': {
-        const h = home?.replace(/\/+$/, '')
-        const p = h && (path === h || path.startsWith(`${h}/`)) ? `~${path.slice(h.length)}` : path
-        const parts = p.split('/')
-        text = parts.length > 4 ? [parts[0], '…', ...parts.slice(-2)].join('/') : p
+        const h = home?.replace(/[\\/]+$/, '')
+        const p = h && (path === h || path.startsWith(`${h}${sep}`)) ? `~${path.slice(h.length)}` : path
+        const parts = p.split(sep)
+        text = parts.length > 4 ? [parts[0], '…', ...parts.slice(-2)].join(sep) : p
         break
       }
       default: text = name(input.probes.gitRoot?.stdout?.trim() || path)

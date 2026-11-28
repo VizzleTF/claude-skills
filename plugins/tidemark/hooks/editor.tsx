@@ -50,6 +50,7 @@ async function paths($: EngineInterface) {
   return configPathsFrom({
     xdg: await $.env.get('XDG_CONFIG_HOME').catch(() => undefined),
     home: await $.env.get('HOME').catch(() => undefined),
+    userProfile: await $.env.get('USERPROFILE').catch(() => undefined),
     cwd: await $.session.cwd().catch(() => undefined),
   })
 }
@@ -118,7 +119,7 @@ export function registerEditor(on: On): void {
     const snap = await read($, snapshotState)
     const preview = buildLines(draft, snap, await read($, probesState), e.props.bodyColumns - 2, await $.clock.now(), {
       cwd: await $.session.cwd().catch(() => undefined),
-      home: await $.env.get('HOME').catch(() => undefined),
+      home: await $.env.get('HOME').catch(() => undefined) || await $.env.get('USERPROFILE').catch(() => undefined),
       surface: e.surface,
     })
     const sel = ed.selected

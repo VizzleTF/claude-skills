@@ -1,7 +1,7 @@
 {
   "name": "tidemark",
   "displayName": "Tidemark",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Configurable band above the Claude Code prompt: context, cache, quota, model, git and more, with a details pane and an in-app config editor.",
   "author": {
     "name": "VizzleTF",

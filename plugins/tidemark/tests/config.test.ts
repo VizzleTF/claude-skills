@@ -1,6 +1,6 @@
 import { expect, mock, test } from 'claude-code/testing'
 import type { On } from 'claude-code'
-import { DEFAULT_CONFIG, PRESETS, SCHEMA_URL, effectiveConfig, forSurface, fromSurface, loadFromTexts, validate } from '../hooks/config-model'
+import { DEFAULT_CONFIG, PRESETS, SCHEMA_URL, configPathsFrom, effectiveConfig, forSurface, fromSurface, loadFromTexts, validate } from '../hooks/config-model'
 
 const HOME = '/u/dev'
 const CWD = '/u/dev/proj'
@@ -181,6 +181,24 @@ test('XDG_CONFIG_HOME moves the global file', async ($, on) => {
   const loaded = await startup($)
   expect(loaded.lines).toEqual([['model']])
   expect(loaded.sources).toEqual(['/u/xdg/tidemark/config.json'])
+})
+
+test('without HOME, as in the Windows desktop app, the global file is under USERPROFILE', async ($, on) => {
+  // the engine resolves a Windows path only on Windows, so a POSIX one stands in for it
+  const global = '/u/win/.config/tidemark/config.json'
+  files(on, { [global]: JSON.stringify({ lines: [['model']] }) }, { USERPROFILE: '/u/win/' })
+  const loaded = await startup($)
+  expect(loaded.lines).toEqual([['model']])
+  expect(loaded.sources).toEqual([global])
+})
+
+test('configPathsFrom: HOME before USERPROFILE, trailing separators dropped, null without either', () => {
+  expect(configPathsFrom({ home: '/u/dev/', userProfile: 'C:\\u\\other', cwd: 'C:\\u\\dev\\proj\\' })).toEqual({
+    global: '/u/dev/.config/tidemark/config.json',
+    project: 'C:\\u\\dev\\proj/.claude/tidemark.json',
+  })
+  expect(configPathsFrom({ home: '', userProfile: 'C:\\u\\dev' }).global).toBe('C:\\u\\dev/.config/tidemark/config.json')
+  expect(configPathsFrom({})).toEqual({ global: null, project: null })
 })
 
 test('compact: on at 70% by default; `at` takes 1 to 100, anything else is dropped with a warning', () => {

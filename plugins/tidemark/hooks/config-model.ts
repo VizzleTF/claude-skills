@@ -239,14 +239,17 @@ export function fromSurface(c: Config, surface: string, view: Config): Config {
   return { ...c, alerts: rest.alerts, desktop: { lines: rest.lines, style: rest.style, pane: rest.pane, compact: rest.compact } }
 }
 
-// Where the files are: `$XDG_CONFIG_HOME/tidemark/config.json` (else `$HOME/.config/...`) and the session
-// directory's `.claude/tidemark.json`. Null where the place cannot be known.
-export function configPathsFrom(env: { xdg?: string; home?: string; cwd?: string }): ConfigPaths {
-  const { xdg, home, cwd } = env
-  const base = xdg ? xdg : home ? `${home.replace(/\/$/, '')}/.config` : undefined
+// Where the files are: `$XDG_CONFIG_HOME/tidemark/config.json` (else `~/.config/...`) and the session
+// directory's `.claude/tidemark.json`. Null where the place cannot be known. Home is `$HOME`, else
+// `%USERPROFILE%`: Windows sets no HOME, so the desktop app's sessions there have only the latter.
+export function configPathsFrom(env: { xdg?: string; home?: string; userProfile?: string; cwd?: string }): ConfigPaths {
+  const { xdg, cwd } = env
+  const home = env.home || env.userProfile
+  const trim = (p: string) => p.replace(/[\\/]+$/, '')
+  const base = xdg ? xdg : home ? `${trim(home)}/.config` : undefined
   return {
-    global: base ? `${base.replace(/\/$/, '')}/tidemark/config.json` : null,
-    project: cwd ? `${cwd.replace(/\/$/, '')}/.claude/tidemark.json` : null,
+    global: base ? `${trim(base)}/tidemark/config.json` : null,
+    project: cwd ? `${trim(cwd)}/.claude/tidemark.json` : null,
   }
 }
 

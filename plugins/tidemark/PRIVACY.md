@@ -7,7 +7,7 @@ tidemark runs inside your Claude Code session and keeps everything on your machi
 - The session figures Claude Code hands to plugins: context usage, token counts, cost, prompt-cache activity, rate-limit percentages, model, effort and subagents.
 - Its config files: `~/.config/tidemark/config.json` (or under `$XDG_CONFIG_HOME`) and `.claude/tidemark.json` in the session's directory.
 - `.claude/tidemark-project.txt` in the session's directory.
-- The environment variables `HOME`, `XDG_CONFIG_HOME`, `CLAUDE_CODE_PROMPT_CACHE_TTL`, `ENABLE_PROMPT_CACHING_1H` and `FORCE_PROMPT_CACHING_5M`.
+- The environment variables `HOME`, `USERPROFILE`, `XDG_CONFIG_HOME`, `CLAUDE_CODE_PROMPT_CACHE_TTL`, `ENABLE_PROMPT_CACHING_1H` and `FORCE_PROMPT_CACHING_5M`.
 
 ## What it writes
 

@@ -15,7 +15,7 @@
 - Limits
 - Troubleshooting
 
-This reference covers tidemark 0.5.0. The config is read from two JSON files, the project file over the global one. A top-level key in the project file replaces the same key of the global file whole: to add one widget in a project, repeat the whole `lines` in the project file. The options `command.command`, `gitPr.githubHosts` and `gitPr.gitlabHosts` are read from the global file only: in a cloned repository's project file they could run a program or send a host's credentials elsewhere. A project file that sets them gets a warning. Until a file exists, the default config applies; `Save` in the editor creates the file and its directories. A hand edit is picked up on the next prompt or within 30 seconds. An unknown key, widget or option and an invalid value are dropped, and the editor shows a warning. A file that does not parse is skipped: the band shows a dim `⚠ config`, and the editor shows the path and the error.
+This reference covers tidemark 0.5.3. The config is read from two JSON files, the project file over the global one. A top-level key in the project file replaces the same key of the global file whole: to add one widget in a project, repeat the whole `lines` in the project file. The options `command.command`, `gitPr.githubHosts` and `gitPr.gitlabHosts` are read from the global file only: in a cloned repository's project file they could run a program or send a host's credentials elsewhere. A project file that sets them gets a warning. Until a file exists, the default config applies; `Save` in the editor creates the file and its directories. A hand edit is picked up on the next prompt or within 30 seconds. An unknown key, widget or option and an invalid value are dropped, and the editor shows a warning. A file that does not parse is skipped: the band shows a dim `⚠ config`, and the editor shows the path and the error.
 
 ## Commands
 
@@ -30,7 +30,7 @@ This reference covers tidemark 0.5.0. The config is read from two JSON files, th
 
 | File | Path |
 |---|---|
-| Global | `$XDG_CONFIG_HOME/tidemark/config.json`, else `~/.config/tidemark/config.json` |
+| Global | `$XDG_CONFIG_HOME/tidemark/config.json`, else `~/.config/tidemark/config.json`; `~` is `$HOME`, else `%USERPROFILE%` (Windows sets no `HOME`) |
 | Project | `.claude/tidemark.json` in the Claude Code session's working directory |
 
 ## Config keys

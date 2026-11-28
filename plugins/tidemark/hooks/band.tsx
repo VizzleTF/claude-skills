@@ -110,7 +110,7 @@ export function registerBand(on: On): void {
     const probes = await read($, probesState)
     const env = {
       cwd: await $.session.cwd().catch(() => undefined),
-      home: await $.env.get('HOME').catch(() => undefined),
+      home: await $.env.get('HOME').catch(() => undefined) || await $.env.get('USERPROFILE').catch(() => undefined),
       agentId: e.props.view.agentId,
       configError: error !== undefined,
       surface: e.surface,

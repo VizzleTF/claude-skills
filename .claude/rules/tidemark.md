@@ -54,7 +54,7 @@ plugins/tidemark/
 - Data flow: engine events -> `snapshot.ts` (sole owner of session events) -> atoms in `$.state` -> `band.tsx` / `pane.tsx` / `editor.tsx` render via `layout.ts` + `widgets/` + `draw.tsx`.
 - Atoms (`plugin: 'tidemark'`): `snapshot`, `track`, `config`, `probes`, `alerts`, `editor`; types in `types/index.d.ts`.
 - `probes.ts` and `alerts.ts` are pure planners; `snapshot.ts` executes the planned `ProbeRequest`s on `turn.complete` and a 30 s tick, stores results in atom `probes`, and shows the toasts `evaluateAlerts` returns after each `session.measure` and on the tick.
-- `config.ts` owns `classic.SessionStart {source: startup}` and `prompt.submit`; config files are `$XDG_CONFIG_HOME/tidemark/config.json` (else `$HOME/.config/...`) and `<cwd>/.claude/tidemark.json`, project over global; mtime re-read on the tick and `prompt.submit`.
+- `config.ts` owns `classic.SessionStart {source: startup}` and `prompt.submit`; config files are `$XDG_CONFIG_HOME/tidemark/config.json` (else `$HOME`, or `%USERPROFILE%` on Windows, `/.config/...`) and `<cwd>/.claude/tidemark.json`, project over global; mtime re-read on the tick and `prompt.submit`.
 - Widget contract: `WidgetDef.render(WidgetInput) -> Variant[]` (`[]` = hidden), `Variant = Span[]`; `layout.ts` picks variants to fit width, `draw.tsx` colours spans by `role` / `tier`.
 - Failed probe keeps its previous result beside `error`; one key never runs twice at once.
 

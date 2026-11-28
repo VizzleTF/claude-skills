@@ -161,6 +161,10 @@ test('cwd styles: project, basename, short, full', () => {
   expect(full('cwd', snap(), { env, options: { style: 'short' } })).toBe('~/…/a/b')
   expect(full('cwd', snap(), { env: { ...env, cwd: '/u/dev/a/b' }, options: { style: 'short' } })).toBe('~/a/b')
   expect(full('cwd', snap(), { env, options: { style: 'full' } })).toBe('/u/dev/x/y/a/b')
+  const win = { cwd: 'C:\\u\\dev\\x\\y\\a\\b\\', home: 'C:\\u\\dev' }
+  expect(full('cwd', snap(), { env: win, options: { style: 'basename' } })).toBe('b')
+  expect(full('cwd', snap(), { env: win, options: { style: 'short' } })).toBe('~\\…\\a\\b')
+  expect(full('cwd', snap(), { env: win, options: { style: 'full' } })).toBe('C:\\u\\dev\\x\\y\\a\\b')
   expect(run('cwd', snap())).toEqual([])
 })
 

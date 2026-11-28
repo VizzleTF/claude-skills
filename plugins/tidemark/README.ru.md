@@ -135,7 +135,7 @@ tidemark — мод, то есть плагин, который рисует в
 | `.claude/tidemark.json` | конфиг проекта | ✓ | по `Save` в `/tidemark-config` |
 | `.claude/tidemark-project.txt` | имя проекта | ✓ | по `/tidemark-project` |
 | Хранилище плагина | последняя квота, уровни effort, которые приняла каждая модель, цели недавних сессий | ✓ | по ходу сессии |
-| `HOME`, `XDG_CONFIG_HOME` | где лежит глобальный конфиг | ✓ | |
+| `HOME` (на Windows без него `USERPROFILE`), `XDG_CONFIG_HOME` | где лежит глобальный конфиг | ✓ | |
 | `CLAUDE_CODE_PROMPT_CACHE_TTL`, `ENABLE_PROMPT_CACHING_1H`, `FORCE_PROMPT_CACHING_5M`, настройка `promptCacheTtl` | время жизни кеша промпта | ✓ | |
 
 Файлы в `.claude` принадлежат tidemark; это не настройки и не инструкции Claude Code. Подробности: [Privacy](PRIVACY.md) (на английском) и [Внешние запуски](docs/reference.ru.md#внешние-запуски).

@@ -2,6 +2,13 @@
 
 All notable changes to the `tidemark` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.5.3] - 2026-11-28
+
+### Fixed
+
+- On Windows, where `HOME` is unset (sessions of the Claude desktop app), the global config is read from and saved to `%USERPROFILE%\.config\tidemark\config.json`; before, the band fell back to the default config and Save reported `no global config path`.
+- The `cwd` widget handles Windows paths: the directory name is the last folder, and the `short` style shortens `%USERPROFILE%` to `~`.
+
 ## [0.5.2] - 2026-11-19
 
 ### Fixed

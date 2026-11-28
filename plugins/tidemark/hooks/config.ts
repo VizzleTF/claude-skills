@@ -11,6 +11,7 @@ async function configPaths($: EngineInterface): Promise<ConfigPaths> {
   return configPathsFrom({
     xdg: await $.env.get('XDG_CONFIG_HOME').catch(() => undefined),
     home: await $.env.get('HOME').catch(() => undefined),
+    userProfile: await $.env.get('USERPROFILE').catch(() => undefined),
     cwd: await $.session.cwd().catch(() => undefined),
   })
 }
