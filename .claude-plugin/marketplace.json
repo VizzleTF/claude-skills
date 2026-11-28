@@ -85,6 +85,24 @@
       ]
     },
     {
+      "name": "vi-work",
+      "source": "./plugins/vi-work",
+      "description": "Work rules at session start: finish owed work before ending a turn, ask only what blocks, never retry a denied step in another form, check subagent absence claims, keep decisions through compaction.",
+      "author": {
+        "name": "VizzleTF",
+        "url": "https://github.com/VizzleTF"
+      },
+      "homepage": "https://github.com/VizzleTF/claude-skills/tree/main/plugins/vi-work",
+      "repository": "https://github.com/VizzleTF/claude-skills",
+      "license": "MIT",
+      "category": "productivity",
+      "tags": [
+        "workflow",
+        "rules",
+        "subagents"
+      ]
+    },
+    {
       "name": "critique",
       "source": "./plugins/critique",
       "description": "Parallel read-only critics and a cold reader review your work; Claude checks each finding, fixes what holds up inside the zone you own, and repeats until nothing critical is left.",

@@ -1,6 +1,6 @@
 # claude-skills
 
-Claude Code plugin marketplace `vizzletf-skills`: the documentation-writing plugin `technical-writing` (English instructions, style rules per document language), plus the `tidemark` mod, the `critique` plugin (`/critique:run` or on request: parallel critic and cold-reader subagents) and two always-on rule plugins injected by a `SessionStart` hook: `vi-voice` (chat style; the reply language comes from the `language` setting) and `vi-code` (coding rules, also injected into every subagent by a `SubagentStart` hook).
+Claude Code plugin marketplace `vizzletf-skills`: the documentation-writing plugin `technical-writing` (English instructions, style rules per document language), plus the `tidemark` mod, the `critique` plugin (`/critique:run` or on request: parallel critic and cold-reader subagents) and three always-on rule plugins injected by a `SessionStart` hook: `vi-voice` (chat style; the reply language comes from the `language` setting), `vi-code` (coding rules, also injected into every subagent by a `SubagentStart` hook) and `vi-work` (work rules: when to stop, what to ask, denials, subagents, compaction).
 
 ## Commands
 
@@ -31,7 +31,7 @@ tools/parity.py                     skill structure and repo-wide secret checks
 tools/version_check.py              version bump + CHANGELOG entry per changed plugin
 tools/live_smoke.py                 tidemark in a real Claude Code under tmux
 tools/pack.py                       plugin zips for claude.ai upload, --notes prints the CHANGELOG entry
-tests/                              one test_<tool>.py per tool, test_tidemark_schema.py, test_vi_code_hook.py, test_vi_voice_hook.py
+tests/                              one test_<tool>.py per tool, test_tidemark_schema.py, test_vi_code_hook.py, test_vi_voice_hook.py (covers vi-work too)
 .github/                            ci.yml (all checks), release.yml (tag -> GitHub release with the zip), ISSUE_TEMPLATE/ (bug, feature)
 ```
 

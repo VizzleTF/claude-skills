@@ -2,6 +2,12 @@
 
 All notable changes to the `technical-writing` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [3.4.0] - 2026-11-28
+
+### Added
+
+- Russian style: a neutral verb over a colloquial one. Metrics, time and effect take «измерять» or «замерять»; a rewrite keeps the author's own «мерить».
+
 ## [3.3.1] - 2026-11-19
 
 ### Fixed

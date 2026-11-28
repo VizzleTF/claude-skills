@@ -2,7 +2,7 @@
 
 [![ci](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml)
 
-Five Claude Code plugins: documents that fit their reader, a status band above the prompt, short replies, small complete code changes, critic subagents that review your work.
+Six Claude Code plugins: documents that fit their reader, a status band above the prompt, short replies, small complete code changes, work finished before the turn ends, critic subagents that review your work.
 
 ```
 /plugin marketplace add VizzleTF/claude-skills
@@ -10,6 +10,7 @@ Five Claude Code plugins: documents that fit their reader, a status band above t
 /plugin install tidemark@vizzletf-skills
 /plugin install vi-voice@vizzletf-skills
 /plugin install vi-code@vizzletf-skills
+/plugin install vi-work@vizzletf-skills
 /plugin install critique@vizzletf-skills
 ```
 
@@ -67,6 +68,17 @@ Claude makes small code changes that reach every caller.
 - subagents follow the same rules
 
 [Full README](plugins/vi-code/README.md)
+
+## vi-work
+
+Claude finishes the work it owes before ending a turn.
+
+- no "shall I continue?" endings; it stops only when it needs you
+- asks only what blocks the work
+- checks a subagent's "not found" before relying on it
+- your decisions survive compaction word for word
+
+[Full README](plugins/vi-work/README.md)
 
 ## critique
 

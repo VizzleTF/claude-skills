@@ -1,4 +1,4 @@
-"""Tests for the SessionStart hooks of vi-voice and vi-code: print the rules file intact, stay silent without it."""
+"""Tests for the SessionStart hooks of vi-voice, vi-code and vi-work: print the rules file intact, stay silent without it."""
 
 import json
 import os
@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PLUGINS = {"vi-voice": "style.md", "vi-code": "rules.md"}
+PLUGINS = {"vi-voice": "style.md", "vi-code": "rules.md", "vi-work": "work.md"}
 
 
 def run_session_hook(plugin_dir):

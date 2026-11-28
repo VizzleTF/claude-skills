@@ -2,7 +2,7 @@
 
 [![ci](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/VizzleTF/claude-skills/actions/workflows/ci.yml)
 
-Пять плагинов Claude Code: документы под читателя, полоса статуса над промптом, короткие ответы, небольшие и полные правки кода, субагенты-критики для проверки работы.
+Шесть плагинов Claude Code: документы под читателя, полоса статуса над промптом, короткие ответы, небольшие и полные правки кода, работа, доделанная до конца хода, субагенты-критики для проверки работы.
 
 ```
 /plugin marketplace add VizzleTF/claude-skills
@@ -10,6 +10,7 @@
 /plugin install tidemark@vizzletf-skills
 /plugin install vi-voice@vizzletf-skills
 /plugin install vi-code@vizzletf-skills
+/plugin install vi-work@vizzletf-skills
 /plugin install critique@vizzletf-skills
 ```
 
@@ -67,6 +68,17 @@ Claude делает небольшие правки кода и не забыв�
 - сабагенты следуют тем же правилам
 
 [Полный README](plugins/vi-code/README.ru.md)
+
+## vi-work
+
+Claude доделывает обещанную работу до конца хода.
+
+- без концовок «продолжить?»; останавливается, только когда нужны вы
+- спрашивает только то, что блокирует работу
+- проверяет ответ субагента «не найдено», прежде чем на него опереться
+- ваши решения переживают сжатие контекста дословно
+
+[Полный README](plugins/vi-work/README.ru.md)
 
 ## critique
 
