@@ -29,6 +29,7 @@ when_to_use: Before the first read or write of the Obsidian vault in a session; 
 - The file is `.obsidian/bookmarks.json`, shaped `{"items":[{"type":"group","title":"Claude","items":[{"type":"file","path":"<path from the vault root>.md"}]}]}`. Groups can nest. Leave other groups and items of other types (folder, search, graph) as they are. Create the file or the group when missing, and keep the JSON valid.
 - Obsidian keeps bookmarks in memory and may write over an outside edit. Edit the file only while Obsidian is not running on that machine; when you cannot tell, treat it as running. While it runs, name the notes to bookmark in the reply.
 - LiveSync carries `.obsidian/` files only with hidden file sync on (the `syncInternalFiles` setting), and it is off by default. While it is off, the group lives on one machine. Tell the user and ask them to turn on hidden file sync for `bookmarks.json` on every device.
+- The scan applies `syncInternalFilesTargetPatterns` to folders too, to paths without a leading `/`. To sync only the bookmarks, the patterns must admit the folder as well: `^\.obsidian$, ^\.obsidian\/bookmarks\.json$`. A file pattern alone finds 0 files.
 - Claude Code memory keeps how to work with the user. Facts and documentation go to the vault.
 
 ## 5. Sync

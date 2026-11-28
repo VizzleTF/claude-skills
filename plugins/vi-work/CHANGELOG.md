@@ -2,6 +2,12 @@
 
 All notable changes to the `vi-work` plugin. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-11-28
+
+### Fixed
+
+- The obsidian skill gives hidden file sync patterns that work: the scan applies them to folders too, so the `.obsidian` folder needs its own pattern next to `bookmarks.json`.
+
 ## [0.2.0] - 2026-11-28
 
 ### Added

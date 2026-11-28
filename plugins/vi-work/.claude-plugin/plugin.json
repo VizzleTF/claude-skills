@@ -1,7 +1,7 @@
 {
   "name": "vi-work",
   "displayName": "vi-work",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Work rules injected at session start: finish owed work before ending a turn, ask only what blocks, never retry a denied step in another form, keep decisions through compaction, keep everything worth keeping in the Obsidian vault. About 750 tokens per session; an obsidian skill loads on demand.",
   "author": {
     "name": "VizzleTF",
