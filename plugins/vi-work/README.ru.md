@@ -8,6 +8,8 @@ Claude Code доделывает обещанную работу до конца
 - ответ субагента «не найдено» или «не изменилось» Claude один раз проверяет сам
 - запрещённый шаг не повторяется в другом виде
 - ваши решения и разрешения переживают сжатие контекста дословно
+- всё, что стоит сохранить, уходит в ваш vault Obsidian, и Claude ищет там, прежде чем спросить вас
+- содержимое vault не попадает в публичные репозитории, артефакты и веб-поиск
 
 ```
 /plugin marketplace add VizzleTF/claude-skills
@@ -16,7 +18,7 @@ Claude Code доделывает обещанную работу до конца
 
 ## Подробнее
 
-- Правила лежат в [work.md](work.md), около 410 слов, на английском; ваши инструкции и CLAUDE.md важнее их. Хук `SessionStart` добавляет их при запуске, `resume`, `clear` и `compact`; субагентов он не трогает.
+- Правила лежат в [work.md](work.md), около 540 слов, на английском; ваши инструкции и CLAUDE.md важнее их. Хук `SessionStart` добавляет их при запуске, `resume`, `clear` и `compact`; субагентов он не трогает. Skill `vi-work:obsidian` (где vault, закладки, LiveSync, git, приватность) подгружается, только когда речь заходит о vault; путь к vault на каждой машине пишется в её `~/.claude/CLAUDE.md` строкой `Obsidian vault: <path>`.
 - На claude.ai: добавьте `VizzleTF/claude-skills` как маркетплейс плагинов в Plugins и включите vi-work. Claude Code и облачные сессии этого аккаунта подгружают его как `vi-work@synced`.
 - Стиль ответов задаёт плагин [vi-voice](../vi-voice/README.ru.md), правила кода — [vi-code](../vi-code/README.ru.md).
 - Удаление: `/plugin uninstall vi-work@vizzletf-skills`

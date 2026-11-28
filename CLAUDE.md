@@ -1,6 +1,6 @@
 # claude-skills
 
-Claude Code plugin marketplace `vizzletf-skills`: the documentation-writing plugin `technical-writing` (English instructions, style rules per document language), plus the `tidemark` mod, the `critique` plugin (`/critique:run` or on request: parallel critic and cold-reader subagents) and three always-on rule plugins injected by a `SessionStart` hook: `vi-voice` (chat style; the reply language comes from the `language` setting), `vi-code` (coding rules, also injected into every subagent by a `SubagentStart` hook) and `vi-work` (work rules: when to stop, what to ask, denials, subagents, compaction).
+Claude Code plugin marketplace `vizzletf-skills`: the documentation-writing plugin `technical-writing` (English instructions, style rules per document language), plus the `tidemark` mod, the `critique` plugin (`/critique:run` or on request: parallel critic and cold-reader subagents) and three always-on rule plugins injected by a `SessionStart` hook: `vi-voice` (chat style; the reply language comes from the `language` setting), `vi-code` (coding rules, also injected into every subagent by a `SubagentStart` hook) and `vi-work` (work rules: when to stop, what to ask, denials, subagents, compaction, the Obsidian vault; on-demand skill `obsidian`).
 
 ## Commands
 
@@ -21,6 +21,7 @@ python3 plugins/technical-writing/skills/write/scripts/check.py plugins/technica
 .claude-plugin/marketplace.json     lists the plugins; renames maps technical-writing-ru to technical-writing
 plugins/technical-writing/          .claude-plugin/plugin.json, README, LICENSE, skills/, evals/
 plugins/critique/                   skills/run/ (SKILL.md, lenses.md), agents/ (critic, cold-reader)
+plugins/vi-work/                    work.md (always-on rules), hooks/hooks.json (SessionStart), skills/obsidian/SKILL.md (vault procedures, on demand)
   skills/write/SKILL.md             the only skill /<plugin>:write: glossary, type choice, routing, core rules, workflow
   skills/write/types/               13 document types, one file each
   skills/write/style/               <language>.md (english.md required, russian.md), llm-patterns.md

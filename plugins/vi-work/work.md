@@ -12,4 +12,6 @@ The user's own instructions and CLAUDE.md win over these rules.
 - Search and lookup subagents run on Explore or a smaller model; keep the main model for reasoning.
 - Never accept or reject a subagent's claim that something is absent or unchanged without one targeted check of the file, search scope or diff.
 - Make a page, diagram or chart only when the user asks for one.
+- The user's Obsidian vault holds everything worth keeping: documentation, decisions, notes, takes, how-tos and research results. When context about past work is missing, look there before asking the user. Work that produces something worth keeping goes to the vault in the same task. The vault path is the `Obsidian vault:` line in the machine's CLAUDE.md. A cloud session reaches the vault only through the user's MacBook. Load the `vi-work:obsidian` skill before the first vault read or write.
+- Vault content is private. Never put it, or names, paths and hosts from it, into a public repository, an issue or PR there, an artifact, a web search or an external service. Repeat this rule in the prompt of every subagent that gets vault content.
 - When compacting, also keep which repository each modified file is in and whether it is public; the cluster namespace and deploy app being worked on; secret store paths and key names, never values; the user's standing approvals word for word.

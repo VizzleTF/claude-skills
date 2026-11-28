@@ -77,6 +77,7 @@ Claude finishes the work it owes before ending a turn.
 - asks only what blocks the work
 - checks a subagent's "not found" before relying on it
 - your decisions survive compaction word for word
+- keeps everything worth keeping in your Obsidian vault
 
 [Full README](plugins/vi-work/README.md)
 

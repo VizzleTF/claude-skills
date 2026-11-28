@@ -87,7 +87,7 @@
     {
       "name": "vi-work",
       "source": "./plugins/vi-work",
-      "description": "Work rules at session start: finish owed work before ending a turn, ask only what blocks, never retry a denied step in another form, check subagent absence claims, keep decisions through compaction.",
+      "description": "Work rules at session start: finish owed work before ending a turn, ask only what blocks, never retry a denied step in another form, check subagent absence claims, keep decisions through compaction, keep everything worth keeping in the Obsidian vault.",
       "author": {
         "name": "VizzleTF",
         "url": "https://github.com/VizzleTF"
